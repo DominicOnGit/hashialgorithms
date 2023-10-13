@@ -1,4 +1,4 @@
-import type { Edge, Hashi, Vertex } from '@/stores/hashi'
+import { validateHashi, type Edge, type Hashi, type Vertex } from '@/stores/hashi'
 
 const GridSizeFactor = 3
 const IslandRadiusFactor = 1
@@ -18,6 +18,7 @@ export class HashiCanvasService {
     private canvas: CanvasRenderingContext2D,
     private hashi: Hashi
   ) {
+    validateHashi(hashi)
     this.canvas.font = '15px sans-serif'
     this.canvas.textAlign = 'center'
     const textMeasure = this.canvas.measureText('5')
@@ -81,7 +82,7 @@ export class HashiCanvasService {
 
   draw(): void {
     // clear canvas
-    this.canvas.clearRect(0, 0, 100, 100)
+    this.canvas.clearRect(0, 0, 400, 400)
 
     this.hashi.vertices.forEach((vertex) => this.drawVertex(vertex))
 

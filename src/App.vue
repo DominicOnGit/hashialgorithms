@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import ActionBar from './components/ActionBar.vue'
 import HashiViewer from './components/HashiViewer.vue'
 </script>
 
 <template>
   <main>
+    <ActionBar />
     <HashiViewer />
   </main>
 </template>

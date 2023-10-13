@@ -43,9 +43,10 @@ export default defineComponent({
     }
   },
   watch: {
-    store: {
+    hashiStore: {
       handler(): void {
         console.log('changed')
+        this.draw()
       },
       deep: true
     }
@@ -54,7 +55,6 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>Size: {{ hashiStore.size }}</div>
   <canvas id="canvas" width="400" height="400"></canvas>
 </template>
 
