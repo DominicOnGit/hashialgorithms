@@ -1,8 +1,16 @@
 import { validateHashi, type Edge, type Hashi, type Vertex } from '@/stores/hashi';
 
-export class HashiVertex implements Vertex {
-  constructor(public vertex: Vertex) {
+export interface Selectable {
+  wrappedItem: Edge | Vertex;
+}
+
+export class HashiVertex implements Selectable, Vertex {
+  constructor(private vertex: Vertex) {
     if (vertex instanceof HashiVertex) throw new Error('recursive');
+  }
+
+  public get wrappedItem(): Vertex {
+    return this.vertex;
   }
 
   public get posX(): number {
@@ -17,7 +25,7 @@ export class HashiVertex implements Vertex {
   }
 }
 
-export class HashiEdge implements Edge {
+export class HashiEdge implements Selectable, Edge {
   vertex1: HashiVertex;
   vertex2: HashiVertex;
 
@@ -28,6 +36,10 @@ export class HashiEdge implements Edge {
     if (edge instanceof HashiEdge) throw new Error('recursive');
     this.vertex1 = vertices[edge.v1];
     this.vertex2 = vertices[edge.v2];
+  }
+
+  public get wrappedItem(): Edge {
+    return this.edge;
   }
 
   public get v1(): number {
@@ -155,6 +167,5 @@ export class HashiUtil {
 //   kind: 'vertex'
 //   vertex: Vertex
 // }
-export type Selectable = HashiEdge | HashiVertex;
 
 export type EdgeVertexNull = Vertex | Edge | null;

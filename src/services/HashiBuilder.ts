@@ -1,4 +1,4 @@
-import { validateHashi, type Hashi } from '@/stores/hashi'
+import { validateHashi, type Hashi } from '@/stores/hashi';
 
 export class HashiBuilder {
   public simpleEmpty(): Hashi {
@@ -9,10 +9,10 @@ export class HashiBuilder {
         { posX: 1, posY: 3, targetDegree: 1 }
       ],
       edges: []
-    }
+    };
 
-    validateHashi(res)
-    return res
+    validateHashi(res);
+    return res;
   }
 
   public buildEmpty(): Hashi {
@@ -25,10 +25,10 @@ export class HashiBuilder {
         { posX: 5, posY: 4, targetDegree: 5 }
       ],
       edges: []
-    }
+    };
 
-    validateHashi(res)
-    return res
+    validateHashi(res);
+    return res;
   }
 
   public build(): Hashi {
@@ -46,9 +46,9 @@ export class HashiBuilder {
         { v1: 0, v2: 2, multiplicity: 1 },
         { v1: 3, v2: 4, multiplicity: 2 }
       ]
-    }
+    };
 
-    validateHashi(res)
-    return res
+    validateHashi(res);
+    return res;
   }
 }

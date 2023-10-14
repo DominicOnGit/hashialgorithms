@@ -3,7 +3,6 @@ import { SelectorRunner } from './SelectorRunner';
 import { type Edge, type Hashi } from '@/stores/hashi';
 import { type Selector } from '@/stores/HashiAlgorithm';
 import { describe } from 'node:test';
-import type { HashiEdge } from './HashiUtil';
 
 describe('edge selection', () => {
   [0, 1, 2].forEach((multiplicity) =>
@@ -34,50 +33,46 @@ describe('edge selection', () => {
 
       const runner = new SelectorRunner(selector, hashi);
 
-      const actual = runner.SelectNext() as HashiEdge;
+      const actual = runner.SelectNext();
 
       const expectedEdge: Edge = {
         v1: multiplicity,
         v2: multiplicity + 1,
         multiplicity: multiplicity
       };
-      // const expected: DiscriminatedEdge = { kind: 'edge', edge: expectedEdge };
-      console.log(actual);
-      expect(actual.edge).toStrictEqual(expectedEdge);
+      expect(actual.wrappedItem).toStrictEqual(expectedEdge);
     })
   );
 });
 
-// describe('vertex selection', () => {
-//   [1, 2].forEach((targetDegree) =>
-//     test('select vertex with targetDegree', () => {
-//       setActivePinia(createPinia());
-//       const hashi: Hashi = {
-//         vertices: [
-//           { posX: 1, posY: 1, targetDegree: 1 },
-//           { posX: 1, posY: 2, targetDegree: 2 }
-//         ],
-//         edges: []
-//       };
+describe('vertex selection', () => {
+  [1, 2].forEach((targetDegree) =>
+    test('select vertex with targetDegree', () => {
+      const hashi: Hashi = {
+        vertices: [
+          { posX: 1, posY: 1, targetDegree: 1 },
+          { posX: 1, posY: 2, targetDegree: 2 }
+        ],
+        edges: []
+      };
 
-//       const selector: Selector = {
-//         kind: 'vertex',
-//         conditions: [
-//           {
-//             lhs: { kind: 'propertyAccess', property: 'targetDegree' },
-//             operator: 'eq',
-//             rhs: { kind: 'constant', value: targetDegree }
-//           }
-//         ]
-//       };
+      const selector: Selector = {
+        kind: 'vertex',
+        conditions: [
+          {
+            lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+            operator: 'eq',
+            rhs: { kind: 'constant', value: targetDegree }
+          }
+        ]
+      };
 
-//       const runner = new SelectorRunner(selector, hashi);
+      const runner = new SelectorRunner(selector, hashi);
 
-//       const actual = runner.SelectNext();
+      const actual = runner.SelectNext();
 
-//       const expectedVertex = hashi.vertices[targetDegree - 1];
-//       const expected: DiscriminatedVertex = { kind: 'vertex', vertex: expectedVertex };
-//       expect(actual).toStrictEqual(expected);
-//     })
-//   );
-// });
+      const expectedVertex = hashi.vertices[targetDegree - 1];
+      expect(actual.wrappedItem).toStrictEqual(expectedVertex);
+    })
+  );
+});

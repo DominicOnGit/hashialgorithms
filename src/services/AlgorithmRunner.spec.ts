@@ -1,12 +1,12 @@
-import { expect, test } from 'vitest'
-import { AlgorithmRunner } from './AlgorithmRunner'
-import { useHashiStore, type Edge, type Hashi } from '@/stores/hashi'
-import { type HashiAlgorithm } from '@/stores/HashiAlgorithm'
-import { createPinia, setActivePinia } from 'pinia'
+import { expect, test } from 'vitest';
+import { AlgorithmRunner } from './AlgorithmRunner';
+import { useHashiStore, type Edge, type Hashi } from '@/stores/hashi';
+import { type HashiAlgorithm } from '@/stores/HashiAlgorithm';
+import { createPinia, setActivePinia } from 'pinia';
 
 test('runs rule', () => {
-  setActivePinia(createPinia())
-  const hashiStore = useHashiStore()
+  setActivePinia(createPinia());
+  const hashiStore = useHashiStore();
   const algorithm: HashiAlgorithm = {
     rules: [
       {
@@ -19,7 +19,7 @@ test('runs rule', () => {
         action: { kind: 'addEdge' }
       }
     ]
-  }
+  };
 
   const hashi: Hashi = {
     vertices: [
@@ -27,15 +27,15 @@ test('runs rule', () => {
       { posX: 1, posY: 2, targetDegree: 1 }
     ],
     edges: []
-  }
-  hashiStore.setHashi(hashi)
+  };
+  hashiStore.setHashi(hashi);
 
-  const runner = new AlgorithmRunner(algorithm, hashi)
-  runner.runStep()
+  const runner = new AlgorithmRunner(algorithm, hashi);
+  runner.runStep();
   const expectedEdge: Edge = {
     v1: 0,
     v2: 1,
     multiplicity: 1
-  }
-  expect(hashiStore.edges).toStrictEqual([expectedEdge])
-})
+  };
+  expect(hashiStore.edges).toStrictEqual([expectedEdge]);
+});

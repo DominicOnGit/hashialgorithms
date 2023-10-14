@@ -9,49 +9,49 @@ store.$subscribe((mutation, state) => {
 </script> -->
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { HashiCanvasService } from '@/services/HashiCanvasService'
-import { mapStores } from 'pinia'
-import { useHashiStore } from '@/stores/hashi'
+import { defineComponent } from 'vue';
+import { HashiCanvasService } from '@/services/HashiCanvasService';
+import { mapStores } from 'pinia';
+import { useHashiStore } from '@/stores/hashi';
 
 export default defineComponent({
   data() {
     return {
       vueCanvas: undefined as CanvasRenderingContext2D | undefined | null
-    }
+    };
   },
   computed: {
     ...mapStores(useHashiStore)
   },
   mounted() {
-    console.log('mounted')
-    const c = document.getElementById('canvas') as HTMLCanvasElement
+    console.log('mounted');
+    const c = document.getElementById('canvas') as HTMLCanvasElement;
 
-    const ctx = c.getContext('2d')
-    this.vueCanvas = ctx
+    const ctx = c.getContext('2d');
+    this.vueCanvas = ctx;
 
-    this.draw()
+    this.draw();
   },
   methods: {
     draw() {
-      console.log('draw')
+      console.log('draw');
 
       if (this.vueCanvas == null) {
-        throw new Error()
+        throw new Error();
       }
-      new HashiCanvasService(this.vueCanvas, this.hashiStore).draw()
+      new HashiCanvasService(this.vueCanvas, this.hashiStore).draw();
     }
   },
   watch: {
     hashiStore: {
       handler(): void {
-        console.log('changed')
-        this.draw()
+        console.log('changed');
+        this.draw();
       },
       deep: true
     }
   }
-})
+});
 </script>
 
 <template>

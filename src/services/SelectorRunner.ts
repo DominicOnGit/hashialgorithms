@@ -1,5 +1,5 @@
 import { HashiUtil, type Selectable } from './HashiUtil';
-import { type Edge, type Hashi } from '@/stores/hashi';
+import { type Hashi } from '@/stores/hashi';
 import type { Condition, Selector } from '@/stores/HashiAlgorithm';
 import { TermEvaluator } from './TermEvaluator';
 
@@ -21,26 +21,30 @@ export class SelectorRunner {
 
         const conditions = this.selector.conditions;
         const filteredEdge = allEdges.find((edge) =>
-          conditions.every((condition) => this.evaluateEdgeCondition(condition, edge))
+          conditions.every((condition) => this.evaluateCondition(condition, edge))
         );
         if (filteredEdge == null) throw new Error('no filtered edges');
         return filteredEdge;
       }
       case 'vertex': {
         const conditions = this.selector.conditions;
-        throw new Error('not implemented');
+        const filtered = this.hashiUtil.vertices.find((vertex) =>
+          conditions.every((condition) => this.evaluateCondition(condition, vertex))
+        );
+        if (filtered == null) throw new Error('no filtered vertex');
+        return filtered;
       }
       default:
         throw new Error('not implemented');
     }
   }
 
-  private evaluateEdgeCondition(cond: Condition, edge: Edge): boolean {
+  private evaluateCondition(cond: Condition, item: Selectable): boolean {
     const evaluator = new TermEvaluator(this.hashi);
-    const lhs = evaluator.evaluateOnEdge(cond.lhs, edge);
-    const rhs = evaluator.evaluateOnEdge(cond.rhs, edge);
+    const lhs = evaluator.evaluate(cond.lhs, item);
+    const rhs = evaluator.evaluate(cond.rhs, item);
     const res = this.evaluateOperator(lhs, cond.operator, rhs);
-    console.log(`evaluateEdgeCondition(.,.) => ${res}`);
+    console.log(`evaluateCondition(.,.) => ${res}`);
     return res;
   }
 

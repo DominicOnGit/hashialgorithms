@@ -35,7 +35,7 @@ export interface Condition {
 
 export interface ProperyAccessTerm {
   kind: 'propertyAccess';
-  property: 'multiplicity';
+  property: 'multiplicity' | 'targetDegree';
 }
 
 export interface ConstantTerm {
