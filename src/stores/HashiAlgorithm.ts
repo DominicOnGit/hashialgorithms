@@ -1,48 +1,49 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export interface HashiAlgorithm {
-  rules: Rule[]
+  rules: Rule[];
 }
 
 export interface Rule {
-  selectorSequence: Selector[]
-  action: HashiAction
+  selectorSequence: Selector[];
+  action: HashiAction;
 }
 
 export interface VertexSelector {
-  kind: 'vertex'
+  kind: 'vertex';
+  conditions: Condition[];
 }
 
 export interface EdgeSelector {
-  kind: 'edge'
-  conditions: Condition[]
+  kind: 'edge';
+  conditions: Condition[];
 }
 
-export type Selector = VertexSelector | EdgeSelector
+export type Selector = VertexSelector | EdgeSelector;
 
 export interface AddEdgeAction {
-  kind: 'addEdge'
+  kind: 'addEdge';
 }
 
-export type HashiAction = AddEdgeAction
+export type HashiAction = AddEdgeAction;
 
 export interface Condition {
-  lhs: Term
-  operator: 'leq' | 'eq'
-  rhs: Term
+  lhs: Term;
+  operator: 'leq' | 'eq';
+  rhs: Term;
 }
 
 export interface ProperyAccessTerm {
-  kind: 'propertyAccess'
-  property: 'multiplicity'
+  kind: 'propertyAccess';
+  property: 'multiplicity';
 }
 
 export interface ConstantTerm {
-  kind: 'constant'
-  value: number
+  kind: 'constant';
+  value: number;
 }
 
-export type Term = ProperyAccessTerm | ConstantTerm
+export type Term = ProperyAccessTerm | ConstantTerm;
 
 export const TestAlgorithm: HashiAlgorithm = {
   rules: [
@@ -62,10 +63,10 @@ export const TestAlgorithm: HashiAlgorithm = {
       action: { kind: 'addEdge' }
     }
   ]
-}
+};
 
 export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
   state: (): HashiAlgorithm => {
-    return TestAlgorithm
+    return TestAlgorithm;
   }
-})
+});

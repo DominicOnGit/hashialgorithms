@@ -28,7 +28,7 @@ export interface Hashi {
 
 export const useHashiStore = defineStore('hashi', {
   state: (): Hashi => {
-    return new HashiBuilder().build()
+    return new HashiBuilder().simpleEmpty()
   },
   actions: {
     setHashi(hashi: Hashi): void {
@@ -51,7 +51,10 @@ export function validateHashi(hashi: Hashi): void {
   for (let i = 0; i < hashi.vertices.length - 1; i++) {
     const vi = hashi.vertices[i]
     const vj = hashi.vertices[i + 1]
-    if ((vi.posY == vj.posY && vi.posX >= vj.posX) || (vi.posX == vj.posX && vi.posY >= vj.posY)) {
+    if (
+      (vi.posY === vj.posY && vi.posX >= vj.posX) ||
+      (vi.posX === vj.posX && vi.posY >= vj.posY)
+    ) {
       throw new Error('Unsorted vertices')
     }
   }

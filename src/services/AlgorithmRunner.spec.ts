@@ -1,13 +1,26 @@
 import { expect, test } from 'vitest'
 import { AlgorithmRunner } from './AlgorithmRunner'
 import { useHashiStore, type Edge, type Hashi } from '@/stores/hashi'
-import { TestAlgorithm, type HashiAlgorithm } from '@/stores/HashiAlgorithm'
+import { type HashiAlgorithm } from '@/stores/HashiAlgorithm'
 import { createPinia, setActivePinia } from 'pinia'
 
 test('runs rule', () => {
   setActivePinia(createPinia())
   const hashiStore = useHashiStore()
-  const algorithm: HashiAlgorithm = TestAlgorithm
+  const algorithm: HashiAlgorithm = {
+    rules: [
+      {
+        selectorSequence: [
+          {
+            kind: 'edge',
+            conditions: []
+          }
+        ],
+        action: { kind: 'addEdge' }
+      }
+    ]
+  }
+
   const hashi: Hashi = {
     vertices: [
       { posX: 1, posY: 1, targetDegree: 1 },

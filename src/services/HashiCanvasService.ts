@@ -69,11 +69,11 @@ export class HashiCanvasService {
     const v2 = this.hashi.vertices[edge.v2]
 
     this.canvas.beginPath()
-    if (edge.multiplicity == 1) {
+    if (edge.multiplicity === 1) {
       this.line(v1, v2, 0)
     }
 
-    if (edge.multiplicity == 2) {
+    if (edge.multiplicity === 2) {
       this.line(v1, v2, -DoubleLineGap)
       this.line(v1, v2, +DoubleLineGap)
     }

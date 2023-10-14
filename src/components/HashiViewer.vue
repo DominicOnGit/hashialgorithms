@@ -60,8 +60,6 @@ export default defineComponent({
 
 <style scoped>
 #canvas {
-  height: 400px;
-  width: 400px;
   border: 1px solid gray;
 }
 </style>

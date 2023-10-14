@@ -1,9 +1,22 @@
 import { validateHashi, type Hashi } from '@/stores/hashi'
 
 export class HashiBuilder {
+  public simpleEmpty(): Hashi {
+    const res = {
+      vertices: [
+        { posX: 1, posY: 1, targetDegree: 2 },
+        { posX: 3, posY: 1, targetDegree: 1 },
+        { posX: 1, posY: 3, targetDegree: 1 }
+      ],
+      edges: []
+    }
+
+    validateHashi(res)
+    return res
+  }
+
   public buildEmpty(): Hashi {
     const res = {
-      size: 5,
       vertices: [
         { posX: 1, posY: 1, targetDegree: 1 },
         { posX: 2, posY: 1, targetDegree: 2 },
@@ -20,7 +33,6 @@ export class HashiBuilder {
 
   public build(): Hashi {
     const res = {
-      size: 5,
       vertices: [
         { posX: 1, posY: 1, targetDegree: 1 },
         { posX: 2, posY: 1, targetDegree: 2 },

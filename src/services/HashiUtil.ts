@@ -1,13 +1,66 @@
-import type { Edge, Hashi } from '@/stores/hashi'
+import { validateHashi, type Edge, type Hashi, type Vertex } from '@/stores/hashi';
+
+export class HashiVertex implements Vertex {
+  constructor(public vertex: Vertex) {
+    if (vertex instanceof HashiVertex) throw new Error('recursive');
+  }
+
+  public get posX(): number {
+    return this.vertex.posX;
+  }
+  public get posY(): number {
+    return this.vertex.posY;
+  }
+
+  public get targetDegree(): number {
+    return this.vertex.targetDegree;
+  }
+}
+
+export class HashiEdge implements Edge {
+  vertex1: HashiVertex;
+  vertex2: HashiVertex;
+
+  constructor(
+    public edge: Edge,
+    vertices: HashiVertex[]
+  ) {
+    if (edge instanceof HashiEdge) throw new Error('recursive');
+    this.vertex1 = vertices[edge.v1];
+    this.vertex2 = vertices[edge.v2];
+  }
+
+  public get v1(): number {
+    return this.edge.v1;
+  }
+  public get v2(): number {
+    return this.edge.v2;
+  }
+  public get multiplicity(): number {
+    return this.edge.multiplicity;
+  }
+
+  public equals(other: Edge): boolean {
+    return this.v1 === other.v1 && this.v2 === other.v2;
+  }
+}
 
 export class HashiUtil {
-  constructor(private hashi: Hashi) {}
+  vertices: HashiVertex[];
+  edges: HashiEdge[];
+
+  constructor(private hashi: Hashi) {
+    validateHashi(hashi);
+
+    this.vertices = hashi.vertices.map((v) => new HashiVertex(v));
+    this.edges = hashi.edges.map((e) => new HashiEdge(e, this.vertices));
+  }
 
   getSize(): { nx: number; ny: number } {
     return {
       nx: Math.max(...this.hashi.vertices.map((v) => v.posX)),
       ny: Math.max(...this.hashi.vertices.map((v) => v.posY))
-    }
+    };
   }
 
   // makeGrid(): EdgeVertexNull[][] {
@@ -38,58 +91,70 @@ export class HashiUtil {
 
   getEdgeAt(x: number, y: number): Edge | undefined {
     const found = this.hashi.edges.find((edge) => {
-      const v1 = this.hashi.vertices[edge.v1]
-      const v2 = this.hashi.vertices[edge.v2]
+      const v1 = this.hashi.vertices[edge.v1];
+      const v2 = this.hashi.vertices[edge.v2];
 
       if (v1.posX === v2.posX && v1.posX === x) {
-        return v1.posY <= y && y <= v2.posY
+        return v1.posY <= y && y <= v2.posY;
       }
-      if (v1.posY === v2.posY && v1.posY === x) {
-        return v1.posX <= x && x <= v2.posX
+      if (v1.posY === v2.posY && v1.posY === y) {
+        return v1.posX <= x && x <= v2.posX;
       }
-      return false
-    })
-    return found
+      return false;
+    });
+    return found;
   }
 
-  getAllEdges(): Edge[] {
-    const res: Edge[] = []
-    for (let v1Index = 0; v1Index < this.hashi.vertices.length; v1Index++)
-      for (let v2Index = v1Index + 1; v2Index < this.hashi.vertices.length; v2Index++) {
-        const v1 = this.hashi.vertices[v1Index]
-        const v2 = this.hashi.vertices[v2Index]
+  getAllEdges(): HashiEdge[] {
+    const res: HashiEdge[] = [];
+    for (let v1Index = 0; v1Index < this.vertices.length; v1Index++)
+      for (let v2Index = v1Index + 1; v2Index < this.vertices.length; v2Index++) {
+        const v1 = this.vertices[v1Index];
+        const v2 = this.vertices[v2Index];
 
-        const existing = this.hashi.edges.find((e) => e.v1 === v1Index && e.v2 === v2Index)
+        const existing = this.edges.find((e) => e.v1 === v1Index && e.v2 === v2Index);
         if (existing != null) {
-          res.push(existing)
+          res.push(existing);
         } else {
-          let valid = true
+          let valid = true;
           if (v1.posX === v2.posX) {
             for (let y = v1.posY + 1; y < v2.posY; y++) {
-              const hit = this.getEdgeAt(v1.posX, y)
+              const hit = this.getEdgeAt(v1.posX, y);
               if (hit != null) {
-                valid = false
-                break
+                valid = false;
+                break;
               }
             }
             if (valid) {
-              res.push({ v1: v1Index, v2: v2Index, multiplicity: 0 })
+              res.push(new HashiEdge({ v1: v1Index, v2: v2Index, multiplicity: 0 }, this.vertices));
             }
           }
           if (v1.posY === v2.posY) {
             for (let x = v1.posX + 1; x < v2.posX; x++) {
-              const hit = this.getEdgeAt(x, v1.posY)
+              const hit = this.getEdgeAt(x, v1.posY);
               if (hit != null) {
-                valid = false
-                break
+                valid = false;
+                break;
               }
             }
             if (valid) {
-              res.push({ v1: v1Index, v2: v2Index, multiplicity: 0 })
+              res.push(new HashiEdge({ v1: v1Index, v2: v2Index, multiplicity: 0 }, this.vertices));
             }
           }
         }
       }
-    return res
+    return res;
   }
 }
+
+// export interface DiscriminatedEdge {
+//   kind: 'edge'
+//   edge: Edge
+// }
+// export interface DiscriminatedVertex {
+//   kind: 'vertex'
+//   vertex: Vertex
+// }
+export type Selectable = HashiEdge | HashiVertex;
+
+export type EdgeVertexNull = Vertex | Edge | null;
