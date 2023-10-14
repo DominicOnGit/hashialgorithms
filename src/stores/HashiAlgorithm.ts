@@ -29,13 +29,13 @@ export type HashiAction = AddEdgeAction;
 
 export interface Condition {
   lhs: Term;
-  operator: 'leq' | 'eq';
+  operator: 'lt' | 'le' | 'eq';
   rhs: Term;
 }
 
 export interface ProperyAccessTerm {
   kind: 'propertyAccess';
-  property: 'multiplicity' | 'targetDegree';
+  property: 'multiplicity' | 'targetDegree' | 'degree';
 }
 
 export interface ConstantTerm {
@@ -54,7 +54,7 @@ export const TestAlgorithm: HashiAlgorithm = {
           conditions: [
             {
               lhs: { kind: 'propertyAccess', property: 'multiplicity' },
-              operator: 'leq',
+              operator: 'le',
               rhs: { kind: 'constant', value: 1 }
             }
           ]

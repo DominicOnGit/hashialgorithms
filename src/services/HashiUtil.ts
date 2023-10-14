@@ -2,10 +2,14 @@ import { validateHashi, type Edge, type Hashi, type Vertex } from '@/stores/hash
 
 export interface Selectable {
   wrappedItem: Edge | Vertex;
+  toString(): string;
 }
 
 export class HashiVertex implements Selectable, Vertex {
-  constructor(private vertex: Vertex) {
+  constructor(
+    private vertex: Vertex,
+    public index: number
+  ) {
     if (vertex instanceof HashiVertex) throw new Error('recursive');
   }
 
@@ -22,6 +26,14 @@ export class HashiVertex implements Selectable, Vertex {
 
   public get targetDegree(): number {
     return this.vertex.targetDegree;
+  }
+
+  public isIncident(e: HashiEdge): boolean {
+    return e.v1 === this.index || e.v2 === this.index;
+  }
+
+  public toString(): string {
+    return `v${this.index}`;
   }
 }
 
@@ -55,6 +67,14 @@ export class HashiEdge implements Selectable, Edge {
   public equals(other: Edge): boolean {
     return this.v1 === other.v1 && this.v2 === other.v2;
   }
+
+  public isIncident(v: HashiVertex): boolean {
+    return v.index === this.v1 || v.index === this.v2;
+  }
+
+  public toString(): string {
+    return `${this.v1}-${this.v2}`;
+  }
 }
 
 export class HashiUtil {
@@ -64,8 +84,18 @@ export class HashiUtil {
   constructor(private hashi: Hashi) {
     validateHashi(hashi);
 
-    this.vertices = hashi.vertices.map((v) => new HashiVertex(v));
+    this.vertices = hashi.vertices.map((v, i) => new HashiVertex(v, i));
     this.edges = hashi.edges.map((e) => new HashiEdge(e, this.vertices));
+
+    this.edges.push(...this.findMissingEdges());
+  }
+
+  incidentEdges(v: HashiVertex): HashiEdge[] {
+    return this.edges.filter((e) => e.isIncident(v));
+  }
+
+  getDegree(v: HashiVertex): number {
+    return this.incidentEdges(v).reduce((sum, e) => sum + e.multiplicity, 0);
   }
 
   getSize(): { nx: number; ny: number } {
@@ -117,7 +147,7 @@ export class HashiUtil {
     return found;
   }
 
-  getAllEdges(): HashiEdge[] {
+  private findMissingEdges(): HashiEdge[] {
     const res: HashiEdge[] = [];
     for (let v1Index = 0; v1Index < this.vertices.length; v1Index++)
       for (let v2Index = v1Index + 1; v2Index < this.vertices.length; v2Index++) {
@@ -125,9 +155,7 @@ export class HashiUtil {
         const v2 = this.vertices[v2Index];
 
         const existing = this.edges.find((e) => e.v1 === v1Index && e.v2 === v2Index);
-        if (existing != null) {
-          res.push(existing);
-        } else {
+        if (existing == null) {
           let valid = true;
           if (v1.posX === v2.posX) {
             for (let y = v1.posY + 1; y < v2.posY; y++) {

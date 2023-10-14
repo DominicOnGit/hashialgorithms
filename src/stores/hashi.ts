@@ -69,5 +69,11 @@ export function validateHashi(hashi: Hashi): void {
     if (e.v1 > e.v2) {
       throw new Error('unordered edge');
     }
+
+    if (
+      hashi.vertices[e.v1].posX !== hashi.vertices[e.v2].posX &&
+      hashi.vertices[e.v1].posY !== hashi.vertices[e.v2].posY
+    )
+      throw new Error('not rectangular');
   });
 }

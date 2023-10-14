@@ -1,23 +1,22 @@
 import { HashiEdge, HashiUtil, type Selectable } from './HashiUtil';
-import { useHashiStore, type Hashi } from '@/stores/hashi';
+import { useHashiStore } from '@/stores/hashi';
 import type { HashiAction } from '@/stores/HashiAlgorithm';
 
 export class ActionRunner {
-  private hashiUtil: HashiUtil;
-
   constructor(
     private action: HashiAction,
-    private hashi: Hashi
-  ) {
-    this.hashiUtil = new HashiUtil(hashi);
-  }
+    private hashiUtil: HashiUtil
+  ) {}
 
-  run(selected: Selectable): void {
+  run(selected: Selectable[]): void {
+    if (selected.length === 0) throw new Error();
+
     const hashiStore = useHashiStore();
     switch (this.action.kind) {
       case 'addEdge': {
-        if (!(selected instanceof HashiEdge)) throw new Error('action not applicable');
-        hashiStore.addEdge(selected.v1, selected.v2);
+        const selectedLeaf = selected[selected.length - 1];
+        if (!(selectedLeaf instanceof HashiEdge)) throw new Error('action not applicable');
+        hashiStore.addEdge(selectedLeaf.v1, selectedLeaf.v2);
       }
     }
   }

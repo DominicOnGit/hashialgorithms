@@ -14,7 +14,7 @@ describe('HashiUtil', () => {
 
     const util = new HashiUtil(hashi);
 
-    const actual = util.getAllEdges();
+    const actual = util.edges;
 
     expect(actual.map((x) => x.edge)).toStrictEqual([{ v1: 0, v2: 1, multiplicity: 0 }]);
   });
@@ -36,7 +36,7 @@ describe('HashiUtil', () => {
 
     const util = new HashiUtil(hashi);
 
-    const actual = util.getAllEdges();
+    const actual = util.edges;
 
     expect(actual.map((x) => x.edge)).toStrictEqual([{ v1: 0, v2: 1, multiplicity: 1 }]);
   });
@@ -53,11 +53,45 @@ describe('HashiUtil', () => {
 
     const util = new HashiUtil(hashi);
 
-    const actual = util.getAllEdges();
+    const actual = util.edges;
 
     expect(actual.map((x) => x.edge)).toStrictEqual([
       { v1: 0, v2: 1, multiplicity: 0 },
       { v1: 0, v2: 2, multiplicity: 0 }
     ]);
+  });
+
+  test('getDegree', () => {
+    const hashi: Hashi = {
+      vertices: [
+        { posX: 1, posY: 1, targetDegree: 1 },
+        { posX: 1, posY: 3, targetDegree: 1 },
+        { posX: 3, posY: 1, targetDegree: 1 },
+        { posX: 3, posY: 3, targetDegree: 1 }
+      ],
+      edges: [
+        {
+          v1: 0,
+          v2: 1,
+          multiplicity: 1
+        },
+        {
+          v1: 0,
+          v2: 2,
+          multiplicity: 2
+        },
+        {
+          v1: 1,
+          v2: 3,
+          multiplicity: 1
+        }
+      ]
+    };
+
+    const util = new HashiUtil(hashi);
+    expect(util.getDegree(util.vertices[0])).toBe(3);
+    expect(util.getDegree(util.vertices[1])).toBe(2);
+    expect(util.getDegree(util.vertices[2])).toBe(2);
+    expect(util.getDegree(util.vertices[3])).toBe(1);
   });
 });

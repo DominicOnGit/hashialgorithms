@@ -1,8 +1,18 @@
 import { expect, test } from 'vitest';
 import { SelectorRunner } from './SelectorRunner';
-import { type Edge, type Hashi } from '@/stores/hashi';
+import { type Edge, type Hashi, type Vertex } from '@/stores/hashi';
 import { type Selector } from '@/stores/HashiAlgorithm';
 import { describe } from 'node:test';
+import { HashiUtil } from './HashiUtil';
+
+function runSingleSelector(selector: Selector, hashi: Hashi): Edge | Vertex {
+  const runner = new SelectorRunner([selector], new HashiUtil(hashi));
+  const actualSet = runner.SelectAll();
+  expect(actualSet.length).toBe(1);
+  const actual = actualSet[0];
+  expect(actual.length).toBe(1);
+  return actual[0].wrappedItem;
+}
 
 describe('edge selection', () => {
   [0, 1, 2].forEach((multiplicity) =>
@@ -31,16 +41,14 @@ describe('edge selection', () => {
         ]
       };
 
-      const runner = new SelectorRunner(selector, hashi);
-
-      const actual = runner.SelectNext();
+      const actual = runSingleSelector(selector, hashi);
 
       const expectedEdge: Edge = {
         v1: multiplicity,
         v2: multiplicity + 1,
         multiplicity: multiplicity
       };
-      expect(actual.wrappedItem).toStrictEqual(expectedEdge);
+      expect(actual).toStrictEqual(expectedEdge);
     })
   );
 });
@@ -67,12 +75,76 @@ describe('vertex selection', () => {
         ]
       };
 
-      const runner = new SelectorRunner(selector, hashi);
-
-      const actual = runner.SelectNext();
+      const actual = runSingleSelector(selector, hashi);
 
       const expectedVertex = hashi.vertices[targetDegree - 1];
-      expect(actual.wrappedItem).toStrictEqual(expectedVertex);
+      expect(actual).toStrictEqual(expectedVertex);
     })
   );
+
+  test('select vertex with not enough degree', () => {
+    const hashi: Hashi = {
+      vertices: [
+        { posX: 1, posY: 1, targetDegree: 1 },
+        { posX: 1, posY: 2, targetDegree: 2 }
+      ],
+      edges: [{ v1: 0, v2: 1, multiplicity: 1 }]
+    };
+
+    const selector: Selector = {
+      kind: 'vertex',
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'degree' },
+          operator: 'lt',
+          rhs: { kind: 'propertyAccess', property: 'targetDegree' }
+        }
+      ]
+    };
+
+    const actual = runSingleSelector(selector, hashi);
+
+    const expectedVertex = hashi.vertices[1];
+    expect(actual).toStrictEqual(expectedVertex);
+  });
+
+  test('select incident edge', () => {
+    const hashi: Hashi = {
+      vertices: [
+        { posX: 1, posY: 1, targetDegree: 2 },
+        { posX: 1, posY: 2, targetDegree: 3 },
+        { posX: 1, posY: 3, targetDegree: 1 }
+      ],
+      edges: [{ v1: 0, v2: 1, multiplicity: 2 }]
+    };
+
+    const selectors: Selector[] = [
+      {
+        kind: 'vertex',
+        conditions: [
+          {
+            lhs: { kind: 'propertyAccess', property: 'degree' },
+            operator: 'lt',
+            rhs: { kind: 'propertyAccess', property: 'targetDegree' }
+          }
+        ]
+      },
+      {
+        kind: 'edge',
+        conditions: [
+          {
+            lhs: { kind: 'propertyAccess', property: 'multiplicity' },
+            operator: 'lt',
+            rhs: { kind: 'constant', value: 2 }
+          }
+        ]
+      }
+    ];
+
+    const runner = new SelectorRunner(selectors, new HashiUtil(hashi));
+    const actualSet = runner.SelectAll();
+    const actualItems = actualSet.map((ancestors) => ancestors[ancestors.length - 1].wrappedItem);
+    const expectedEdge: Edge = { v1: 1, v2: 2, multiplicity: 0 };
+    expect(actualItems).toStrictEqual([expectedEdge, expectedEdge]);
+  });
 });

@@ -1,13 +1,12 @@
 import type { ProperyAccessTerm, Term } from '@/stores/HashiAlgorithm';
-import { type Hashi } from '@/stores/hashi';
-import { HashiEdge, HashiVertex, type Selectable } from './HashiUtil';
+import { HashiEdge, HashiUtil, HashiVertex, type Selectable } from './HashiUtil';
 
 export class TermEvaluator {
-  constructor(private hashi: Hashi) {}
+  constructor(private hashi: HashiUtil) {}
 
   public evaluate(term: Term, item: Selectable): number {
     const res = this.evaluate2(term, item);
-    console.log(`evaluate(${term.kind}, .) => ${res}`, item);
+    // console.log(`evaluate(${term.kind}, .) => ${res}`, term, item);
     return res;
   }
 
@@ -35,6 +34,18 @@ export class TermEvaluator {
       case 'targetDegree':
         if (!(item instanceof HashiVertex)) throw new Error('bad type');
         return item.targetDegree;
+      case 'degree':
+        if (!(item instanceof HashiVertex)) throw new Error('bad type');
+        return this.hashi.getDegree(item);
+    }
+  }
+
+  public termToString(term: Term): string {
+    switch (term.kind) {
+      case 'constant':
+        return term.value.toString();
+      case 'propertyAccess':
+        return `@${term.property}`;
     }
   }
 }
