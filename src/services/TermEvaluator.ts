@@ -1,8 +1,12 @@
-import type { ProperyAccessTerm, Term } from '@/stores/HashiAlgorithm';
+import type { ProperyAccessTerm, SumTerm, Term } from '@/stores/HashiAlgorithm';
 import { HashiEdge, HashiUtil, HashiVertex, type Selectable } from './HashiUtil';
+import type { ISelectorEvaluator } from './interfaces';
 
 export class TermEvaluator {
-  constructor(private hashi: HashiUtil) {}
+  constructor(
+    private hashi: HashiUtil,
+    private selectorEvaluator: ISelectorEvaluator
+  ) {}
 
   public evaluate(term: Term, item: Selectable): number {
     const res = this.evaluate2(term, item);
@@ -18,9 +22,16 @@ export class TermEvaluator {
       case 'propertyAccess': {
         return this.evaluatePropertyAccess(term.property, item);
       }
-      default:
-        throw Error();
+      case 'sum': {
+        return this.evaluateSum(term, item);
+      }
     }
+  }
+
+  private evaluateSum(sum: SumTerm, item: Selectable): number {
+    const itemsToSumOver = this.selectorEvaluator.SelectAll(sum.over, [item]);
+    const res = itemsToSumOver.reduce((acc, item) => acc + this.evaluate2(sum.what, item), 0);
+    return res;
   }
 
   private evaluatePropertyAccess(
@@ -46,6 +57,8 @@ export class TermEvaluator {
         return term.value.toString();
       case 'propertyAccess':
         return `@${term.property}`;
+      case 'sum':
+        return `sum_${term.over.kind}(${this.termToString(term.what)})`;
     }
   }
 }

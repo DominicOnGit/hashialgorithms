@@ -1,8 +1,9 @@
 import { expect, test, describe } from 'vitest';
 import { SelectorRunner } from './SelectorRunner';
 import { type Edge, type Hashi, type Vertex } from '@/stores/hashi';
-import { type Selector } from '@/stores/HashiAlgorithm';
+import { type Selector, type SumTerm } from '@/stores/HashiAlgorithm';
 import { HashiUtil } from './HashiUtil';
+import { SelectorEvaluator } from './SelectorEvaluator';
 
 function runSingleSelector(selector: Selector, hashi: Hashi): Edge | Vertex {
   const runner = new SelectorRunner([selector], new HashiUtil(hashi));
@@ -145,5 +146,42 @@ describe('vertex selection', () => {
     const actualItems = actualSet.map((ancestors) => ancestors[ancestors.length - 1].wrappedItem);
     const expectedEdge: Edge = { v1: 1, v2: 2, multiplicity: 0 };
     expect(actualItems).toStrictEqual([expectedEdge, expectedEdge]);
+  });
+
+  test('count incident edges', () => {
+    const hashi = new HashiUtil({
+      vertices: [
+        { posX: 1, posY: 1, targetDegree: 2 },
+        { posX: 1, posY: 2, targetDegree: 3 },
+        { posX: 1, posY: 3, targetDegree: 1 },
+        { posX: 5, posY: 5, targetDegree: 1 }
+      ],
+      edges: [
+        { v1: 0, v2: 1, multiplicity: 1 },
+        { v1: 1, v2: 2, multiplicity: 2 }
+      ]
+    });
+
+    const sum: SumTerm = {
+      kind: 'sum',
+      over: { kind: 'edge', conditions: [] },
+      what: { kind: 'constant', value: 1 }
+    };
+
+    const selector: Selector = {
+      kind: 'vertex',
+      conditions: [
+        {
+          lhs: sum,
+          operator: 'eq',
+          rhs: { kind: 'constant', value: 1 }
+        }
+      ]
+    };
+
+    const selectorEvaluator = new SelectorEvaluator(hashi);
+    const actual = selectorEvaluator.SelectAll(selector, []);
+
+    expect(actual).toStrictEqual([hashi.vertices[0], hashi.vertices[2]]);
   });
 });

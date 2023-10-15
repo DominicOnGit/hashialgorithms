@@ -43,7 +43,13 @@ export interface ConstantTerm {
   value: number;
 }
 
-export type Term = ProperyAccessTerm | ConstantTerm;
+export interface SumTerm {
+  kind: 'sum';
+  over: Selector;
+  what: Term;
+}
+
+export type Term = ProperyAccessTerm | ConstantTerm | SumTerm;
 
 export const TestAlgorithm: HashiAlgorithm = {
   rules: [
