@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import ActionBar from './components/ActionBar.vue';
 import HashiViewer from './components/HashiViewer.vue';
+import AlgorithmBuilder from './components/AlgorithmBuilder.vue';
 </script>
 
 <template>
   <main>
     <ActionBar />
     <HashiViewer />
+    <AlgorithmBuilder />
+    <AlgorithmBuilder />
   </main>
 </template>
 

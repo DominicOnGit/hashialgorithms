@@ -1,3 +1,4 @@
+import { AlgorithmPathService } from '@/services/AlgorithmPathService';
 import { defineStore } from 'pinia';
 
 export interface HashiAlgorithm {
@@ -74,5 +75,20 @@ export const TestAlgorithm: HashiAlgorithm = {
 export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
   state: (): HashiAlgorithm => {
     return TestAlgorithm;
+  },
+  actions: {
+    changeSelectorKind(pathToSelector: AlgorithmPath, kind: Selector['kind']): void {
+      console.log('changeSelectorKind', kind, pathToSelector);
+      const pathService = new AlgorithmPathService();
+      const selector = pathService.getComponent(this, pathToSelector) as Selector;
+      selector.kind = kind;
+    }
   }
 });
+
+export interface AlgorithmPath {
+  ruleIndex: number;
+  selectorIndex?: number;
+  conditionIndex?: number;
+  termIndex?: number;
+}
