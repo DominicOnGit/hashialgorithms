@@ -50,15 +50,4 @@ export class TermEvaluator {
         return this.hashi.getDegree(item);
     }
   }
-
-  public termToString(term: Term): string {
-    switch (term.kind) {
-      case 'constant':
-        return term.value.toString();
-      case 'propertyAccess':
-        return `@${term.property}`;
-      case 'sum':
-        return `sum_${term.over.kind}(${this.termToString(term.what)})`;
-    }
-  }
 }

@@ -22,7 +22,8 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest'
   },
-  "rules": {
+  ignorePatterns: ['dist/'],
+  rules: {
     "eqeqeq": ["error", "smart"]
   }
 }

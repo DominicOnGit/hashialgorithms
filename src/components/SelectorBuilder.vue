@@ -4,6 +4,8 @@ import { mapStores } from 'pinia';
 import { useHashiStore } from '@/stores/hashi';
 import { useHashiAlgorithmStore, type Selector, type AlgorithmPath } from '@/stores/HashiAlgorithm';
 import SelectorTypeOption from './SelectorTypeOption.vue';
+import ConditionBuilder from './ConditionBuilder.vue';
+import { pathAppendCondition } from '@/services/AlgorithmPathService';
 
 export default defineComponent({
   props: {
@@ -13,23 +15,25 @@ export default defineComponent({
   computed: {
     ...mapStores(useHashiStore, useHashiAlgorithmStore)
   },
-  methods: {
-    changeSelectorKind(kind: Selector['kind']) {
-      console.log('change', kind);
-    }
-  },
-  components: { SelectorTypeOption }
+  methods: { pathAppendCondition },
+  components: { SelectorTypeOption, ConditionBuilder }
 });
 </script>
 
 <template>
   <tr>
-    <td>Select {{ selector.kind }}</td>
+    <td>Select</td>
     <td>
       <SelectorTypeOption
         :value="selector.kind"
         @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(path, newKind)"
       />
+    </td>
+  </tr>
+  <tr v-for="(condition, index) of selector.conditions" :key="index">
+    <td>{{ index === 0 ? 'with' : 'and' }}</td>
+    <td>
+      <ConditionBuilder :condition="condition" :path="pathAppendCondition(path, index)" />
     </td>
   </tr>
 </template>

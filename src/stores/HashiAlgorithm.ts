@@ -1,4 +1,4 @@
-import { AlgorithmPathService } from '@/services/AlgorithmPathService';
+import { AlgorithmPathService, getAncestorCondition } from '@/services/AlgorithmPathService';
 import { defineStore } from 'pinia';
 
 export interface HashiAlgorithm {
@@ -63,6 +63,11 @@ export const TestAlgorithm: HashiAlgorithm = {
               lhs: { kind: 'propertyAccess', property: 'multiplicity' },
               operator: 'le',
               rhs: { kind: 'constant', value: 1 }
+            },
+            {
+              lhs: { kind: 'propertyAccess', property: 'multiplicity' },
+              operator: 'eq',
+              rhs: { kind: 'constant', value: 2 }
             }
           ]
         }
@@ -82,6 +87,22 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
       const pathService = new AlgorithmPathService();
       const selector = pathService.getComponent(this, pathToSelector) as Selector;
       selector.kind = kind;
+    },
+
+    changeConditionOperator(pathToCondition: AlgorithmPath, operator: Condition['operator']): void {
+      console.log('changeConditionOperator', operator, pathToCondition);
+      const pathService = new AlgorithmPathService();
+      const condition = pathService.getComponent(this, pathToCondition) as Condition;
+      condition.operator = operator;
+    },
+
+    changeTerm(pathToTerm: AlgorithmPath, newTerm: Term): void {
+      console.log('changeTerm', newTerm, pathToTerm);
+      if (pathToTerm.termIndex == null) throw new Error();
+
+      const condition = getAncestorCondition(this, pathToTerm);
+      if (pathToTerm.termIndex === 0) condition.lhs = newTerm;
+      else condition.rhs = newTerm;
     }
   }
 });

@@ -2,6 +2,7 @@ import { HashiUtil, HashiVertex, type Selectable } from './HashiUtil';
 import type { Condition, Selector } from '@/stores/HashiAlgorithm';
 import { TermEvaluator } from './TermEvaluator';
 import type { ISelectorEvaluator } from './interfaces';
+import { termToString } from './TermBuilderService';
 
 export class SelectorEvaluator implements ISelectorEvaluator {
   private termEvaluator: TermEvaluator;
@@ -41,17 +42,15 @@ export class SelectorEvaluator implements ISelectorEvaluator {
     const lhs = this.termEvaluator.evaluate(cond.lhs, item);
     const rhs = this.termEvaluator.evaluate(cond.rhs, item);
     const res = this.evaluateOperator(lhs, cond.operator, rhs);
-    const condString = `${this.termEvaluator.termToString(cond.lhs)}=${lhs} ${
-      cond.operator
-    } ${this.termEvaluator.termToString(cond.rhs)}=${rhs}`;
+    const condString = `${termToString(cond.lhs)}=${lhs} ${cond.operator} ${termToString(
+      cond.rhs
+    )}=${rhs}`;
     console.log(`evaluateCondition(${condString}, ${item.toString()}) => ${res}`);
     return res;
   }
 
   public conditionToString(cond: Condition): string {
-    return `${this.termEvaluator.termToString(cond.lhs)} ${
-      cond.operator
-    } ${this.termEvaluator.termToString(cond.rhs)}`;
+    return `${termToString(cond.lhs)} ${cond.operator} ${termToString(cond.rhs)}`;
   }
 
   private evaluateOperator(lhs: number, op: Condition['operator'], rhs: number): boolean {
