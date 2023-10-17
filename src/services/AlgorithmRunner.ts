@@ -14,18 +14,24 @@ export class AlgorithmRunner {
     this.hashiUtil = new HashiUtil(hashi);
   }
 
-  runStep(): void {
+  runStep(): boolean {
     const rule = this.algorithm.rules[0];
-    this.runRuleStep(rule);
+    const hadEffect = this.runRuleStep(rule);
+    return hadEffect;
   }
 
-  runRuleStep(rule: Rule): void {
+  runRuleStep(rule: Rule): boolean {
     const selectorRunner = new SelectorRunner(rule.selectorSequence, this.hashiUtil);
 
     const selected = selectorRunner.SelectNext();
     console.log('Rule selected ', selected);
 
-    const actionRunner = new ActionRunner(rule.action, this.hashiUtil);
-    actionRunner.run(selected);
+    if (selected != null) {
+      const actionRunner = new ActionRunner(rule.action, this.hashiUtil);
+      actionRunner.run(selected);
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -4,6 +4,7 @@ import { mapStores } from 'pinia';
 import { useHashiStore } from '@/stores/hashi';
 import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithm';
 import { AlgorithmRunner } from '@/services/AlgorithmRunner';
+import { useMiscStore } from '@/stores/MiscStore';
 
 export default defineComponent({
   data() {
@@ -12,7 +13,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapStores(useHashiStore, useHashiAlgorithmStore)
+    ...mapStores(useHashiStore, useHashiAlgorithmStore, useMiscStore)
   },
   methods: {
     reset(): void {
@@ -25,6 +26,23 @@ export default defineComponent({
       console.log('step');
       const runner = new AlgorithmRunner(this.hashiAlgorithmStore, this.hashiStore);
       runner.runStep();
+    },
+    animate(): void {
+      if (this.miscStore.isRunning) {
+        const runner = new AlgorithmRunner(this.hashiAlgorithmStore, this.hashiStore);
+        const ok = runner.runStep();
+        if (ok) {
+          setTimeout(() => this.animate(), 1000);
+        } else {
+          this.miscStore.isRunning = false;
+        }
+      }
+    },
+    toggleRunning(): void {
+      this.miscStore.isRunning = !this.miscStore.isRunning;
+      if (this.miscStore.isRunning) {
+        this.animate();
+      }
     }
   }
 });
@@ -34,6 +52,7 @@ export default defineComponent({
   <div>
     <button @click="reset">reset</button>
     <button @click="step">step</button>
+    <button @click="toggleRunning">{{ miscStore.isRunning ? 'stop' : 'start' }}</button>
   </div>
 </template>
 

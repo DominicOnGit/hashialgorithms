@@ -66,7 +66,7 @@ export const TestAlgorithm: HashiAlgorithm = {
             },
             {
               lhs: { kind: 'propertyAccess', property: 'multiplicity' },
-              operator: 'eq',
+              operator: 'le',
               rhs: { kind: 'constant', value: 2 }
             }
           ]

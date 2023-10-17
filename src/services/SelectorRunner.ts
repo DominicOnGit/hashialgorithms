@@ -13,9 +13,9 @@ export class SelectorRunner {
     this.selectorEvaluator = new SelectorEvaluator(hashiUtil);
   }
 
-  public SelectNext(): Selectable[] {
+  public SelectNext(): Selectable[] | null {
     const all = this.SelectAll();
-    if (all.length === 0) throw new Error('nothing selected');
+    if (all.length === 0) return null;
     return all[0];
   }
 
