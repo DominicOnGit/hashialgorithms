@@ -13,6 +13,7 @@ import { defineComponent } from 'vue';
 import { HashiCanvasService } from '@/services/HashiCanvasService';
 import { mapStores } from 'pinia';
 import { useHashiStore } from '@/stores/hashi';
+import { HashiUtil } from '@/services/HashiUtil';
 
 export default defineComponent({
   data() {
@@ -39,7 +40,7 @@ export default defineComponent({
       if (this.vueCanvas == null) {
         throw new Error();
       }
-      new HashiCanvasService(this.vueCanvas, this.hashiStore).draw();
+      new HashiCanvasService(this.vueCanvas, new HashiUtil(this.hashiStore)).draw();
     }
   },
   watch: {

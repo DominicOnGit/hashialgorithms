@@ -35,6 +35,10 @@ export default defineComponent({
     <td>
       <ConditionBuilder :condition="condition" :path="pathAppendCondition(path, index)" />
     </td>
+    <td><button @click="() => hashiAlgorithmStore.deleteCondition(path, index)">x</button></td>
+  </tr>
+  <tr>
+    <button @click="() => hashiAlgorithmStore.newCondition(path)">+</button>
   </tr>
 </template>
 

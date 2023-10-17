@@ -28,7 +28,7 @@ export interface Hashi {
 
 export const useHashiStore = defineStore('hashi', {
   state: (): Hashi => {
-    return new HashiBuilder().simpleEmpty();
+    return new HashiBuilder().buildInvalid();
   },
   actions: {
     setHashi(hashi: Hashi): void {

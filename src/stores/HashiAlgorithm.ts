@@ -77,6 +77,14 @@ export const TestAlgorithm: HashiAlgorithm = {
   ]
 };
 
+function buildEmptyCondition(): Condition {
+  return {
+    lhs: { kind: 'constant', value: 0 },
+    operator: 'eq',
+    rhs: { kind: 'constant', value: 0 }
+  };
+}
+
 export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
   state: (): HashiAlgorithm => {
     return TestAlgorithm;
@@ -103,6 +111,18 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
       const condition = getAncestorCondition(this, pathToTerm);
       if (pathToTerm.termIndex === 0) condition.lhs = newTerm;
       else condition.rhs = newTerm;
+    },
+
+    newCondition(pathToSelector: AlgorithmPath): void {
+      console.log('newCondition', pathToSelector);
+      const selector = new AlgorithmPathService().getComponent(this, pathToSelector) as Selector;
+      selector.conditions.push(buildEmptyCondition());
+    },
+
+    deleteCondition(pathToSelector: AlgorithmPath, conditionIndex: number): void {
+      console.log('deleteCondition', pathToSelector, conditionIndex);
+      const selector = new AlgorithmPathService().getComponent(this, pathToSelector) as Selector;
+      selector.conditions.splice(conditionIndex, 1);
     }
   }
 });

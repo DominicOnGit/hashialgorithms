@@ -1,8 +1,13 @@
 import { validateHashi, type Edge, type Hashi, type Vertex } from '@/stores/hashi';
+import type { HashiEdge, HashiUtil, HashiVertex } from './HashiUtil';
 
 const GridSizeFactor = 3;
 const IslandRadiusFactor = 1;
-const DoubleLineGap = 2;
+const LineGap = 4;
+
+const NormalStyle = 'black';
+const SatisfiedStyle = 'darkgreen';
+const ErrorStyle = 'red';
 
 function compareNumbers(a: number, b: number): number {
   return b > a ? 1 : b < a ? -1 : 0;
@@ -16,9 +21,8 @@ export class HashiCanvasService {
 
   constructor(
     private canvas: CanvasRenderingContext2D,
-    private hashi: Hashi
+    private hashi: HashiUtil
   ) {
-    validateHashi(hashi);
     this.canvas.font = '15px sans-serif';
     this.canvas.textAlign = 'center';
     const textMeasure = this.canvas.measureText('5');
@@ -29,8 +33,9 @@ export class HashiCanvasService {
     this.gridSize = this.islandRadius * GridSizeFactor;
   }
 
-  private drawVertex(vertex: Vertex): void {
+  private drawVertex(vertex: HashiVertex): void {
     this.canvas.beginPath();
+    this.canvas.strokeStyle = NormalStyle;
     this.canvas.arc(
       vertex.posX * this.gridSize,
       vertex.posY * this.gridSize,
@@ -39,6 +44,13 @@ export class HashiCanvasService {
       2 * Math.PI
     );
     this.canvas.stroke();
+
+    const degree = this.hashi.getDegree(vertex);
+    if (degree === vertex.targetDegree) {
+      this.canvas.strokeStyle = SatisfiedStyle;
+    } else if (degree > vertex.targetDegree) {
+      this.canvas.strokeStyle = ErrorStyle;
+    }
 
     this.canvas.textBaseline = 'alphabetic';
     this.canvas.strokeText(
@@ -64,18 +76,22 @@ export class HashiCanvasService {
     );
   }
 
-  private drawEdge(edge: Edge): void {
-    const v1 = this.hashi.vertices[edge.v1];
-    const v2 = this.hashi.vertices[edge.v2];
-
+  private drawEdge(edge: HashiEdge): void {
     this.canvas.beginPath();
+    this.canvas.strokeStyle = edge.multiplicity <= 2 ? NormalStyle : ErrorStyle;
     if (edge.multiplicity === 1) {
-      this.line(v1, v2, 0);
+      this.line(edge.vertex1, edge.vertex2, 0);
     }
 
     if (edge.multiplicity === 2) {
-      this.line(v1, v2, -DoubleLineGap);
-      this.line(v1, v2, +DoubleLineGap);
+      this.line(edge.vertex1, edge.vertex2, -LineGap / 2);
+      this.line(edge.vertex1, edge.vertex2, +LineGap / 2);
+    }
+
+    if (edge.multiplicity > 2) {
+      this.line(edge.vertex1, edge.vertex2, -0.8 * LineGap);
+      this.line(edge.vertex1, edge.vertex2, 0);
+      this.line(edge.vertex1, edge.vertex2, +0.8 * LineGap);
     }
     this.canvas.stroke();
   }

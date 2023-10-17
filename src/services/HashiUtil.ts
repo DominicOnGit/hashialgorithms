@@ -72,6 +72,12 @@ export class HashiEdge implements Selectable, Edge {
     return v.index === this.v1 || v.index === this.v2;
   }
 
+  public getOtherEnd(v: HashiVertex): HashiVertex {
+    if (v.index === this.v1) return this.vertex2;
+    if (v.index === this.v2) return this.vertex1;
+    throw new Error('not incident');
+  }
+
   public toString(): string {
     return `${this.v1}-${this.v2}`;
   }
@@ -96,6 +102,12 @@ export class HashiUtil {
 
   getDegree(v: HashiVertex): number {
     return this.incidentEdges(v).reduce((sum, e) => sum + e.multiplicity, 0);
+  }
+
+  adjacentVertices(v: HashiVertex): HashiVertex[] {
+    const incidentEdges = this.incidentEdges(v).filter((e) => e.multiplicity > 0);
+    const res = incidentEdges.map((e) => e.getOtherEnd(v));
+    return res;
   }
 
   getSize(): { nx: number; ny: number } {
@@ -185,7 +197,42 @@ export class HashiUtil {
       }
     return res;
   }
+
+  public IsValid(): boolean {
+    return (
+      this.edges.every((e) => e.multiplicity <= 2) &&
+      this.vertices.every((v) => this.getDegree(v) <= v.targetDegree)
+    );
+  }
+
+  public IsConnected(): boolean {
+    if (this.vertices.length === 0) return true;
+    const reachedAndProcessed: HashiVertex[] = [];
+    const reachendNotProcess = [this.vertices[0]];
+
+    while (reachendNotProcess.length > 0) {
+      const v = reachendNotProcess.pop();
+      if (v == null) throw new Error();
+      if (!reachedAndProcessed.includes(v)) {
+        reachendNotProcess.push(...this.adjacentVertices(v));
+      }
+    }
+
+    return reachedAndProcessed.length === this.vertices.length;
+  }
+
+  public IsSolved(): boolean {
+    return this.vertices.every((v) => this.getDegree(v) === v.targetDegree) && this.IsConnected();
+  }
+
+  public getSolutionState(): SolutionState {
+    if (!this.IsValid()) return 'invalid';
+    if (this.IsSolved()) return 'solved';
+    return 'open';
+  }
 }
+
+export type SolutionState = 'solved' | 'invalid' | 'wrong' | 'open';
 
 // export interface DiscriminatedEdge {
 //   kind: 'edge'
