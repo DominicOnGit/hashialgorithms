@@ -4,6 +4,7 @@ import { onBeforeUpdate, ref } from 'vue';
 
 const props = defineProps<{
   value: Selector['kind'];
+  isFirst: boolean;
 }>();
 defineEmits(['change']);
 
@@ -19,8 +20,12 @@ function getValue(e: Event): Selector['kind'] {
 
 <template>
   <select ref="selectElem" @change="(e) => $emit('change', getValue(e))">
-    <option value="vertex" :selected="value === 'vertex'">Vertex</option>
-    <option value="edge" :selected="value === 'edge'">Edge</option>
+    <option value="vertex" :selected="value === 'vertex'">
+      {{ isFirst ? 'Vertex' : 'Incident Vertex' }}
+    </option>
+    <option value="edge" :selected="value === 'edge'">
+      {{ isFirst ? 'Edge' : 'Incident Edge' }}
+    </option>
   </select>
 </template>
 
