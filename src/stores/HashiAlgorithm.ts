@@ -1,4 +1,8 @@
-import { AlgorithmPathService, getAncestorCondition } from '@/services/AlgorithmPathService';
+import {
+  AlgorithmPathService,
+  getAncestorCondition,
+  getAncestorRule
+} from '@/services/AlgorithmPathService';
 import { defineStore } from 'pinia';
 
 export interface HashiAlgorithm {
@@ -57,6 +61,16 @@ export const TestAlgorithm: HashiAlgorithm = {
     {
       selectorSequence: [
         {
+          kind: 'vertex',
+          conditions: [
+            {
+              lhs: { kind: 'propertyAccess', property: 'degree' },
+              operator: 'lt',
+              rhs: { kind: 'propertyAccess', property: 'targetDegree' }
+            }
+          ]
+        },
+        {
           kind: 'edge',
           conditions: [
             {
@@ -85,6 +99,10 @@ function buildEmptyCondition(): Condition {
   };
 }
 
+function buildEmptySelector(kind: Selector['kind']): Selector {
+  return { kind: kind, conditions: [] };
+}
+
 export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
   state: (): HashiAlgorithm => {
     return TestAlgorithm;
@@ -111,6 +129,24 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
       const condition = getAncestorCondition(this, pathToTerm);
       if (pathToTerm.termIndex === 0) condition.lhs = newTerm;
       else condition.rhs = newTerm;
+    },
+
+    newSelector(pathToRule: AlgorithmPath): void {
+      console.log('newSelector', pathToRule);
+      const rule = getAncestorRule(this, pathToRule);
+      let kind: Selector['kind'] = 'vertex';
+      if (rule.selectorSequence.length > 0) {
+        const lastSelector = rule.selectorSequence[rule.selectorSequence.length - 1];
+        kind = lastSelector.kind === 'edge' ? 'vertex' : 'edge';
+      }
+      rule.selectorSequence.push(buildEmptySelector(kind));
+    },
+
+    deleteSelector(pathToSelector: AlgorithmPath): void {
+      console.log('deleteSelector', pathToSelector);
+      if (pathToSelector.selectorIndex == null) throw new Error();
+      const rule = getAncestorRule(this, pathToSelector);
+      rule.selectorSequence.splice(pathToSelector.selectorIndex, 1);
     },
 
     newCondition(pathToSelector: AlgorithmPath): void {

@@ -29,6 +29,11 @@ export default defineComponent({
     <template v-for="(selector, index) in rule.selectorSequence" :key="index">
       <SelectorBuilder :selector="selector" :path="pathAppendSelector(path, index)" />
     </template>
+    <tr>
+      <td colspan="2">
+        <button @click="hashiAlgorithmStore.newSelector(path)">continue selecting</button>
+      </td>
+    </tr>
   </table>
 </template>
 

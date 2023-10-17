@@ -34,6 +34,7 @@ export default defineComponent({
         @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(path, newKind)"
       />
     </td>
+    <td><button @click="hashiAlgorithmStore.deleteSelector(path)">x</button></td>
   </tr>
   <tr v-for="(condition, index) of selector.conditions" :key="index">
     <td class="rightAlign">{{ index === 0 ? 'with' : 'and' }}</td>

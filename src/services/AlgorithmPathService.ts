@@ -31,6 +31,10 @@ export class AlgorithmPathService {
   }
 }
 
+export function getAncestorRule(algo: HashiAlgorithm, path: AlgorithmPath): Rule {
+  return algo.rules[path.ruleIndex];
+}
+
 export function getAncestorCondition(algo: HashiAlgorithm, path: AlgorithmPath): Condition {
   if (path.selectorIndex == null || path.conditionIndex == null) throw new Error();
   const selector = algo.rules[path.ruleIndex].selectorSequence[path.selectorIndex];
