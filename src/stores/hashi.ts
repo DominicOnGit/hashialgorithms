@@ -1,4 +1,4 @@
-import { buildInvalid } from '@/services/HashiSamples';
+import { buildEmpty, buildInvalid, empty } from '@/services/HashiSamples';
 import { defineStore } from 'pinia';
 
 export interface Vertex {
@@ -28,7 +28,7 @@ export interface Hashi {
 
 export const useHashiStore = defineStore('hashi', {
   state: (): Hashi => {
-    return buildInvalid();
+    return empty();
   },
   actions: {
     setHashi(hashi: Hashi): void {

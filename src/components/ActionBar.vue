@@ -48,6 +48,9 @@ export default defineComponent({
     grow(): void {
       const builder = new HashiBuilder(this.hashiStore);
       builder.grow({ nx: 11, ny: 11 });
+    },
+    clearEdges(): void {
+      this.hashiStore.edges = [];
     }
   }
 });
@@ -59,6 +62,7 @@ export default defineComponent({
     <button @click="step">step</button>
     <button @click="toggleRunning">{{ miscStore.isRunning ? 'stop' : 'start' }}</button>
     <button @click="grow">grow</button>
+    <button @click="clearEdges">clear</button>
   </div>
 </template>
 

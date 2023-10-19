@@ -1,5 +1,9 @@
 import { validateHashi, type Hashi } from '@/stores/hashi';
 
+export function empty(): Hashi {
+  return { vertices: [], edges: [] };
+}
+
 export function simpleEmpty(): Hashi {
   const res = {
     vertices: [

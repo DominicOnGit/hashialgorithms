@@ -32,7 +32,7 @@ export class HashiBuilder {
     validateHashi(this.hashi);
   }
 
-  addEdge(newEdge: Edge): void {
+  addEdge(newEdge: Edge, updateTargets: boolean): void {
     if (newEdge.v1 > newEdge.v2) {
       this.hashi.edges.push({
         v1: newEdge.v2,
@@ -42,10 +42,14 @@ export class HashiBuilder {
     } else {
       this.hashi.edges.push(newEdge);
     }
+    if (updateTargets) {
+      this.hashi.vertices[newEdge.v1].targetDegree += newEdge.multiplicity;
+      this.hashi.vertices[newEdge.v2].targetDegree += newEdge.multiplicity;
+    }
     validateHashi(this.hashi);
   }
 
-  addVertexAndConnect(newVertex: Vertex, connectTo: Vertex, multiplicity: number): void {
+  private addVertexAndConnect(newVertex: Vertex, connectTo: Vertex, multiplicity: number): void {
     this.addVertex(newVertex);
 
     const updatedNewVertexIndex = this.hashi.vertices.findIndex(
@@ -55,11 +59,14 @@ export class HashiBuilder {
       (v) => v.posX === connectTo.posX && v.posY === connectTo.posY
     );
     if (updatedNewVertexIndex === -1 || updatedConnectToIndex === -1) throw new Error();
-    this.addEdge({
-      v1: updatedConnectToIndex,
-      v2: updatedNewVertexIndex,
-      multiplicity
-    });
+    this.addEdge(
+      {
+        v1: updatedConnectToIndex,
+        v2: updatedNewVertexIndex,
+        multiplicity
+      },
+      true
+    );
   }
 
   // 0 if no extension possible
@@ -132,6 +139,11 @@ export class HashiBuilder {
   }
 
   grow(maybeMaxSize?: HashiSize): boolean {
+    if (this.hashi.vertices.length === 0) {
+      this.addVertex({ posX: 5, posY: 5, targetDegree: 0 });
+      return true;
+    }
+
     const maxSize: HashiSize = maybeMaxSize ?? { nx: 100, ny: 100 };
     const hashiUtil = new HashiUtil(this.hashi);
 
@@ -146,7 +158,7 @@ export class HashiBuilder {
       const newVertex: Vertex = {
         posY: vectorToGrow.vertex.posY + randomDist * vectorToGrow.vector.dir[1],
         posX: vectorToGrow.vertex.posX + randomDist * vectorToGrow.vector.dir[0],
-        targetDegree: 1
+        targetDegree: 0
       };
       this.addVertexAndConnect(newVertex, vectorToGrow.vertex, 1);
       return true;

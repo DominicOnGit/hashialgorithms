@@ -87,7 +87,7 @@ describe('addVertex', () => {
 test('add edge', () => {
   const builder = new HashiBuilder(startingHashi());
   const newEdge: Edge = { v1: 0, v2: 1, multiplicity: 2 };
-  builder.addEdge(newEdge);
+  builder.addEdge(newEdge, false);
 
   validateHashi(builder.hashi);
   const expectedHashi: Hashi = {
@@ -104,7 +104,7 @@ test('add edge', () => {
 test('add edge with wrong order Vertices', () => {
   const builder = new HashiBuilder(startingHashi());
   const newEdge: Edge = { v1: 1, v2: 0, multiplicity: 2 };
-  builder.addEdge(newEdge);
+  builder.addEdge(newEdge, false);
 
   validateHashi(builder.hashi);
   const expectedHashi: Hashi = {
