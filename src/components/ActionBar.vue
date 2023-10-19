@@ -5,6 +5,7 @@ import { useHashiStore } from '@/stores/hashi';
 import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithm';
 import { AlgorithmRunner } from '@/services/AlgorithmRunner';
 import { useMiscStore } from '@/stores/MiscStore';
+import { HashiBuilder } from '@/services/HashiBuilder';
 
 export default defineComponent({
   data() {
@@ -43,6 +44,10 @@ export default defineComponent({
       if (this.miscStore.isRunning) {
         this.animate();
       }
+    },
+    grow(): void {
+      const builder = new HashiBuilder(this.hashiStore);
+      builder.grow({ nx: 11, ny: 11 });
     }
   }
 });
@@ -53,6 +58,7 @@ export default defineComponent({
     <button @click="reset">reset</button>
     <button @click="step">step</button>
     <button @click="toggleRunning">{{ miscStore.isRunning ? 'stop' : 'start' }}</button>
+    <button @click="grow">grow</button>
   </div>
 </template>
 

@@ -110,7 +110,7 @@ export class HashiUtil {
     return res;
   }
 
-  getSize(): { nx: number; ny: number } {
+  getSize(): HashiSize {
     return {
       nx: Math.max(...this.hashi.vertices.map((v) => v.posX)),
       ny: Math.max(...this.hashi.vertices.map((v) => v.posY))
@@ -142,6 +142,10 @@ export class HashiUtil {
   //   })
   //   return grid
   // }
+
+  getVertexAt(x: number, y: number): Vertex | undefined {
+    return this.hashi.vertices.find((v) => v.posX === x && v.posY === y);
+  }
 
   getEdgeAt(x: number, y: number): Edge | undefined {
     const found = this.hashi.edges.find((edge) => {
@@ -244,3 +248,5 @@ export type SolutionState = 'solved' | 'invalid' | 'wrong' | 'open';
 // }
 
 export type EdgeVertexNull = Vertex | Edge | null;
+
+export type HashiSize = { nx: number; ny: number };

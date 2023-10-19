@@ -1,4 +1,4 @@
-import { HashiBuilder } from '@/services/HashiBuilder';
+import { buildInvalid } from '@/services/HashiSamples';
 import { defineStore } from 'pinia';
 
 export interface Vertex {
@@ -28,7 +28,7 @@ export interface Hashi {
 
 export const useHashiStore = defineStore('hashi', {
   state: (): Hashi => {
-    return new HashiBuilder().buildInvalid();
+    return buildInvalid();
   },
   actions: {
     setHashi(hashi: Hashi): void {
