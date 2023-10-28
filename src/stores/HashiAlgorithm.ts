@@ -26,15 +26,19 @@ export interface EdgeSelector {
 
 export type Selector = VertexSelector | EdgeSelector;
 
+export type SelectorKind = Selector['kind'];
+
 export interface AddEdgeAction {
   kind: 'addEdge';
 }
 
 export type HashiAction = AddEdgeAction;
 
+export type Operator = 'lt' | 'le' | 'eq';
+
 export interface Condition {
   lhs: Term;
-  operator: 'lt' | 'le' | 'eq';
+  operator: Operator;
   rhs: Term;
 }
 
@@ -74,7 +78,11 @@ export const TestAlgorithm: HashiAlgorithm = {
           kind: 'edge',
           conditions: [
             {
-              lhs: { kind: 'propertyAccess', property: 'multiplicity' },
+              lhs: {
+                kind: 'sum',
+                over: { kind: 'vertex', conditions: [] },
+                what: { kind: 'propertyAccess', property: 'targetDegree' }
+              },
               operator: 'le',
               rhs: { kind: 'constant', value: 1 }
             },
@@ -112,6 +120,7 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
       console.log('changeSelectorKind', kind, pathToSelector);
       const pathService = new AlgorithmPathService();
       const selector = pathService.getComponent(this, pathToSelector) as Selector;
+      console.log(selector);
       selector.kind = kind;
     },
 
@@ -126,9 +135,8 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
       console.log('changeTerm', newTerm, pathToTerm);
       if (pathToTerm.termIndex == null) throw new Error();
 
-      const condition = getAncestorCondition(this, pathToTerm);
-      if (pathToTerm.termIndex === 0) condition.lhs = newTerm;
-      else condition.rhs = newTerm;
+      const pathService = new AlgorithmPathService();
+      pathService.setComponent(this, pathToTerm, newTerm);
     },
 
     newSelector(pathToRule: AlgorithmPath): void {
@@ -167,5 +175,6 @@ export interface AlgorithmPath {
   ruleIndex: number;
   selectorIndex?: number;
   conditionIndex?: number;
-  termIndex?: number;
+  termIndex?: number; // lhs or rhs
+  termPath?: AlgorithmPath;
 }

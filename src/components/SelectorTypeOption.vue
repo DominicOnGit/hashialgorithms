@@ -1,32 +1,29 @@
 <script setup lang="ts">
-import type { Selector } from '@/stores/HashiAlgorithm';
+import type { Selector, SelectorKind } from '@/stores/HashiAlgorithm';
 import { onBeforeUpdate, ref } from 'vue';
+import ComboboxMultiSelect from './ComboboxMultiSelect.vue';
 
 const props = defineProps<{
-  value: Selector['kind'];
+  value: SelectorKind;
   isFirst: boolean;
 }>();
 defineEmits(['change']);
 
-const selectElem = ref(null);
+const options: SelectorKind[] = ['vertex', 'edge'];
 
-onBeforeUpdate(() => console.log('before update', props.value));
-
-function getValue(e: Event): Selector['kind'] {
-  const selectElement = e.target as HTMLSelectElement;
-  return selectElement.value as Selector['kind'];
-}
+const labels: { [key in SelectorKind]: string } = {
+  edge: props.isFirst ? 'Edge' : 'Incident Edge',
+  vertex: props.isFirst ? 'Vertex' : 'Incident Vertex'
+};
 </script>
 
 <template>
-  <select ref="selectElem" @change="(e) => $emit('change', getValue(e))">
-    <option value="vertex" :selected="value === 'vertex'">
-      {{ isFirst ? 'Vertex' : 'Incident Vertex' }}
-    </option>
-    <option value="edge" :selected="value === 'edge'">
-      {{ isFirst ? 'Edge' : 'Incident Edge' }}
-    </option>
-  </select>
+  <ComboboxMultiSelect
+    :options="options"
+    :active="value"
+    :label-getter="(x) => labels[x as SelectorKind]"
+    @update:model-value="(val) => $emit('change', val)"
+  />
 </template>
 
 <style scoped></style>
