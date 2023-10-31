@@ -1,6 +1,13 @@
-import { AlgorithmPathService, getAncestorRule } from '@/services/AlgorithmPathService';
 import { defineStore } from 'pinia';
-import type { HashiAlgorithm, Condition, Selector, AlgorithmPath, Term } from './HashiAlgorithm';
+import type {
+  HashiAlgorithm,
+  Condition,
+  Selector,
+  AlgorithmPath,
+  Term,
+  Rule
+} from './HashiAlgorithm';
+import { deleteComponent, getComponent, setComponent } from '@/services/AlgorithmPathService';
 
 export const TestAlgorithm: HashiAlgorithm = {
   rules: [
@@ -60,30 +67,27 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
   actions: {
     changeSelectorKind(pathToSelector: AlgorithmPath, kind: Selector['kind']): void {
       console.log('changeSelectorKind', kind, pathToSelector);
-      const pathService = new AlgorithmPathService();
-      const selector = pathService.getComponent(this, pathToSelector) as Selector;
+      const selector = getComponent(this, pathToSelector) as Selector;
       console.log(selector);
       selector.kind = kind;
     },
 
     changeConditionOperator(pathToCondition: AlgorithmPath, operator: Condition['operator']): void {
       console.log('changeConditionOperator', operator, pathToCondition);
-      const pathService = new AlgorithmPathService();
-      const condition = pathService.getComponent(this, pathToCondition) as Condition;
+      const condition = getComponent(this, pathToCondition) as Condition;
       condition.operator = operator;
     },
 
     changeTerm(pathToTerm: AlgorithmPath, newTerm: Term): void {
       console.log('changeTerm', newTerm, pathToTerm);
-      if (pathToTerm.termIndex == null) throw new Error();
+      // if (pathToTerm.termIndex == null) throw new Error();
 
-      const pathService = new AlgorithmPathService();
-      pathService.setComponent(this, pathToTerm, newTerm);
+      setComponent(this, pathToTerm, newTerm);
     },
 
     newSelector(pathToRule: AlgorithmPath): void {
       console.log('newSelector', pathToRule);
-      const rule = getAncestorRule(this, pathToRule);
+      const rule = getComponent(this, pathToRule) as Rule;
       let kind: Selector['kind'] = 'vertex';
       if (rule.selectorSequence.length > 0) {
         const lastSelector = rule.selectorSequence[rule.selectorSequence.length - 1];
@@ -94,21 +98,19 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
 
     deleteSelector(pathToSelector: AlgorithmPath): void {
       console.log('deleteSelector', pathToSelector);
-      if (pathToSelector.selectorIndex == null) throw new Error();
-      const rule = getAncestorRule(this, pathToSelector);
-      rule.selectorSequence.splice(pathToSelector.selectorIndex, 1);
+      // if (pathToSelector.selectorIndex == null) throw new Error();
+      deleteComponent(this, pathToSelector);
     },
 
     newCondition(pathToSelector: AlgorithmPath): void {
       console.log('newCondition', pathToSelector);
-      const selector = new AlgorithmPathService().getComponent(this, pathToSelector) as Selector;
+      const selector = getComponent(this, pathToSelector) as Selector;
       selector.conditions.push(buildEmptyCondition());
     },
 
-    deleteCondition(pathToSelector: AlgorithmPath, conditionIndex: number): void {
-      console.log('deleteCondition', pathToSelector, conditionIndex);
-      const selector = new AlgorithmPathService().getComponent(this, pathToSelector) as Selector;
-      selector.conditions.splice(conditionIndex, 1);
+    deleteCondition(pathToCondition: AlgorithmPath): void {
+      console.log('deleteCondition', pathToCondition);
+      deleteComponent(this, pathToCondition);
     }
   }
 });

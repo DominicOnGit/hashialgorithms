@@ -55,10 +55,13 @@ export type Term = ProperyAccessTerm | ConstantTerm | SumTerm;
 
 export type AlgorithmPiece = Rule | Selector | Condition | Term;
 
-export interface AlgorithmPath {
-  ruleIndex: number;
-  selectorIndex?: number;
-  conditionIndex?: number;
-  termIndex?: number; // lhs or rhs
-  termPath?: AlgorithmPath;
-}
+// [ruleIndex, selectorIndex, conditionIndex, termIndex, termPart]
+export type AlgorithmPath = number[];
+
+// export interface AlgorithmPath {
+//   ruleIndex: number;
+//   selectorIndex?: number;
+//   conditionIndex?: number;
+//   termIndex?: number; // lhs or rhs
+//   termPath?: AlgorithmPath;
+// }

@@ -1,27 +1,21 @@
-<script lang="ts">
-import { defineComponent, type PropType } from 'vue';
-import { mapStores } from 'pinia';
-import { useHashiStore } from '@/stores/hashi';
+<script setup lang="ts">
+import { computed } from 'vue';
 import { type Selector, type AlgorithmPath } from '@/stores/HashiAlgorithm';
 import SelectorTypeOption from './SelectorTypeOption.vue';
 import ConditionBuilder from './ConditionBuilder.vue';
-import { pathAppendCondition } from '@/services/AlgorithmPathService';
+import { getSelectorIndex, pathAppend } from '@/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 
-export default defineComponent({
-  props: {
-    selector: { type: Object as PropType<Selector>, required: true },
-    path: { type: Object as PropType<AlgorithmPath>, required: true }
-  },
-  computed: {
-    ...mapStores(useHashiStore, useHashiAlgorithmStore),
-    isFirst(): boolean {
-      return this.path.selectorIndex === 0;
-    }
-  },
-  methods: { pathAppendCondition },
-  components: { SelectorTypeOption, ConditionBuilder }
+const props = defineProps<{
+  selector: Selector;
+  path: AlgorithmPath;
+}>();
+
+const isFirst = computed(() => {
+  return getSelectorIndex(props.path) === 0;
 });
+
+const hashiAlgorithmStore = useHashiAlgorithmStore();
 </script>
 
 <template>
@@ -39,9 +33,11 @@ export default defineComponent({
   <tr v-for="(condition, index) of selector.conditions" :key="index">
     <td class="rightAlign">{{ index === 0 ? 'with' : 'and' }}</td>
     <td>
-      <ConditionBuilder :condition="condition" :path="pathAppendCondition(path, index)" />
+      <ConditionBuilder :condition="condition" :path="pathAppend(path, index)" />
     </td>
-    <td><button @click="() => hashiAlgorithmStore.deleteCondition(path, index)">x</button></td>
+    <td>
+      <button @click="() => hashiAlgorithmStore.deleteCondition(pathAppend(path, index))">x</button>
+    </td>
   </tr>
   <tr class="rightAlign">
     <button @click="() => hashiAlgorithmStore.newCondition(path)">+</button>

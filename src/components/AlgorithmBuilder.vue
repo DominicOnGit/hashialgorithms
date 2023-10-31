@@ -1,20 +1,9 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { mapStores } from 'pinia';
-import { useHashiStore } from '@/stores/hashi';
+<script setup lang="ts">
 import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 import RuleBuilder from './RuleBuilder.vue';
+import { createPathToRule } from '@/services/AlgorithmPathService';
 
-export default defineComponent({
-  data() {
-    return {};
-  },
-  computed: {
-    ...mapStores(useHashiStore, useHashiAlgorithmStore)
-  },
-  methods: {},
-  components: { RuleBuilder }
-});
+const hashiAlgorithmStore = useHashiAlgorithmStore();
 </script>
 
 <template>
@@ -22,7 +11,7 @@ export default defineComponent({
     v-for="(rule, index) in hashiAlgorithmStore.rules"
     :key="index"
     :rule="rule"
-    :path="{ ruleIndex: index }"
+    :path="createPathToRule(index)"
   />
 </template>
 

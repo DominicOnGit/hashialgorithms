@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type AlgorithmPath, type SumTerm } from '@/stores/HashiAlgorithm';
 import TermBuilder from './TermBuilder.vue';
-import { pathAppendSumPart } from '@/services/AlgorithmPathService';
+import { pathAppend } from '@/services/AlgorithmPathService';
 
 import SelectorTypeOption from './SelectorTypeOption.vue';
 import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
@@ -19,7 +19,7 @@ const hashiAlgorithmStore = useHashiAlgorithmStore();
   <TermBuilder
     @mousedown.stop
     :term="term.what"
-    :path="pathAppendSumPart(path, 1)"
+    :path="pathAppend(path, 1)"
     :allowSum="false"
   ></TermBuilder>
   Over
@@ -27,9 +27,7 @@ const hashiAlgorithmStore = useHashiAlgorithmStore();
     @mousedown.stop
     :value="term.over.kind"
     :isFirst="false"
-    @change="
-      (newKind) => hashiAlgorithmStore.changeSelectorKind(pathAppendSumPart(path, 0), newKind)
-    "
+    @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(pathAppend(path, 0), newKind)"
   />
 </template>
 

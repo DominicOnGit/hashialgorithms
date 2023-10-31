@@ -1,34 +1,21 @@
-<script lang="ts">
-import { defineComponent, type PropType } from 'vue';
-import { mapStores } from 'pinia';
-import { useHashiStore } from '@/stores/hashi';
+<script setup lang="ts">
 import { type Rule, type AlgorithmPath } from '@/stores/HashiAlgorithm';
 import SelectorBuilder from './SelectorBuilder.vue';
-import { pathAppendSelector } from '@/services/AlgorithmPathService';
+import { pathAppend } from '@/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 
-export default defineComponent({
-  props: {
-    rule: { type: Object as PropType<Rule>, required: true },
-    path: { type: Object as PropType<AlgorithmPath>, required: true }
-  },
-  data() {
-    return {};
-  },
-  computed: {
-    ...mapStores(useHashiStore, useHashiAlgorithmStore)
-  },
-  methods: {
-    pathAppendSelector
-  },
-  components: { SelectorBuilder }
-});
+defineProps<{
+  rule: Rule;
+  path: AlgorithmPath;
+}>();
+
+const hashiAlgorithmStore = useHashiAlgorithmStore();
 </script>
 
 <template>
   <table>
     <template v-for="(selector, index) in rule.selectorSequence" :key="index">
-      <SelectorBuilder :selector="selector" :path="pathAppendSelector(path, index)" />
+      <SelectorBuilder :selector="selector" :path="pathAppend(path, index)" />
     </template>
     <tr>
       <td colspan="2">

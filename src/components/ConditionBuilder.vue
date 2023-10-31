@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type AlgorithmPath, type Condition, type Operator } from '@/stores/HashiAlgorithm';
 import TermBuilder from './TermBuilder.vue';
-import { pathAppendTerm } from '@/services/AlgorithmPathService';
+import { pathAppend } from '@/services/AlgorithmPathService';
 import ComboboxMultiSelect from './ComboboxMultiSelect.vue';
 import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 
@@ -25,7 +25,7 @@ const operatorLabels: { [key in Operator]: string } = {
 
 <template>
   <span class="condition">
-    <TermBuilder :term="condition.lhs" :path="pathAppendTerm(path, 0)" :allow-sum="true" />
+    <TermBuilder :term="condition.lhs" :path="pathAppend(path, 0)" :allow-sum="true" />
 
     <ComboboxMultiSelect
       :options="operators"
@@ -35,7 +35,7 @@ const operatorLabels: { [key in Operator]: string } = {
     >
     </ComboboxMultiSelect>
 
-    <TermBuilder :term="condition.rhs" :path="pathAppendTerm(path, 1)" :allow-sum="true" />
+    <TermBuilder :term="condition.rhs" :path="pathAppend(path, 1)" :allow-sum="true" />
   </span>
 </template>
 

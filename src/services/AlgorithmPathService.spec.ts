@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { AlgorithmPathService } from './AlgorithmPathService';
+import { createPathToRule, getComponent, pathAppend } from './AlgorithmPathService';
 import type { AlgorithmPath, HashiAlgorithm } from '@/stores/HashiAlgorithm';
 
 const algorithm: HashiAlgorithm = {
@@ -61,56 +61,30 @@ const algorithm: HashiAlgorithm = {
 };
 
 test('toRule', () => {
-  const path: AlgorithmPath = {
-    ruleIndex: 1
-  };
-
-  const service = new AlgorithmPathService();
-
-  expect(service.getComponent(algorithm, path)).toEqual(algorithm.rules[1]);
+  const path: AlgorithmPath = createPathToRule(1);
+  expect(getComponent(algorithm, path)).toEqual(algorithm.rules[1]);
 });
 
 test('toSelector', () => {
-  const path: AlgorithmPath = {
-    ruleIndex: 1,
-    selectorIndex: 0
-  };
-
-  const service = new AlgorithmPathService();
-
-  expect(service.getComponent(algorithm, path)).toEqual(algorithm.rules[1].selectorSequence[0]);
+  const path: AlgorithmPath = pathAppend(createPathToRule(1), 0);
+  expect(getComponent(algorithm, path)).toEqual(algorithm.rules[1].selectorSequence[0]);
 });
 
 test('toSelectorCondition', () => {
-  const path: AlgorithmPath = {
-    ruleIndex: 1,
-    selectorIndex: 1,
-    conditionIndex: 0
-  };
-
-  const service = new AlgorithmPathService();
-
-  expect(service.getComponent(algorithm, path)).toEqual(
+  const path: AlgorithmPath = pathAppend(pathAppend(createPathToRule(1), 1), 0);
+  expect(getComponent(algorithm, path)).toEqual(
     algorithm.rules[1].selectorSequence[1].conditions[0]
   );
 });
 
 test('toSelectorCondition', () => {
-  const path: AlgorithmPath = {
-    ruleIndex: 1,
-    selectorIndex: 1,
-    conditionIndex: 0,
-    termIndex: 0
-  };
-
-  const service = new AlgorithmPathService();
-
-  expect(service.getComponent(algorithm, path)).toEqual(
+  const path: AlgorithmPath = pathAppend(pathAppend(pathAppend(createPathToRule(1), 1), 0), 0);
+  expect(getComponent(algorithm, path)).toEqual(
     algorithm.rules[1].selectorSequence[1].conditions[0].lhs
   );
 
-  path.termIndex = 1;
-  expect(service.getComponent(algorithm, path)).toEqual(
+  const path2: AlgorithmPath = pathAppend(pathAppend(pathAppend(createPathToRule(1), 1), 0), 1);
+  expect(getComponent(algorithm, path2)).toEqual(
     algorithm.rules[1].selectorSequence[1].conditions[0].rhs
   );
 });
