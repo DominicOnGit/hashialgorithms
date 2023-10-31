@@ -1,4 +1,4 @@
-import { validateHashi, type Edge, type Hashi, type Vertex } from '@/stores/hashi';
+import { type Vertex } from '@/stores/hashi';
 import type { HashiEdge, HashiUtil, HashiVertex } from './HashiUtil';
 
 const GridSizeFactor = 3;

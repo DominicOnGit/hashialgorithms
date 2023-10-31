@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Selector, SelectorKind } from '@/stores/HashiAlgorithm';
-import { onBeforeUpdate, ref } from 'vue';
+import type { SelectorKind } from '@/stores/HashiAlgorithm';
 import ComboboxMultiSelect from './ComboboxMultiSelect.vue';
 
 const props = defineProps<{

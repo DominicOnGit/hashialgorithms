@@ -6,12 +6,6 @@ import App from './App.vue';
 import { createPinia } from 'pinia';
 import GameScreen from './GameScreen.vue';
 import TestScreen from './TestScreen.vue';
-import Multiselect from 'vue-multiselect';
-
-// const app = createApp(App)
-// const pinia = createPinia()
-// app.use(pinia)
-// app.mount('#app')
 
 const routes: RouteRecordRaw[] = [
   { path: '/', component: GameScreen },

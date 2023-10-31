@@ -1,23 +1,15 @@
 <script setup lang="ts">
-import { defineComponent, type PropType } from 'vue';
-import { mapStores } from 'pinia';
-import { useHashiStore } from '@/stores/hashi';
-import {
-  useHashiAlgorithmStore,
-  type AlgorithmPath,
-  type Condition,
-  type Operator
-} from '@/stores/HashiAlgorithm';
+import { type AlgorithmPath, type Condition, type Operator } from '@/stores/HashiAlgorithm';
 import TermBuilder from './TermBuilder.vue';
 import { pathAppendTerm } from '@/services/AlgorithmPathService';
 import ComboboxMultiSelect from './ComboboxMultiSelect.vue';
+import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 
 defineProps<{
   condition: Condition;
   path: AlgorithmPath;
 }>();
 
-const hashiStore = useHashiStore();
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 
 const operators: Operator[] = ['eq', 'le', 'lt'];
@@ -43,10 +35,6 @@ const operatorLabels: { [key in Operator]: string } = {
     >
     </ComboboxMultiSelect>
 
-    <!-- <OperatorOption
-      :value="condition.operator"
-      @change="(newOp) => hashiAlgorithmStore.changeConditionOperator(path, newOp)"
-    /> -->
     <TermBuilder :term="condition.rhs" :path="pathAppendTerm(path, 1)" :allow-sum="true" />
   </span>
 </template>

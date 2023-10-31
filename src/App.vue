@@ -1,8 +1,4 @@
-<script setup lang="ts">
-import ActionBar from './components/ActionBar.vue';
-import HashiViewer from './components/HashiViewer.vue';
-import AlgorithmBuilder from './components/AlgorithmBuilder.vue';
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <header>

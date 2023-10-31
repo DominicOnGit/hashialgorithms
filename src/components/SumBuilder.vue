@@ -1,34 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import {
-  useHashiAlgorithmStore,
-  type AlgorithmPath,
-  type Term,
-  type SumTerm
-} from '@/stores/HashiAlgorithm';
+import { type AlgorithmPath, type SumTerm } from '@/stores/HashiAlgorithm';
 import TermBuilder from './TermBuilder.vue';
-import { TermBuilderService } from '@/services/TermBuilderService';
-import { getAncestorSelector, pathAppendSumPart } from '@/services/AlgorithmPathService';
-import { termToString } from '@/services/TermBuilderService';
+import { pathAppendSumPart } from '@/services/AlgorithmPathService';
 
 import SelectorTypeOption from './SelectorTypeOption.vue';
+import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 
-const props = defineProps<{
+defineProps<{
   term: SumTerm;
   path: AlgorithmPath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
-
-const termBuilderService = computed(() => {
-  const ancestorSelector = getAncestorSelector(hashiAlgorithmStore, props.path);
-  return new TermBuilderService(ancestorSelector.kind);
-});
-
-function getSelcetedIndex(e: Event): number {
-  const selectElement = e.target as HTMLSelectElement;
-  return selectElement.selectedIndex;
-}
 </script>
 
 <template>

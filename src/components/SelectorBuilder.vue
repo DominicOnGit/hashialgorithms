@@ -2,11 +2,11 @@
 import { defineComponent, type PropType } from 'vue';
 import { mapStores } from 'pinia';
 import { useHashiStore } from '@/stores/hashi';
-import { useHashiAlgorithmStore, type Selector, type AlgorithmPath } from '@/stores/HashiAlgorithm';
+import { type Selector, type AlgorithmPath } from '@/stores/HashiAlgorithm';
 import SelectorTypeOption from './SelectorTypeOption.vue';
 import ConditionBuilder from './ConditionBuilder.vue';
 import { pathAppendCondition } from '@/services/AlgorithmPathService';
-import path from 'path';
+import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 
 export default defineComponent({
   props: {

@@ -2,10 +2,10 @@
 import { defineComponent } from 'vue';
 import { mapStores } from 'pinia';
 import { useHashiStore } from '@/stores/hashi';
-import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithm';
 import { AlgorithmRunner } from '@/services/AlgorithmRunner';
 import { useMiscStore } from '@/stores/MiscStore';
 import { HashiBuilder } from '@/services/HashiBuilder';
+import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 
 export default defineComponent({
   data() {

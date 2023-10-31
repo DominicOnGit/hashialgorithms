@@ -1,15 +1,5 @@
 <script setup lang="ts">
-import Multiselect from 'vue-multiselect';
-import ComboboxSelection from './components/ComboboxSelection.vue';
-import SelectionOption from './components/SelectionOption.vue';
-import TermBuilder from './components/TermBuilder.vue';
-import { computed, ref } from 'vue';
-import { useHashiAlgorithmStore, type AlgorithmPath, type Term } from './stores/HashiAlgorithm';
-import { AlgorithmPathService } from './services/AlgorithmPathService';
-
-function selected() {
-  console.log('selected it TEST');
-}
+import { ref } from 'vue';
 
 interface OptionType {
   label: string;
@@ -28,15 +18,6 @@ const optRaw: OptionType[] = [
 ];
 
 const opt = ref(optRaw);
-
-const algoState = useHashiAlgorithmStore();
-
-const path: AlgorithmPath = { ruleIndex: 0, selectorIndex: 0, conditionIndex: 0, termIndex: 0 };
-
-const term = computed((): Term => {
-  const res = new AlgorithmPathService().getComponent(algoState, path) as Term;
-  return res;
-});
 </script>
 
 <template>

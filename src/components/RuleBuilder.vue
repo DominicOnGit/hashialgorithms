@@ -2,9 +2,10 @@
 import { defineComponent, type PropType } from 'vue';
 import { mapStores } from 'pinia';
 import { useHashiStore } from '@/stores/hashi';
-import { useHashiAlgorithmStore, type Rule, type AlgorithmPath } from '@/stores/HashiAlgorithm';
+import { type Rule, type AlgorithmPath } from '@/stores/HashiAlgorithm';
 import SelectorBuilder from './SelectorBuilder.vue';
 import { pathAppendSelector } from '@/services/AlgorithmPathService';
+import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 
 export default defineComponent({
   props: {

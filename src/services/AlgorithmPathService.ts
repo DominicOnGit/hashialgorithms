@@ -1,5 +1,6 @@
 import type {
   AlgorithmPath,
+  AlgorithmPiece,
   Condition,
   HashiAlgorithm,
   Selector,
@@ -9,7 +10,7 @@ import type {
 import { type Rule } from '../stores/HashiAlgorithm';
 
 export class AlgorithmPathService {
-  public getComponent(algo: HashiAlgorithm, path: AlgorithmPath): unknown {
+  public getComponent(algo: HashiAlgorithm, path: AlgorithmPath): AlgorithmPiece {
     const rule = this.getRule(algo, path);
 
     if (path.selectorIndex != null) {
@@ -36,7 +37,7 @@ export class AlgorithmPathService {
     return rule;
   }
 
-  public setComponent(algo: HashiAlgorithm, path: AlgorithmPath, newComponent: unknown): void {
+  public setComponent(algo: HashiAlgorithm, path: AlgorithmPath, newComponent: AlgorithmPiece): void {
     const parentPath = pathToParent(path);
     const parent = this.getComponent(algo, parentPath);
 

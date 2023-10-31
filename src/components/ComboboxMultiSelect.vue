@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, toRef } from 'vue';
+import { computed } from 'vue';
 import Multiselect from 'vue-multiselect';
 
 const props = defineProps<{
@@ -8,7 +8,7 @@ const props = defineProps<{
   labelGetter?: (item: any) => string;
 }>();
 
-const emits = defineEmits<{ (e: 'update:modelValue', item: any, index: number): void }>();
+defineEmits<{ (e: 'update:modelValue', item: any, index: number): void }>();
 
 defineSlots<{
   selected(props: { selectedItem: any }): any;

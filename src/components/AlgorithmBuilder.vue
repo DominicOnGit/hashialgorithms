@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 import { mapStores } from 'pinia';
 import { useHashiStore } from '@/stores/hashi';
-import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithm';
+import { useHashiAlgorithmStore } from '@/stores/HashiAlgorithmStore';
 import RuleBuilder from './RuleBuilder.vue';
 
 export default defineComponent({
