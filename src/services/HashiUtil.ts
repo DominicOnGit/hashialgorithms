@@ -28,6 +28,10 @@ export class HashiVertex implements Selectable, Vertex {
     return this.vertex.targetDegree;
   }
 
+  public equals(other: Vertex): boolean {
+    return this.posX === other.posX && this.posY === other.posY;
+  }
+
   public isIncident(e: HashiEdge): boolean {
     return e.v1 === this.index || e.v2 === this.index;
   }
@@ -98,6 +102,10 @@ export class HashiUtil {
 
   incidentEdges(v: HashiVertex): HashiEdge[] {
     return this.edges.filter((e) => e.isIncident(v));
+  }
+
+  incidentVertices(e: HashiEdge): HashiVertex[] {
+    return [e.vertex1, e.vertex2];
   }
 
   getDegree(v: HashiVertex): number {

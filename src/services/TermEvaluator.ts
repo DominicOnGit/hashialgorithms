@@ -8,13 +8,13 @@ export class TermEvaluator {
     private selectorEvaluator: ISelectorEvaluator
   ) {}
 
-  public evaluate(term: Term, item: Selectable): number {
-    const res = this.evaluate2(term, item);
+  public evaluate(term: Term, item: Selectable, selectedAncestors: Selectable[]): number {
+    const res = this.evaluate2(term, item, selectedAncestors);
     // console.log(`evaluate(${term.kind}, .) => ${res}`, term, item);
     return res;
   }
 
-  private evaluate2(term: Term, item: Selectable): number {
+  private evaluate2(term: Term, item: Selectable, selectedAncestors: Selectable[]): number {
     switch (term.kind) {
       case 'constant': {
         return term.value;
@@ -23,14 +23,19 @@ export class TermEvaluator {
         return this.evaluatePropertyAccess(term.property, item);
       }
       case 'sum': {
-        return this.evaluateSum(term, item);
+        return this.evaluateSum(term, item, selectedAncestors);
       }
     }
   }
 
-  private evaluateSum(sum: SumTerm, item: Selectable): number {
-    const itemsToSumOver = this.selectorEvaluator.SelectAll(sum.over, [item]);
-    const res = itemsToSumOver.reduce((acc, item) => acc + this.evaluate2(sum.what, item), 0);
+  private evaluateSum(sum: SumTerm, item: Selectable, selectedAncestors: Selectable[]): number {
+    const chainToItem = [...selectedAncestors, item];
+    const itemsToSumOver = this.selectorEvaluator.SelectAll(sum.over, chainToItem);
+    // console.log('evaluateSum on ' + item.toString(), itemsToSumOver);
+    const res = itemsToSumOver.reduce(
+      (acc, summandItem) => acc + this.evaluate2(sum.what, summandItem, chainToItem),
+      0
+    );
     return res;
   }
 
