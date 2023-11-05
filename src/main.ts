@@ -4,8 +4,8 @@ import { createApp } from 'vue';
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router';
 import App from './App.vue';
 import { createPinia } from 'pinia';
-import GameScreen from './GameScreen.vue';
-import TestScreen from './TestScreen.vue';
+import GameScreen from './components/GameScreen.vue';
+import TestScreen from './components/TestScreen.vue';
 
 const routes: RouteRecordRaw[] = [
   { path: '/', component: GameScreen },
