@@ -6,7 +6,7 @@ import AlgorithmBuilder from './components/AlgorithmBuilder.vue';
 
 <template>
   <ActionBar />
-  <HashiViewer style="height: 200px" />
+  <HashiViewer style="height: 400px" />
 
   <AlgorithmBuilder />
 </template>

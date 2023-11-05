@@ -51,6 +51,13 @@ export default defineComponent({
     },
     clearEdges(): void {
       this.hashiStore.edges = [];
+    },
+    growSomeAndClear(): void {
+      const builder = new HashiBuilder(this.hashiStore);
+      for (let i = 0; i < 5; i++) {
+        builder.grow({ nx: 11, ny: 11 });
+      }
+      this.clearEdges();
     }
   }
 });
@@ -63,6 +70,7 @@ export default defineComponent({
     <button @click="toggleRunning">{{ miscStore.isRunning ? 'stop' : 'start' }}</button>
     <button @click="grow">grow</button>
     <button @click="clearEdges">clear</button>
+    <button @click="growSomeAndClear">growProblem</button>
   </div>
 </template>
 
