@@ -1,9 +1,7 @@
 import { expect, test } from 'vitest';
-import { useHashiStore, type Edge, type Hashi } from '@/stores/hashi';
-import { type HashiAction, type Rule } from '@/stores/HashiAlgorithm';
-import { RuleRunner } from './RuleRunner';
+import { useHashiStore, type Hashi } from '@/stores/hashi';
+import { type HashiAction } from '@/stores/HashiAlgorithm';
 import { HashiUtil } from './HashiUtil';
-import { beforeEach } from 'node:test';
 import { setActivePinia, createPinia } from 'pinia';
 import { ActionRunner } from './ActionRunner';
 
@@ -25,7 +23,6 @@ test('addEdge on on selected edge', () => {
 
   const actionRunner = new ActionRunner(action, hashiUtil);
 
-  const e1: Edge = { v1: 1, v2: 2, multiplicity: 0 };
   actionRunner.run([hashiUtil.getEdge(1, 2)]);
   expect(hashiStore.edges).toStrictEqual([
     { v1: 0, v2: 1, multiplicity: 2 },
@@ -51,7 +48,6 @@ test('addEdge on on selected ancestor', () => {
 
   const actionRunner = new ActionRunner(action, hashiUtil);
 
-  const e1: Edge = { v1: 1, v2: 2, multiplicity: 0 };
   actionRunner.run([hashiUtil.getEdge(1, 2), hashiUtil.vertices[2]]);
   expect(hashiStore.edges).toStrictEqual([
     { v1: 0, v2: 1, multiplicity: 2 },

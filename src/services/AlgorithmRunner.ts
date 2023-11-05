@@ -16,7 +16,7 @@ export class AlgorithmRunner {
   runStep(): boolean {
     const rule = this.algorithm.rules[0];
     const ruleRunner = new RuleRunner(rule, this.hashiUtil);
-    const hadEffect = ruleRunner.runRuleStep(rule);
+    const hadEffect = ruleRunner.runRuleStep();
     return hadEffect;
   }
 }
