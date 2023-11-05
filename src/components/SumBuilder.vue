@@ -25,8 +25,9 @@ const hashiAlgorithmStore = useHashiAlgorithmStore();
   Over
   <SelectorTypeOption
     @mousedown.stop
-    :value="term.over.kind"
-    :isFirst="false"
+    :value="term.over"
+    :useIncident="false"
+    :allow-exclude-ancestor="true"
     @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(pathAppend(path, 0), newKind)"
   />
 </template>

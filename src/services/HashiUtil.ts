@@ -118,6 +118,12 @@ export class HashiUtil {
     return res;
   }
 
+  getEdge(v1: number, v2: number): HashiEdge {
+    const edge = this.edges.find((e) => e.v1 === v1 && e.v2 === v2);
+    if (edge == null) throw new Error();
+    return edge;
+  }
+
   getSize(): HashiSize {
     return {
       nx: Math.max(...this.hashi.vertices.map((v) => v.posX)),

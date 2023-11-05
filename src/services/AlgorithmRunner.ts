@@ -1,7 +1,6 @@
+import { RuleRunner } from './RuleRunner';
 import { type Hashi } from '@/stores/hashi';
-import type { HashiAlgorithm, Rule } from '@/stores/HashiAlgorithm';
-import { SelectorRunner } from './SelectorRunner';
-import { ActionRunner } from './ActionRunner';
+import type { HashiAlgorithm } from '@/stores/HashiAlgorithm';
 import { HashiUtil } from './HashiUtil';
 
 export class AlgorithmRunner {
@@ -16,22 +15,8 @@ export class AlgorithmRunner {
 
   runStep(): boolean {
     const rule = this.algorithm.rules[0];
-    const hadEffect = this.runRuleStep(rule);
+    const ruleRunner = new RuleRunner(rule, this.hashiUtil);
+    const hadEffect = ruleRunner.runRuleStep(rule);
     return hadEffect;
-  }
-
-  runRuleStep(rule: Rule): boolean {
-    const selectorRunner = new SelectorRunner(rule.selectorSequence, this.hashiUtil);
-
-    const selected = selectorRunner.SelectNext();
-    console.log('Rule selected ', selected);
-
-    if (selected != null) {
-      const actionRunner = new ActionRunner(rule.action, this.hashiUtil);
-      actionRunner.run(selected);
-      return true;
-    } else {
-      return false;
-    }
   }
 }

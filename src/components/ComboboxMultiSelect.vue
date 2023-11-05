@@ -2,9 +2,17 @@
 import { computed } from 'vue';
 import Multiselect from 'vue-multiselect';
 
+interface OptionData {
+  item: any;
+  label: string;
+  key: string;
+  // index: number;
+}
+
 const props = defineProps<{
   options: unknown[];
   active: unknown;
+  keyGetter?: (item: any) => string;
   labelGetter?: (item: any) => string;
 }>();
 
@@ -16,26 +24,36 @@ defineSlots<{
 }>();
 
 function getKey(item: unknown): string {
-  return JSON.stringify(item);
+  return props.keyGetter != null ? props.keyGetter(item) : JSON.stringify(item);
+}
+
+function toOptionData(item: any): OptionData {
+  return {
+    item: item,
+    label: props.labelGetter != null ? props.labelGetter(item) : 'undefined',
+    key: getKey(item)
+  };
 }
 
 const optionsData = computed(() => {
-  const optionsAndKey = props.options.map((opt, index) => {
-    return {
-      item: opt,
-      label: props.labelGetter != null ? props.labelGetter(opt) : 'undefined',
-      key: getKey(opt),
-      index: index
-    };
-  });
-  // console.log(optionsAndKey);
-  return optionsAndKey;
+  const dataFromOptions = props.options.map(toOptionData);
+  const activeData = toOptionData(props.active);
+  const activeAt = dataFromOptions.findIndex((x) => x.key === activeData.key);
+  if (activeAt === -1) throw new Error('active item not found in options');
+  dataFromOptions.splice(activeAt, 1, activeData);
+  return dataFromOptions;
 });
 
 const activeData = computed(() => {
   const activeId = getKey(props.active);
   const found = optionsData.value.find((x) => x.key === activeId);
-  //console.log('active: ' + activeId, found);
+  if (found == null) {
+    console.error(
+      'no active item found',
+      activeId,
+      optionsData.value.map((x) => x.key)
+    );
+  }
   return found;
 });
 </script>

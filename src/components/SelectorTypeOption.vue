@@ -1,26 +1,61 @@
 <script setup lang="ts">
-import type { SelectorKind } from '@/stores/HashiAlgorithm';
+import type { SelectorKind, SelectorKindAndExcludeAncestor } from '@/stores/HashiAlgorithm';
 import ComboboxMultiSelect from './ComboboxMultiSelect.vue';
+import { computed } from 'vue';
 
 const props = defineProps<{
-  value: SelectorKind;
-  isFirst: boolean;
+  value: SelectorKindAndExcludeAncestor;
+  useIncident: boolean;
+  allowExcludeAncestor: boolean;
 }>();
-defineEmits(['change']);
+defineEmits<{
+  change: [result: SelectorKindAndExcludeAncestor];
+}>();
 
-const options: SelectorKind[] = ['vertex', 'edge'];
+const options = computed((): SelectorKindAndExcludeAncestor[] => {
+  const base: SelectorKindAndExcludeAncestor[] = [
+    { kind: 'vertex', excludeAncestor: false },
+    { kind: 'edge', excludeAncestor: false }
+  ];
+  if (props.allowExcludeAncestor) {
+    return [
+      ...base,
+      { kind: 'vertex', excludeAncestor: true },
+      { kind: 'edge', excludeAncestor: true }
+    ];
+  }
+  return base;
+});
 
-const labels: { [key in SelectorKind]: string } = {
-  edge: props.isFirst ? 'Edge' : 'Incident Edge',
-  vertex: props.isFirst ? 'Vertex' : 'Incident Vertex'
+const kindLabels: { [key in SelectorKind]: string } = {
+  edge: 'Edge',
+  vertex: 'Vertex'
 };
+
+function getKey(item: SelectorKindAndExcludeAncestor): string {
+  return JSON.stringify({
+    kind: item.kind,
+    excludeAncestor: item.excludeAncestor ?? false
+  });
+}
+
+function getLabel(item: SelectorKindAndExcludeAncestor): string {
+  const prefix =
+    props.allowExcludeAncestor && item.excludeAncestor
+      ? 'Other '
+      : props.useIncident
+      ? 'Incident '
+      : '';
+  return prefix + kindLabels[item.kind];
+}
 </script>
 
 <template>
   <ComboboxMultiSelect
     :options="options"
     :active="value"
-    :label-getter="(x) => labels[x as SelectorKind]"
+    :key-getter="getKey"
+    :label-getter="getLabel"
     @update:model-value="(val) => $emit('change', val)"
   />
 </template>

@@ -5,7 +5,8 @@ import type {
   Selector,
   AlgorithmPath,
   Term,
-  Rule
+  Rule,
+  SelectorKindAndExcludeAncestor
 } from './HashiAlgorithm';
 import { deleteComponent, getComponent, setComponent } from '@/services/AlgorithmPathService';
 
@@ -14,31 +15,31 @@ export const TestAlgorithm: HashiAlgorithm = {
     {
       selectorSequence: [
         {
+          kind: 'edge',
+          conditions: [
+            {
+              lhs: { kind: 'propertyAccess', property: 'multiplicity' },
+              operator: 'lt',
+              rhs: { kind: 'constant', value: 2 }
+            }
+          ]
+        },
+        {
           kind: 'vertex',
           conditions: [
             {
               lhs: { kind: 'propertyAccess', property: 'degree' },
               operator: 'lt',
               rhs: { kind: 'propertyAccess', property: 'targetDegree' }
-            }
-          ]
-        },
-        {
-          kind: 'edge',
-          conditions: [
+            },
             {
               lhs: {
                 kind: 'sum',
-                over: { kind: 'vertex', conditions: [] },
-                what: { kind: 'propertyAccess', property: 'targetDegree' }
+                over: { kind: 'edge', excludeAncestor: true, conditions: [] },
+                what: { kind: 'constant', value: 2 }
               },
-              operator: 'le',
-              rhs: { kind: 'constant', value: 1 }
-            },
-            {
-              lhs: { kind: 'propertyAccess', property: 'multiplicity' },
-              operator: 'le',
-              rhs: { kind: 'constant', value: 2 }
+              operator: 'lt',
+              rhs: { kind: 'propertyAccess', property: 'targetDegree' }
             }
           ]
         }
@@ -57,7 +58,7 @@ function buildEmptyCondition(): Condition {
 }
 
 function buildEmptySelector(kind: Selector['kind']): Selector {
-  return { kind: kind, conditions: [] };
+  return { kind: kind, excludeAncestor: false, conditions: [] };
 }
 
 export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
@@ -65,11 +66,15 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
     return TestAlgorithm;
   },
   actions: {
-    changeSelectorKind(pathToSelector: AlgorithmPath, kind: Selector['kind']): void {
-      console.log('changeSelectorKind', kind, pathToSelector);
+    changeSelectorKind(
+      pathToSelector: AlgorithmPath,
+      kindAndExcludeAncestor: SelectorKindAndExcludeAncestor
+    ): void {
+      console.log('changeSelectorKind', kindAndExcludeAncestor, pathToSelector);
       const selector = getComponent(this, pathToSelector) as Selector;
       console.log(selector);
-      selector.kind = kind;
+      selector.kind = kindAndExcludeAncestor.kind;
+      selector.excludeAncestor = kindAndExcludeAncestor.excludeAncestor;
     },
 
     changeConditionOperator(pathToCondition: AlgorithmPath, operator: Condition['operator']): void {

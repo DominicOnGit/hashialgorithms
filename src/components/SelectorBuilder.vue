@@ -23,8 +23,9 @@ const hashiAlgorithmStore = useHashiAlgorithmStore();
     <td class="rightAlign">{{ isFirst ? 'Select' : 'then select' }}</td>
     <td>
       <SelectorTypeOption
-        :value="selector.kind"
-        :isFirst="isFirst"
+        :value="selector"
+        :useIncident="!isFirst"
+        :allowExcludeAncestor="false"
         @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(path, newKind)"
       />
     </td>

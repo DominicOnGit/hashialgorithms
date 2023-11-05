@@ -22,10 +22,6 @@ const termBuilderService = computed(() => {
 
 const options = computed(() => {
   const allTerms = termBuilderService.value.getAllTermOptions(props.allowSum);
-  const propTermId = termBuilderService.value.getTermId(props.term);
-  const activeAt = allTerms.findIndex((x) => termBuilderService.value.getTermId(x) === propTermId);
-  allTerms.splice(activeAt, 1, props.term);
-  // console.log(allTerms);
   return allTerms;
 });
 </script>
@@ -34,6 +30,7 @@ const options = computed(() => {
   <ComboboxMultiSelect
     :options="options"
     :active="term"
+    :key-getter="termBuilderService.getTermId"
     :label-getter="termBuilderService.getTermId"
     @update:modelValue="(term: Term) => hashiAlgorithmStore.changeTerm(path, term)"
   >

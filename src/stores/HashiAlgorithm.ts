@@ -7,13 +7,16 @@ export interface Rule {
   action: HashiAction;
 }
 
-export interface Selector {
+export type SelectorKind = 'vertex' | 'edge';
+
+export interface SelectorKindAndExcludeAncestor {
   kind: SelectorKind;
-  excludeAncestor?: boolean; // default false
-  conditions: Condition[];
+  excludeAncestor?: boolean;
 }
 
-export type SelectorKind = 'vertex' | 'edge';
+export interface Selector extends SelectorKindAndExcludeAncestor {
+  conditions: Condition[];
+}
 
 export interface AddEdgeAction {
   kind: 'addEdge';
