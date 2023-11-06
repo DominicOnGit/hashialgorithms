@@ -2,19 +2,26 @@
 import {
   type AlgorithmPath,
   type Condition,
-  type Operator
+  type Operator,
+  type SelectorKind
 } from '@/algorithm/stores/HashiAlgorithm';
 import TermBuilder from './TermBuilder.vue';
-import { pathAppend } from '@/algorithm/services/AlgorithmPathService';
+import { getAncestorSelector, pathAppend } from '@/algorithm/services/AlgorithmPathService';
 import ComboboxMultiSelect from '../../components/ComboboxMultiSelect.vue';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { computed } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   condition: Condition;
   path: AlgorithmPath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
+
+const onEdgeOrVertex = computed((): SelectorKind => {
+  const ancestorSelector = getAncestorSelector(hashiAlgorithmStore, props.path);
+  return ancestorSelector.kind;
+});
 
 const operators: Operator[] = ['eq', 'le', 'lt'];
 
@@ -29,7 +36,12 @@ const operatorLabels: { [key in Operator]: string } = {
 
 <template>
   <span class="condition">
-    <TermBuilder :term="condition.lhs" :path="pathAppend(path, 0)" :allow-sum="true" />
+    <TermBuilder
+      :term="condition.lhs"
+      :path="pathAppend(path, 0)"
+      :on-edge-or-vertex="onEdgeOrVertex"
+      :allow-sum="true"
+    />
 
     <ComboboxMultiSelect
       :options="operators"
@@ -39,7 +51,12 @@ const operatorLabels: { [key in Operator]: string } = {
     >
     </ComboboxMultiSelect>
 
-    <TermBuilder :term="condition.rhs" :path="pathAppend(path, 1)" :allow-sum="true" />
+    <TermBuilder
+      :term="condition.rhs"
+      :path="pathAppend(path, 1)"
+      :on-edge-or-vertex="onEdgeOrVertex"
+      :allow-sum="true"
+    />
   </span>
 </template>
 

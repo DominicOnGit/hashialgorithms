@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { type Rule, type AlgorithmPath } from '@/algorithm/stores/HashiAlgorithm';
 import SelectorBuilder from './SelectorBuilder.vue';
-import { pathAppend } from '@/algorithm/services/AlgorithmPathService';
+import ActionBuilder from './ActionBuilder.vue';
+import {
+  pathSelectorAndAppend,
+  pathActionAndAppend
+} from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 
 defineProps<{
@@ -15,11 +19,17 @@ const hashiAlgorithmStore = useHashiAlgorithmStore();
 <template>
   <table>
     <template v-for="(selector, index) in rule.selectorSequence" :key="index">
-      <SelectorBuilder :selector="selector" :path="pathAppend(path, index)" />
+      <SelectorBuilder :selector="selector" :path="pathSelectorAndAppend(path, index)" />
     </template>
     <tr>
       <td colspan="2">
         <button @click="hashiAlgorithmStore.newSelector(path)">continue selecting</button>
+      </td>
+    </tr>
+    <tr>
+      <td>then</td>
+      <td>
+        <ActionBuilder :action="rule.action" :path="pathActionAndAppend(path, 0)"></ActionBuilder>
       </td>
     </tr>
   </table>

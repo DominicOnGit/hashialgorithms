@@ -15,6 +15,8 @@ export interface Edge {
   v2: number;
 
   multiplicity: number;
+
+  customPropertyValues?: Record<string, number>;
 }
 
 export interface Hashi {
@@ -24,6 +26,17 @@ export interface Hashi {
   // v1.posX == v2.posX => v1.posY < v2.posY
   // v1.posY == v2.posY => v1.posX < v2.posX
   edges: Edge[];
+}
+
+function findOrCreateEdge(hashi: Hashi, v1: number, v2: number): Edge {
+  const found = hashi.edges.find((e) => e.v1 === v1 && e.v2 === v2);
+  if (found) {
+    return found;
+  } else {
+    const newEdge = { v1, v2, multiplicity: 0 };
+    hashi.edges.push(newEdge);
+    return newEdge;
+  }
 }
 
 export const useHashiStore = defineStore('hashi', {
@@ -37,12 +50,14 @@ export const useHashiStore = defineStore('hashi', {
     },
     addEdge(v1: number, v2: number): void {
       console.log(`addEdge(${v1}, ${v2})`);
-      const found = this.edges.find((e) => e.v1 === v1 && e.v2 === v2);
-      if (found) {
-        found.multiplicity++;
-      } else {
-        this.edges.push({ v1, v2, multiplicity: 1 });
-      }
+      const edge = findOrCreateEdge(this, v1, v2);
+      edge.multiplicity++;
+    },
+    setCustomPropertyValue(v1: number, v2: number, name: string, value: number): void {
+      console.log(`setCustomPropertyValue(${v1}, ${v2}, ${name}, ${value})`);
+      const edge = findOrCreateEdge(this, v1, v2);
+      if (edge.customPropertyValues == null) edge.customPropertyValues = {};
+      edge.customPropertyValues[name] = value;
     }
   }
 });

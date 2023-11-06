@@ -34,14 +34,14 @@ export class TermBuilderService {
         return this.commonTerms.concat(this.edgeTerms);
     }
   }
+}
 
-  public getTermId(term: Term): string {
-    switch (term.kind) {
-      case 'sum':
-        return 'sum';
-      default:
-        return termToString(term);
-    }
+export function getTermId(term: Term): string {
+  switch (term.kind) {
+    case 'sum':
+      return 'sum';
+    default:
+      return termToString(term);
   }
 }
 

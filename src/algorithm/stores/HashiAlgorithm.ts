@@ -1,5 +1,8 @@
+import type { CustomPropertyDef } from '@/stores/CustomPropertyDef';
+
 export interface HashiAlgorithm {
   rules: Rule[];
+  //  customProperties: CustomPropertyDef[];
 }
 
 export interface Rule {
@@ -22,7 +25,13 @@ export interface AddEdgeAction {
   kind: 'addEdge';
 }
 
-export type HashiAction = AddEdgeAction;
+export interface SetPropertyAction {
+  kind: 'setProperty';
+  property: string;
+  value: Term;
+}
+
+export type HashiAction = AddEdgeAction | SetPropertyAction;
 
 export type Operator = 'lt' | 'le' | 'eq';
 
@@ -50,11 +59,15 @@ export interface SumTerm {
 
 export type Term = ProperyAccessTerm | ConstantTerm | SumTerm;
 
-export type AlgorithmPiece = Rule | Selector | Condition | Term;
+export type AlgorithmPiece = Rule | Selector | Condition | Term | HashiAction;
 
-// [ruleIndex, selectorIndex, conditionIndex, termIndex, termPart]
+// selectorpath [ruleIndex, selectorOrAction, selectorIndex, conditionIndex, termIndex, termPart]
+// actionPath: [ ruleIndex, selectorOrAction, actionIndex, termIndex, termPart]
 export type AlgorithmPath = number[];
-
+// {
+//   kind: 'selector' | 'action';
+//   sequence: number[];
+// };
 // export interface AlgorithmPath {
 //   ruleIndex: number;
 //   selectorIndex?: number;

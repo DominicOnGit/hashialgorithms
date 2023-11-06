@@ -14,6 +14,7 @@ import { HashiCanvasService } from '@/hashi/services/HashiCanvasService';
 import { mapStores } from 'pinia';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
+import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
 
 export default defineComponent({
   data() {
@@ -22,7 +23,7 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapStores(useHashiStore)
+    ...mapStores(useHashiStore, useCustomPropertyStore)
   },
   mounted() {
     console.log('mounted');
@@ -40,7 +41,11 @@ export default defineComponent({
       if (this.vueCanvas == null) {
         throw new Error();
       }
-      new HashiCanvasService(this.vueCanvas, new HashiUtil(this.hashiStore)).draw();
+      new HashiCanvasService(
+        this.vueCanvas,
+        new HashiUtil(this.hashiStore),
+        this.CustomPropertyStore.defs
+      ).draw();
     }
   },
   watch: {

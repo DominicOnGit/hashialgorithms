@@ -1,7 +1,8 @@
 import { type Vertex } from '@/hashi/stores/hashi';
 import type { HashiEdge, HashiUtil, HashiVertex } from './HashiUtil';
+import type { CustomPropertyDefs } from '@/stores/CustomPropertyDef';
 
-const GridSizeFactor = 3;
+const GridSizeFactor = 5;
 const IslandRadiusFactor = 1;
 const LineGap = 4;
 
@@ -21,7 +22,8 @@ export class HashiCanvasService {
 
   constructor(
     private canvas: CanvasRenderingContext2D,
-    private hashi: HashiUtil
+    private hashi: HashiUtil,
+    private customPropertyDefs: CustomPropertyDefs
   ) {
     this.canvas.font = '15px sans-serif';
     this.canvas.textAlign = 'center';
@@ -79,7 +81,12 @@ export class HashiCanvasService {
   private drawEdge(edge: HashiEdge): void {
     this.canvas.beginPath();
     this.canvas.strokeStyle = edge.multiplicity <= 2 ? NormalStyle : ErrorStyle;
-    if (edge.multiplicity === 1) {
+    this.canvas.setLineDash(edge.multiplicity === 0 ? [1, 3] : []);
+
+    if (
+      (edge.multiplicity === 0 && edge.getCustomProperties(this.customPropertyDefs).length > 0) ||
+      edge.multiplicity === 1
+    ) {
       this.line(edge.vertex1, edge.vertex2, 0);
     }
 
@@ -94,6 +101,23 @@ export class HashiCanvasService {
       this.line(edge.vertex1, edge.vertex2, +0.8 * LineGap);
     }
     this.canvas.stroke();
+
+    this.canvas.setLineDash([]);
+    this.drawEdgeProperties(edge);
+  }
+
+  private drawEdgeProperties(edge: HashiEdge) {
+    this.canvas.textBaseline = 'middle';
+    this.canvas.textAlign = 'center';
+
+    const xOffset = edge.vertex1.posX === edge.vertex2.posX ? 10 : 0;
+    const yOffset = edge.vertex1.posY === edge.vertex2.posY ? -10 : 0;
+    const x = ((edge.vertex1.posX + edge.vertex2.posX) * this.gridSize) / 2 + xOffset;
+    const y = ((edge.vertex1.posY + edge.vertex2.posY) * this.gridSize) / 2 + yOffset;
+
+    edge.getCustomProperties(this.customPropertyDefs).forEach((prop) => {
+      this.canvas.strokeText(prop.value.toString(), x, y);
+    });
   }
 
   draw(): void {

@@ -1,4 +1,5 @@
 import { validateHashi, type Edge, type Hashi, type Vertex } from '@/hashi/stores/hashi';
+import type { CustomPropertyData, CustomPropertyDefs } from '@/stores/CustomPropertyDef';
 
 export interface Selectable {
   wrappedItem: Edge | Vertex;
@@ -66,6 +67,22 @@ export class HashiEdge implements Selectable, Edge {
   }
   public get multiplicity(): number {
     return this.edge.multiplicity;
+  }
+
+  public getCustomProperties(propertyDefs: CustomPropertyDefs): CustomPropertyData[] {
+    if (this.edge.customPropertyValues != null) {
+      return Object.entries(this.edge.customPropertyValues)
+        .map(([name, value]) => ({ value, def: propertyDefs.find((x) => x.name === name) }))
+        .filter((x) => x.def != null)
+        .map<CustomPropertyData>(({ value, def }) => {
+          if (def == null) throw new Error();
+          return {
+            ...def,
+            value
+          };
+        });
+    }
+    return [];
   }
 
   public equals(other: Edge): boolean {

@@ -40,12 +40,18 @@ const hashiAlgorithmStore = useHashiAlgorithmStore();
       <button @click="() => hashiAlgorithmStore.deleteCondition(pathAppend(path, index))">x</button>
     </td>
   </tr>
-  <tr class="rightAlign">
-    <button @click="() => hashiAlgorithmStore.newCondition(path)">+</button>
+  <tr>
+    <td></td>
+    <td class="spaceUnder">
+      <button @click="() => hashiAlgorithmStore.newCondition(path)">add condition</button>
+    </td>
   </tr>
 </template>
 
 <style scoped>
+.spaceUnder {
+  padding-bottom: 10px;
+}
 .rightAlign {
   text-align: right;
 }

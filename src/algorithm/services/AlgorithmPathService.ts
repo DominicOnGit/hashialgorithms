@@ -2,35 +2,27 @@ import type {
   AlgorithmPath,
   AlgorithmPiece,
   Condition,
+  HashiAction,
   HashiAlgorithm,
   Selector,
   Term
 } from '@/algorithm/stores/HashiAlgorithm';
 import { type Rule } from '../stores/HashiAlgorithm';
 
-// path: [ruleIndex, selectorIndex, conditionIndex, termIndex, termPart]
+// path: [ruleIndex, selectorOrAction, ...]
 export function getComponent(algo: HashiAlgorithm, path: AlgorithmPath): AlgorithmPiece {
   if (path.length === 0) throw new Error();
 
   const rule = algo.rules[path[0]];
   if (path.length > 1) {
-    const selector = rule.selectorSequence[path[1]];
-    if (path.length > 2) {
-      const condition = selector.conditions[path[2]];
-      if (path.length > 3) {
-        const term = path[3] === 0 ? condition.lhs : condition.rhs;
-        if (path.length > 4) {
-          return getTermPart(term, path.slice(4));
-        }
-        return term;
-      }
-      return condition;
-    }
-    return selector;
+    return path[1] === 0
+      ? getSelectorComponent(rule, path.slice(2))
+      : getActionComponent(rule, path);
   }
   return rule;
 }
 
+// path: [ruleIndex, selectorOrAction, ...]
 export function setComponent(
   algo: HashiAlgorithm,
   path: AlgorithmPath,
@@ -44,49 +36,93 @@ export function setComponent(
   }
   const rule = algo.rules[path[0]];
 
-  if (path.length === 2) {
-    rule.selectorSequence[path[1]] = newComponent as Selector;
-    return;
+  if (path[1] === 0) {
+    setSelectorComponent(rule, path.slice(2), newComponent);
+  } else {
+    setActionComponent(rule, path.slice(2), newComponent);
   }
-  const selector = rule.selectorSequence[path[1]];
-
-  if (path.length === 3) {
-    selector.conditions[path[2]] = newComponent as Condition;
-    return;
-  }
-  const condition = selector.conditions[path[2]];
-
-  if (path.length === 4) {
-    if (path[3] === 0) condition.lhs = newComponent as Term;
-    else condition.rhs = newComponent as Term;
-    return;
-  }
-  const term = path[3] === 0 ? condition.lhs : condition.rhs;
-
-  setTermPart(term, path.slice(4), newComponent);
 }
 
-export function deleteComponent(algo: HashiAlgorithm, path: AlgorithmPath): void {
+// path:  [selectorIndex, conditionIndex, termIndex, termPart]
+function getSelectorComponent(rule: Rule, path: AlgorithmPath): AlgorithmPiece {
+  if (path.length === 0) throw new Error();
+
+  const selector = rule.selectorSequence[path[0]];
+  if (path.length > 1) {
+    const condition = selector.conditions[path[1]];
+    if (path.length > 2) {
+      const term = path[2] === 0 ? condition.lhs : condition.rhs;
+      if (path.length > 3) {
+        return getTermPart(term, path.slice(3));
+      }
+      return term;
+    }
+    return condition;
+  }
+  return selector;
+}
+
+// path:  [selectorIndex, conditionIndex, termIndex, termPart]
+function setSelectorComponent(rule: Rule, path: AlgorithmPath, newComponent: AlgorithmPiece): void {
   if (path.length === 0) throw new Error();
 
   if (path.length === 1) {
-    algo.rules.splice(path[0], 1);
+    rule.selectorSequence[path[0]] = newComponent as Selector;
     return;
   }
-  const rule = algo.rules[path[0]];
+  const selector = rule.selectorSequence[path[0]];
 
   if (path.length === 2) {
-    rule.selectorSequence.splice(path[1], 1);
+    selector.conditions[path[1]] = newComponent as Condition;
     return;
   }
-  const selector = rule.selectorSequence[path[1]];
+  const condition = selector.conditions[path[1]];
 
   if (path.length === 3) {
-    selector.conditions.splice(path[2], 1);
+    if (path[2] === 0) condition.lhs = newComponent as Term;
+    else condition.rhs = newComponent as Term;
     return;
   }
+  const term = path[2] === 0 ? condition.lhs : condition.rhs;
 
-  throw new Error();
+  setTermPart(term, path.slice(3), newComponent);
+}
+
+// path:  [actionIndex, termIndex, termPart]
+function getActionComponent(rule: Rule, path: AlgorithmPath): AlgorithmPiece {
+  if (path.length === 0) throw new Error();
+  if (path[0] !== 0) throw new Error('multiple actions not supported');
+
+  const action = rule.action;
+  if (path.length > 1) {
+    if (path[1] !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
+    const term = action.value;
+    if (path.length > 2) {
+      return getTermPart(term, path.slice(2));
+    }
+    return term;
+  }
+  return action;
+}
+
+// path:  [actionIndex, termIndex, termPart]
+function setActionComponent(rule: Rule, path: AlgorithmPath, newComponent: AlgorithmPiece): void {
+  if (path.length === 0) throw new Error();
+  if (path[0] !== 0) throw new Error('multiple actions not supported');
+
+  if (path.length === 1) {
+    rule.action = newComponent as HashiAction;
+    return;
+  }
+  const action = rule.action;
+  if (path[1] !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
+
+  if (path.length === 2) {
+    action.value = newComponent as Term;
+    return;
+  }
+  const term = action.value;
+  setTermPart(term, path.slice(2), newComponent);
 }
 
 function getTermPart(term: Term, termPath: AlgorithmPath): Selector | Term {
@@ -103,25 +139,66 @@ function setTermPart(term: Term, termPath: AlgorithmPath, newComponent: Algorith
   } else throw new Error();
 }
 
-export function pathToParent(path: AlgorithmPath): AlgorithmPath {
-  if (path.length < 2) throw new Error();
-  return path.slice(0, path.length - 1);
+// path: [ruleIndex, selectorOrAction, ...]
+export function deleteComponent(algo: HashiAlgorithm, path: AlgorithmPath): void {
+  if (path.length === 0) throw new Error();
+
+  if (path.length === 1) {
+    algo.rules.splice(path[0], 1);
+    return;
+  }
+  const rule = algo.rules[path[0]];
+
+  if (path[1] === 0) {
+    deleteSelectorComponent(rule, path.slice(2));
+  } else {
+    throw new Error('not supported');
+  }
+}
+
+// path:  [selectorIndex, conditionIndex, termIndex, termPart]
+function deleteSelectorComponent(rule: Rule, path: AlgorithmPath): void {
+  if (path.length === 0) throw new Error();
+
+  if (path.length === 1) {
+    rule.selectorSequence.splice(path[0], 1);
+    return;
+  }
+  const selector = rule.selectorSequence[path[0]];
+
+  if (path.length === 2) {
+    selector.conditions.splice(path[1], 1);
+    return;
+  }
+
+  throw new Error();
 }
 
 export function createPathToRule(ruleIndex: number): AlgorithmPath {
   return [ruleIndex];
 }
 
+export function pathSelectorAndAppend(path: AlgorithmPath, selectorIndex: number): AlgorithmPath {
+  if (path.length !== 1) throw new Error();
+  return [...path, 0, selectorIndex];
+}
+
+export function pathActionAndAppend(path: AlgorithmPath, selectorIndex: number): AlgorithmPath {
+  if (path.length !== 1) throw new Error();
+  return [...path, 1, selectorIndex];
+}
+
 export function pathAppend(path: AlgorithmPath, nextStep: number): AlgorithmPath {
+  if (path.length < 2) throw Error();
   return [...path, nextStep];
 }
 
 export function getSelectorIndex(path: AlgorithmPath): number {
-  if (path.length < 2) throw new Error();
-  return path[1];
+  if (path.length < 3 || path[1] !== 0) throw new Error();
+  return path[2];
 }
 
 export function getAncestorSelector(algo: HashiAlgorithm, path: AlgorithmPath): Selector {
-  if (path.length < 2) throw new Error();
-  return getComponent(algo, path.slice(0, 2)) as Selector;
+  if (path.length < 3) throw new Error();
+  return getComponent(algo, path.slice(0, 3)) as Selector;
 }

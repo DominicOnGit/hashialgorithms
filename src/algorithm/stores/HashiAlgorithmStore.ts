@@ -6,7 +6,8 @@ import type {
   AlgorithmPath,
   Term,
   Rule,
-  SelectorKindAndExcludeAncestor
+  SelectorKindAndExcludeAncestor,
+  HashiAction
 } from './HashiAlgorithm';
 import {
   deleteComponent,
@@ -48,7 +49,11 @@ export const TestAlgorithm: HashiAlgorithm = {
           ]
         }
       ],
-      action: { kind: 'addEdge' }
+      action: {
+        kind: 'setProperty',
+        property: 'maxMultiplicity',
+        value: { kind: 'constant', value: 1 }
+      }
     }
   ]
 };
@@ -120,6 +125,11 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
     deleteCondition(pathToCondition: AlgorithmPath): void {
       console.log('deleteCondition', pathToCondition);
       deleteComponent(this, pathToCondition);
+    },
+
+    changeAction(pathToAction: AlgorithmPath, newAction: HashiAction): void {
+      console.log('changeAction', pathToAction, newAction);
+      setComponent(this, pathToAction, newAction);
     }
   }
 });

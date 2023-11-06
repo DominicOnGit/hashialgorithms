@@ -1,0 +1,8 @@
+- setting auxiliary proporties, e.g. maxMultiplicity
+- save/load of algorithms
+- multiple rules
+- advanced hashi builder, difficulties
+- manual bridge drawing
+- tutorial
+- any operatior
+- action editor

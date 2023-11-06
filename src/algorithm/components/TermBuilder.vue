@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { type AlgorithmPath, type Term } from '@/algorithm/stores/HashiAlgorithm';
-import { TermBuilderService } from '@/algorithm/services/TermBuilderService';
+import {
+  type AlgorithmPath,
+  type SelectorKind,
+  type Term
+} from '@/algorithm/stores/HashiAlgorithm';
+import { TermBuilderService, getTermId } from '@/algorithm/services/TermBuilderService';
 import { getAncestorSelector } from '@/algorithm/services/AlgorithmPathService';
 import SumBuilder from './SumBuilder.vue';
 import ComboboxMultiSelect from '../../components/ComboboxMultiSelect.vue';
@@ -11,17 +15,14 @@ const props = defineProps<{
   term: Term;
   path: AlgorithmPath;
   allowSum: boolean;
+  onEdgeOrVertex: SelectorKind;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 
-const termBuilderService = computed(() => {
-  const ancestorSelector = getAncestorSelector(hashiAlgorithmStore, props.path);
-  return new TermBuilderService(ancestorSelector.kind);
-});
-
 const options = computed(() => {
-  const allTerms = termBuilderService.value.getAllTermOptions(props.allowSum);
+  const termBuilderService = new TermBuilderService(props.onEdgeOrVertex);
+  const allTerms = termBuilderService.getAllTermOptions(props.allowSum);
   return allTerms;
 });
 </script>
@@ -30,15 +31,15 @@ const options = computed(() => {
   <ComboboxMultiSelect
     :options="options"
     :active="term"
-    :key-getter="termBuilderService.getTermId"
-    :label-getter="termBuilderService.getTermId"
+    :key-getter="getTermId"
+    :label-getter="getTermId"
     @update:modelValue="(term: Term) => hashiAlgorithmStore.changeTerm(path, term)"
   >
     <template #selected="slotProps">
       <template v-if="slotProps.selectedItem.kind == 'sum'">
         <SumBuilder :term="slotProps.selectedItem" :path="path"></SumBuilder>
       </template>
-      <template v-else> {{ termBuilderService.getTermId(slotProps.selectedItem) }}</template>
+      <template v-else> {{ getTermId(slotProps.selectedItem) }}</template>
     </template>
   </ComboboxMultiSelect>
 </template>

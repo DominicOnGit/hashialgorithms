@@ -1,11 +1,12 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, h } from 'vue';
 import { mapStores } from 'pinia';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { AlgorithmRunner } from '@/algorithm/services/AlgorithmRunner';
 import { useMiscStore } from '@/stores/MiscStore';
 import { HashiBuilder } from '@/hashi/services/HashiBuilder';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { buildWithMaxMultiplicity } from '@/hashi/services/HashiSamples';
 
 export default defineComponent({
   data() {
@@ -58,6 +59,10 @@ export default defineComponent({
         builder.grow({ nx: 11, ny: 11 });
       }
       this.clearEdges();
+    },
+    hashi1(): void {
+      const hashi = buildWithMaxMultiplicity();
+      this.hashiStore.setHashi(hashi);
     }
   }
 });
@@ -71,6 +76,7 @@ export default defineComponent({
     <button @click="grow">grow</button>
     <button @click="clearEdges">clear</button>
     <button @click="growSomeAndClear">growProblem</button>
+    <button @click="hashi1">Hashi1</button>
   </div>
 </template>
 
