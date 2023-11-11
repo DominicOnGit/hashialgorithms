@@ -6,7 +6,6 @@ import {
   type Term
 } from '@/algorithm/stores/HashiAlgorithm';
 import { TermBuilderService, getTermId } from '@/algorithm/services/TermBuilderService';
-import { getAncestorSelector } from '@/algorithm/services/AlgorithmPathService';
 import SumBuilder from './SumBuilder.vue';
 import ComboboxMultiSelect from '../../components/ComboboxMultiSelect.vue';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';

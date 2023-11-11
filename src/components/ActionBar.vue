@@ -1,6 +1,4 @@
-<script lang="ts">
-import { defineComponent, h } from 'vue';
-import { mapStores } from 'pinia';
+<script setup lang="ts">
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { AlgorithmRunner } from '@/algorithm/services/AlgorithmRunner';
 import { useMiscStore } from '@/stores/MiscStore';
@@ -8,64 +6,61 @@ import { HashiBuilder } from '@/hashi/services/HashiBuilder';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { buildWithMaxMultiplicity } from '@/hashi/services/HashiSamples';
 
-export default defineComponent({
-  data() {
-    return {
-      vueCanvas: undefined as CanvasRenderingContext2D | undefined | null
-    };
-  },
-  computed: {
-    ...mapStores(useHashiStore, useHashiAlgorithmStore, useMiscStore)
-  },
-  methods: {
-    reset(): void {
-      console.log('reset');
-      this.hashiStore.$reset();
-      // const hashi = new HashiBuilder().buildEmpty()
-      // this.hashiStore.setHashi(hashi)
-    },
-    step(): void {
-      console.log('step');
-      const runner = new AlgorithmRunner(this.hashiAlgorithmStore, this.hashiStore);
-      runner.runStep();
-    },
-    animate(): void {
-      if (this.miscStore.isRunning) {
-        const runner = new AlgorithmRunner(this.hashiAlgorithmStore, this.hashiStore);
-        const ok = runner.runStep();
-        if (ok) {
-          setTimeout(() => this.animate(), 1000);
-        } else {
-          this.miscStore.isRunning = false;
-        }
-      }
-    },
-    toggleRunning(): void {
-      this.miscStore.isRunning = !this.miscStore.isRunning;
-      if (this.miscStore.isRunning) {
-        this.animate();
-      }
-    },
-    grow(): void {
-      const builder = new HashiBuilder(this.hashiStore);
-      builder.grow({ nx: 11, ny: 11 });
-    },
-    clearEdges(): void {
-      this.hashiStore.edges = [];
-    },
-    growSomeAndClear(): void {
-      const builder = new HashiBuilder(this.hashiStore);
-      for (let i = 0; i < 5; i++) {
-        builder.grow({ nx: 11, ny: 11 });
-      }
-      this.clearEdges();
-    },
-    hashi1(): void {
-      const hashi = buildWithMaxMultiplicity();
-      this.hashiStore.setHashi(hashi);
+const hashiStore = useHashiStore();
+const hashiAlgorithmStore = useHashiAlgorithmStore();
+const miscStore = useMiscStore();
+
+function reset(): void {
+  console.log('reset');
+  hashiStore.$reset();
+}
+
+function step(): void {
+  console.log('step');
+  const runner = new AlgorithmRunner(hashiAlgorithmStore, hashiStore);
+  runner.runStep();
+}
+
+function animate(): void {
+  if (miscStore.isRunning) {
+    const runner = new AlgorithmRunner(hashiAlgorithmStore, hashiStore);
+    const ok = runner.runStep();
+    if (ok) {
+      setTimeout(() => animate(), 1000);
+    } else {
+      miscStore.isRunning = false;
     }
   }
-});
+}
+
+function toggleRunning(): void {
+  miscStore.isRunning = !miscStore.isRunning;
+  if (miscStore.isRunning) {
+    animate();
+  }
+}
+
+function grow(): void {
+  const builder = new HashiBuilder(hashiStore);
+  builder.grow({ nx: 11, ny: 11 });
+}
+
+function clearEdges(): void {
+  hashiStore.edges = [];
+}
+
+function growSomeAndClear(): void {
+  const builder = new HashiBuilder(hashiStore);
+  for (let i = 0; i < 5; i++) {
+    builder.grow({ nx: 11, ny: 11 });
+  }
+  clearEdges();
+}
+
+function hashi1(): void {
+  const hashi = buildWithMaxMultiplicity();
+  hashiStore.setHashi(hashi);
+}
 </script>
 
 <template>

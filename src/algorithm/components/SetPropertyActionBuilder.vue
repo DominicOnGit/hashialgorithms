@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import {
-  type Rule,
-  type AlgorithmPath,
-  type HashiAction,
-  type SetPropertyAction
-} from '@/algorithm/stores/HashiAlgorithm';
+import { type AlgorithmPath, type SetPropertyAction } from '@/algorithm/stores/HashiAlgorithm';
 import ComboboxMultiSelect from '@/components/ComboboxMultiSelect.vue';
 import { pathAppend } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { computed } from 'vue';
-import RuleBuilder from './RuleBuilder.vue';
 import TermBuilder from './TermBuilder.vue';
+import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
 
 const props = defineProps<{
   action: SetPropertyAction;
@@ -18,18 +13,11 @@ const props = defineProps<{
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
+const customPropertiesStore = useCustomPropertyStore();
 
 const propertyOptions = computed((): string[] => {
-  return ['maxMultiplicity'];
+  return customPropertiesStore.defs.map((x) => x.name);
 });
-
-function getKey(item: SetPropertyAction): string {
-  return item.kind;
-}
-
-function getLabel(item: SetPropertyAction): string {
-  return item.kind;
-}
 
 function changeProperty(newProperty: string): void {
   const newAction: SetPropertyAction = {

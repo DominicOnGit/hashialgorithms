@@ -1,8 +1,5 @@
-import type { CustomPropertyDef } from '@/stores/CustomPropertyDef';
-
 export interface HashiAlgorithm {
   rules: Rule[];
-  //  customProperties: CustomPropertyDef[];
 }
 
 export interface Rule {

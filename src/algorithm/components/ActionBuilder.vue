@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import {
-  type Rule,
   type AlgorithmPath,
   type HashiAction,
   type SetPropertyAction
 } from '@/algorithm/stores/HashiAlgorithm';
 import ComboboxMultiSelect from '@/components/ComboboxMultiSelect.vue';
 import SetPropertyActionBuilder from './SetPropertyActionBuilder.vue';
-import { pathAppend } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { computed } from 'vue';
 import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
