@@ -18,6 +18,7 @@ import {
 export const TestAlgorithm: HashiAlgorithm = {
   rules: [
     {
+      name: 'set maxMultiplicity',
       selectorSequence: [
         {
           kind: 'edge',
@@ -54,10 +55,23 @@ export const TestAlgorithm: HashiAlgorithm = {
         property: 'maxMultiplicity',
         value: { kind: 'constant', value: 1 }
       }
+    },
+    {
+      name: 'add edge',
+      selectorSequence: [],
+      action: {
+        kind: 'addEdge'
+      }
     }
   ]
 };
 
+function buildEmptyRule(): Rule {
+  return {
+    selectorSequence: [],
+    action: { kind: 'addEdge' }
+  };
+}
 function buildEmptyCondition(): Condition {
   return {
     lhs: { kind: 'constant', value: 0 },
@@ -97,6 +111,12 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
       // if (pathToTerm.termIndex == null) throw new Error();
 
       setComponent(this, pathToTerm, newTerm);
+    },
+
+    newRule(): void {
+      console.log('newRule');
+      const rule = buildEmptyRule();
+      this.rules.push(rule);
     },
 
     newSelector(pathToRule: AlgorithmPath): void {

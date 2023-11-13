@@ -39,7 +39,10 @@ const optionsData = computed(() => {
   const dataFromOptions = props.options.map(toOptionData);
   const activeData = toOptionData(props.active);
   const activeAt = dataFromOptions.findIndex((x) => x.key === activeData.key);
-  if (activeAt === -1) throw new Error('active item not found in options');
+  if (activeAt === -1) {
+    console.error('active item not found', props.active, props.options);
+    throw new Error('active item not found in options');
+  }
   dataFromOptions.splice(activeAt, 1, activeData);
   return dataFromOptions;
 });
