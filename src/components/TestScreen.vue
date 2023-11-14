@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import SlowPressButton from './SlowPressButton.vue';
 
 interface OptionType {
   label: string;
@@ -22,20 +23,8 @@ const opt = ref(optRaw);
 
 <template>
   <h1>Test</h1>
-  start
-  <ComboboxSelection :options="opt" :selected="opt[0]">
-    <template #default="slotProps"> {{ slotProps.selectedItem.label }} </template>
-    <template #option="slotProps"> {{ slotProps.item.label }} </template>
-  </ComboboxSelection>
-  continue
-  <!-- <TermBuilder :path="path" :term="term"></TermBuilder> -->
-  <!-- 
-  <Multiselect :options="opt" :modelValue="opt[1]" :searchable="false">
-    <template #singleLabel="slotProps">
-      {{ slotProps }}
-    </template>
-  </Multiselect>
-  and here we -->
+
+  <SlowPressButton @activated="console.log('activated')">OK</SlowPressButton>
 </template>
 
 <style scoped></style>
