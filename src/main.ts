@@ -7,6 +7,11 @@ import { createPinia } from 'pinia';
 import GameScreen from './components/GameScreen.vue';
 import TestScreen from './components/TestScreen.vue';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
+
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 const routes: RouteRecordRaw[] = [
   { path: '/', component: GameScreen },
   { path: '/test', component: TestScreen }
