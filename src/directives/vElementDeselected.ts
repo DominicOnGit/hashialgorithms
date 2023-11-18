@@ -3,18 +3,28 @@ export const vElementDeselected = {
   mounted: function (el: any, binding: any, vnode: any): void {
     el.globalClickEvent = function (event: any) {
       const { handler, exclude } = binding.value;
-
-      const noExcludedClicked = exclude.every((refName: string) => {
-        const excludedEl = vnode.ctx.refs[refName];
-        if (excludedEl instanceof Array) {
-          return excludedEl.every(
-            (excludedArrayEl) =>
-              excludedArrayEl !== event.target && !excludedArrayEl.contains(event.target)
-          );
-        }
-        return excludedEl !== event.target && !excludedEl.contains(event.target);
-      });
-      if (noExcludedClicked) {
+      if (!isInDom(event.target)) {
+        console.log('removed element');
+        return;
+      }
+      let clickedOutsideExclusion: boolean;
+      if (exclude == null) {
+        clickedOutsideExclusion = el !== event.target && !el.contains(event.target);
+      } else {
+        clickedOutsideExclusion = exclude.every((refName: string) => {
+          const excludedEl = vnode.ctx.refs[refName];
+          console.log(event.target, excludedEl);
+          console.log(event.target.parentElement);
+          if (excludedEl instanceof Array) {
+            return excludedEl.every(
+              (excludedArrayEl) =>
+                excludedArrayEl !== event.target && !excludedArrayEl.contains(event.target)
+            );
+          }
+          return excludedEl !== event.target && !excludedEl.contains(event.target);
+        });
+      }
+      if (clickedOutsideExclusion) {
         handler(event);
       }
     };
@@ -26,6 +36,15 @@ export const vElementDeselected = {
     document.body.removeEventListener('touchstart', el.globalClickEvent);
   }
 };
+
+function isInDom(element: HTMLElement): boolean {
+  let el: HTMLElement | null = element;
+  while (el != null) {
+    if (el.localName === 'html') return true;
+    el = el.parentElement;
+  }
+  return false;
+}
 
 // enables v-focus in templates
 export const vElementDeselectedByParentId = {

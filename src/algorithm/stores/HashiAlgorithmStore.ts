@@ -150,6 +150,11 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
     changeAction(pathToAction: AlgorithmPath, newAction: HashiAction): void {
       console.log('changeAction', pathToAction, newAction);
       setComponent(this, pathToAction, newAction);
+    },
+
+    deleteRule(pathToRule: AlgorithmPath): void {
+      console.log('deleteRule', pathToRule);
+      deleteComponent(this, pathToRule);
     }
   }
 });

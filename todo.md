@@ -1,8 +1,16 @@
-- setting auxiliary proporties, e.g. maxMultiplicity
+## Prio 1
+
 - save/load of algorithms
-- multiple rules
 - advanced hashi builder, difficulties
 - manual bridge drawing
 - tutorial
 - any operatior
-- action editor
+- beautify
+
+## Prio 2
+
+- undo/redo
+
+## Bugs
+
+- Hashi.changeSelectorKind can leave selector inconsistent, as property terms can be invalid on the new edge/vertex
