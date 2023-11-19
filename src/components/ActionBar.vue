@@ -5,10 +5,16 @@ import { useMiscStore } from '@/stores/MiscStore';
 import { HashiBuilder } from '@/hashi/services/HashiBuilder';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { buildWithMaxMultiplicity } from '@/hashi/services/HashiSamples';
+import { SaveAll, LoadAll, CanLoad } from '@/services/storageService';
+import { onMounted, ref } from 'vue';
 
 const hashiStore = useHashiStore();
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const miscStore = useMiscStore();
+
+const canLoad = ref(false);
+
+onMounted(() => (canLoad.value = CanLoad()));
 
 function reset(): void {
   console.log('reset');
@@ -61,6 +67,11 @@ function hashi1(): void {
   const hashi = buildWithMaxMultiplicity();
   hashiStore.setHashi(hashi);
 }
+
+function Save(): void {
+  SaveAll();
+  canLoad.value = CanLoad();
+}
 </script>
 
 <template>
@@ -72,6 +83,10 @@ function hashi1(): void {
     <button @click="clearEdges">clear</button>
     <button @click="growSomeAndClear">growProblem</button>
     <button @click="hashi1">Hashi1</button>
+  </div>
+  <div>
+    <button @click="Save">save</button>
+    <button @click="LoadAll" :disabled="!canLoad">load</button>
   </div>
 </template>
 

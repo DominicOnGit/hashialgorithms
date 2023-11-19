@@ -1,6 +1,6 @@
 ## Prio 1
 
-- save/load of algorithms
+- multi rule running
 - advanced hashi builder, difficulties
 - manual bridge drawing
 - tutorial

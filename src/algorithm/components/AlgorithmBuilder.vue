@@ -6,7 +6,6 @@ import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
 import type { Rule } from '../stores/HashiAlgorithm';
 import { ref, nextTick } from 'vue';
 import SlowPressButton from '@/components/SlowPressButton.vue';
-import { errorMonitor } from 'events';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 
