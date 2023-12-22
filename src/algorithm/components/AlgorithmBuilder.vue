@@ -1,19 +1,39 @@
 <script setup lang="ts">
-import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { TestAlgorithm, useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { vElementDeselected } from '@/directives/vElementDeselected';
 import RuleBuilder from './RuleBuilder.vue';
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
 import type { Rule } from '../stores/HashiAlgorithm';
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, onBeforeMount } from 'vue';
 import SlowPressButton from '@/components/SlowPressButton.vue';
 import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
+import { useHashiStore } from '@/hashi/stores/hashi';
+import { HashiUtil } from '@/hashi/services/HashiUtil';
+import { RuleRunner } from '../services/RuleRunner';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const runState = useAlgorithmRunnerStore();
+const hashiState = useHashiStore();
 
 const nameEditors = ref();
 const activeRuleIndex = ref(0);
 const editedNameIndex = ref<number | null>(null);
+
+hashiState.$subscribe(() => updateRuleState());
+hashiAlgorithmStore.$subscribe(() => updateRuleState());
+
+function updateRuleState(): void {
+  hashiAlgorithmStore.rules.forEach((rule, index) => {
+    const runner = new RuleRunner(rule, new HashiUtil(hashiState));
+    const state = runner.getRuleState();
+
+    runState.setRuleState(index, state);
+  });
+}
+
+onBeforeMount(() => {
+  hashiAlgorithmStore.$patch(TestAlgorithm);
+});
 
 function getName(rule: Rule, index: number): string {
   return rule.name ?? 'Rule ' + (index + 1);

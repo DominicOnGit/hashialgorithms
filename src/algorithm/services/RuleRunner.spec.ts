@@ -162,3 +162,57 @@ test('runs action on selected ancestor', () => {
     { v1: 1, v2: 2, multiplicity: 1 }
   ]);
 });
+
+test('getRuleState', () => {
+  const rule: Rule = {
+    selectorSequence: [
+      {
+        kind: 'vertex',
+        conditions: [
+          {
+            lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+            operator: 'eq',
+            rhs: { kind: 'constant', value: 2 }
+          }
+        ]
+      }
+    ],
+    action: { kind: 'addEdge' }
+  };
+
+  const hashi: Hashi = {
+    vertices: [
+      { posX: 1, posY: 1, targetDegree: 1 },
+      { posX: 1, posY: 2, targetDegree: 2 }
+    ],
+    edges: []
+  };
+
+  const runner = new RuleRunner(rule, new HashiUtil(hashi));
+  const actual = runner.getRuleState();
+  expect(actual).toBe('matching');
+
+  hashi.vertices[1].targetDegree = 1;
+  const runner2 = new RuleRunner(rule, new HashiUtil(hashi));
+  const actual2 = runner2.getRuleState();
+  expect(actual2).toBe('noMatch');
+});
+
+test('getRuleState on empty rule', () => {
+  const rule: Rule = {
+    selectorSequence: [],
+    action: { kind: 'addEdge' }
+  };
+
+  const hashi: Hashi = {
+    vertices: [
+      { posX: 1, posY: 1, targetDegree: 1 },
+      { posX: 1, posY: 2, targetDegree: 2 }
+    ],
+    edges: []
+  };
+
+  const runner = new RuleRunner(rule, new HashiUtil(hashi));
+  const actual = runner.getRuleState();
+  expect(actual).toBe('noMatch');
+});

@@ -15,6 +15,10 @@ import {
   setComponent
 } from '@/algorithm/services/AlgorithmPathService';
 
+const EmptyAlgorithm: HashiAlgorithm = {
+  rules: []
+};
+
 export const TestAlgorithm: HashiAlgorithm = {
   rules: [
     {
@@ -86,7 +90,7 @@ function buildEmptySelector(kind: Selector['kind']): Selector {
 
 export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
   state: (): HashiAlgorithm => {
-    return TestAlgorithm;
+    return EmptyAlgorithm;
   },
   actions: {
     changeSelectorKind(

@@ -12,12 +12,16 @@ export const useAlgorithmRunnerStore = defineStore('algorithmRunner', {
   state: (): RunState => {
     return {
       activeRule: null,
-      ruleStates: ['noMatch', 'matching']
+      ruleStates: []
     };
   },
   actions: {
     setActiveRule(ruleIndex: number | null): void {
       this.activeRule = ruleIndex;
+    },
+    setRuleState(ruleIndex: number, state: RuleState): void {
+      console.log(`setRuleState(${ruleIndex}, ${state})`);
+      this.ruleStates[ruleIndex] = state;
     }
   }
 });
