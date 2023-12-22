@@ -9,6 +9,7 @@ import { TermBuilderService, getTermId } from '@/algorithm/services/TermBuilderS
 import SumBuilder from './SumBuilder.vue';
 import ComboboxMultiSelect from '../../components/ComboboxMultiSelect.vue';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
 
 const props = defineProps<{
   term: Term;
@@ -18,9 +19,13 @@ const props = defineProps<{
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
+const customPropertiesStore = useCustomPropertyStore();
 
 const options = computed(() => {
-  const termBuilderService = new TermBuilderService(props.onEdgeOrVertex);
+  const termBuilderService = new TermBuilderService(
+    props.onEdgeOrVertex,
+    customPropertiesStore.defs
+  );
   const allTerms = termBuilderService.getAllTermOptions(props.allowSum);
   return allTerms;
 });

@@ -1,3 +1,5 @@
+import type { CustomPropertyDef } from '@/stores/CustomPropertyDef';
+
 export interface HashiAlgorithm {
   rules: Rule[];
 }
@@ -44,6 +46,11 @@ export interface ProperyAccessTerm {
   property: 'multiplicity' | 'targetDegree' | 'degree';
 }
 
+export interface CustomProperyAccessTerm {
+  kind: 'custompropertyAccess';
+  property: CustomPropertyDef;
+}
+
 export interface ConstantTerm {
   kind: 'constant';
   value: number;
@@ -55,7 +62,7 @@ export interface SumTerm {
   what: Term;
 }
 
-export type Term = ProperyAccessTerm | ConstantTerm | SumTerm;
+export type Term = ProperyAccessTerm | CustomProperyAccessTerm | ConstantTerm | SumTerm;
 
 export type AlgorithmPiece = Rule | Selector | Condition | Term | HashiAction;
 

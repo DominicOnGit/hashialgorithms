@@ -28,7 +28,7 @@ export class SelectorRunner {
 
     const res = ancestorsToLevelSet.flatMap((selectedAncestors) => {
       const allAtLevel = this.selectorEvaluator.SelectAll(this.selectors[level], selectedAncestors);
-      console.log(
+      console.debug(
         'selector evaluated at level ' + level,
         selectedAncestors.map((x) => x.toString()),
         allAtLevel.map((x) => x.toString())

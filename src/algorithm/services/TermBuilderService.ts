@@ -1,7 +1,11 @@
 import type { Selector, Term } from '@/algorithm/stores/HashiAlgorithm';
+import type { CustomPropertyDefs } from '@/stores/CustomPropertyDef';
 
 export class TermBuilderService {
-  constructor(private selectionKind: Selector['kind']) {}
+  constructor(
+    private selectionKind: Selector['kind'],
+    private customPropDefs: CustomPropertyDefs
+  ) {}
 
   commonTerms: Term[] = [
     { kind: 'constant', value: 0 },
@@ -27,11 +31,14 @@ export class TermBuilderService {
   }
 
   private getAllTermOptionsUnfiltered(): Term[] {
+    const customPropertyTerms = this.customPropDefs
+      .filter((pd) => pd.onVertex === (this.selectionKind === 'vertex'))
+      .map<Term>((pd) => ({ kind: 'custompropertyAccess', property: pd }));
     switch (this.selectionKind) {
       case 'vertex':
-        return this.commonTerms.concat(this.vertexTerms);
+        return this.commonTerms.concat(this.vertexTerms).concat(customPropertyTerms);
       case 'edge':
-        return this.commonTerms.concat(this.edgeTerms);
+        return this.commonTerms.concat(this.edgeTerms).concat(customPropertyTerms);
     }
   }
 }
@@ -50,6 +57,8 @@ export function termToString(term: Term): string {
     case 'constant':
       return term.value.toString();
     case 'propertyAccess':
+      return `@${term.property}`;
+    case 'custompropertyAccess':
       return `@${term.property}`;
     case 'sum':
       return `sum_${term.over.kind}(${termToString(term.what)})`;

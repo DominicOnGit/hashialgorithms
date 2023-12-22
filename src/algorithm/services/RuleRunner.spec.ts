@@ -38,7 +38,41 @@ test('runs rule', () => {
   expect(hashiStore.edges).toStrictEqual([expectedEdge]);
 });
 
-test('runStep retuns false if nothing executed', () => {
+test('runStep retuns false if nothing selected', () => {
+  const rule: Rule = {
+    selectorSequence: [
+      {
+        kind: 'edge',
+        conditions: [
+          {
+            lhs: { kind: 'propertyAccess', property: 'multiplicity' },
+            operator: 'eq',
+            rhs: { kind: 'constant', value: 3 }
+          }
+        ]
+      }
+    ],
+    action: { kind: 'addEdge' }
+  };
+
+  const hashi: Hashi = {
+    vertices: [
+      { posX: 1, posY: 1, targetDegree: 1 },
+      { posX: 1, posY: 2, targetDegree: 1 }
+    ],
+    edges: []
+  };
+  setActivePinia(createPinia());
+  const hashiStore = useHashiStore();
+  hashiStore.setHashi(hashi);
+
+  const runner = new RuleRunner(rule, new HashiUtil(hashi));
+  const ok = runner.runRuleStep();
+  expect(ok).toBe(false);
+  expect(hashiStore.edges).toStrictEqual([]);
+});
+
+test('runStep retuns false if nothing selected', () => {
   const rule: Rule = {
     selectorSequence: [
       {

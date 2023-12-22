@@ -6,8 +6,10 @@ import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
 import type { Rule } from '../stores/HashiAlgorithm';
 import { ref, nextTick } from 'vue';
 import SlowPressButton from '@/components/SlowPressButton.vue';
+import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
+const runState = useAlgorithmRunnerStore();
 
 const nameEditors = ref();
 const activeRuleIndex = ref(0);
@@ -51,6 +53,20 @@ function deleteRule(index: number): void {
         :class="{ active: activeRuleIndex === index }"
         @click="activeRuleIndex = index"
       >
+        <i v-if="runState.activeRule === index" class="bi-activity"></i>
+        <!-- bi-bullseye bi-caret-right-square-->
+        <template v-else>
+          <i v-if="runState.ruleStates[index] == 'matching'" class="bi-crosshair"></i>
+          <i v-else-if="runState.ruleStates[index] == 'noMatch'" class="bi-mic-mute"></i>
+          <i v-else-if="runState.ruleStates[index] == 'unknown'" class="bi-hourglass"></i>
+          <i v-else-if="runState.ruleStates[index] == 'infiniteLoop'" class="bi-infinity"></i>
+        </template>
+        <!-- <span
+          v-if="runState.activeRule === index"
+          class="spinner-border spinner-border-sm"
+          role="status"
+          aria-hidden="true"
+        ></span> -->
         <template v-if="editedNameIndex === index">
           <input
             ref="nameEditors"

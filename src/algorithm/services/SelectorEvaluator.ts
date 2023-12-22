@@ -87,7 +87,7 @@ export class SelectorEvaluator implements ISelectorEvaluator {
     const condString = `${termToString(cond.lhs)}=${lhs} ${cond.operator} ${termToString(
       cond.rhs
     )}=${rhs}`;
-    console.log(`evaluateCondition(${condString}, ${item.toString()}) => ${res}`);
+    console.debug(`evaluateCondition(${condString}, ${item.toString()}) => ${res}`);
     return res;
   }
 

@@ -1,3 +1,4 @@
+import { type CustomPropertyDef } from './../../stores/CustomPropertyDef';
 import type { ProperyAccessTerm, SumTerm, Term } from '@/algorithm/stores/HashiAlgorithm';
 import { HashiEdge, HashiUtil, HashiVertex, type Selectable } from '../../hashi/services/HashiUtil';
 import type { ISelectorEvaluator } from './interfaces';
@@ -22,6 +23,9 @@ export class TermEvaluator {
       case 'propertyAccess': {
         return this.evaluatePropertyAccess(term.property, item);
       }
+      case 'custompropertyAccess': {
+        return this.evaluateCustomPropertyAccess(term.property, item);
+      }
       case 'sum': {
         return this.evaluateSum(term, item, selectedAncestors);
       }
@@ -37,6 +41,20 @@ export class TermEvaluator {
       0
     );
     return res;
+  }
+
+  private evaluateCustomPropertyAccess(property: CustomPropertyDef, item: Selectable): number {
+    if (property.onVertex) {
+      throw new Error('not implemented');
+    } else {
+      if (!(item instanceof HashiEdge)) throw new Error('bad type');
+      {
+        if (item.edge.customPropertyValues != null) {
+          return item.edge.customPropertyValues[property.name] ?? property.initialValue;
+        }
+        return property.initialValue;
+      }
+    }
   }
 
   private evaluatePropertyAccess(
