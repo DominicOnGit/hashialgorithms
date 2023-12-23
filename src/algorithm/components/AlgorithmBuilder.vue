@@ -73,13 +73,19 @@ function deleteRule(index: number): void {
         :class="{ active: activeRuleIndex === index }"
         @click="activeRuleIndex = index"
       >
-        <i v-if="runState.activeRule === index" class="bi-activity"></i>
+        <i v-if="runState.activeRule === index" class="ruleState bi-activity"></i>
         <!-- bi-bullseye bi-caret-right-square-->
         <template v-else>
-          <i v-if="runState.ruleStates[index] == 'matching'" class="bi-crosshair"></i>
-          <i v-else-if="runState.ruleStates[index] == 'noMatch'" class="bi-mic-mute"></i>
-          <i v-else-if="runState.ruleStates[index] == 'unknown'" class="bi-hourglass"></i>
-          <i v-else-if="runState.ruleStates[index] == 'infiniteLoop'" class="bi-infinity"></i>
+          <i v-if="runState.ruleStates[index] == 'matching'" class="ruleState bi-play-circle"></i>
+          <i
+            v-else-if="runState.ruleStates[index] == 'noMatch'"
+            class="ruleState bi-stop-circle"
+          ></i>
+          <i v-else-if="runState.ruleStates[index] == 'unknown'" class="ruleState bi-hourglass"></i>
+          <i
+            v-else-if="runState.ruleStates[index] == 'infiniteLoop'"
+            class="ruleState bi-repeat"
+          ></i>
         </template>
         <!-- <span
           v-if="runState.activeRule === index"
@@ -101,10 +107,10 @@ function deleteRule(index: number): void {
         </template>
         <template v-else>
           <span>{{ getName(rule, index) }} </span>
-          <button class="btn" @click="editName(index)">
+          <button class="ruleBtn btn" @click="editName(index)">
             <i class="bi-pencil"></i>
           </button>
-          <SlowPressButton class="btn" @activated="() => deleteRule(index)">
+          <SlowPressButton class="ruleBtn btn" @activated="() => deleteRule(index)">
             <i class="bi-trash"></i>
           </SlowPressButton>
         </template>
@@ -119,4 +125,12 @@ function deleteRule(index: number): void {
   />
 </template>
 
-<style scoped></style>
+<style scoped>
+.ruleState {
+  margin-right: 5px;
+}
+.ruleBtn {
+  --bs-btn-padding-x: 0.5rem;
+  --bs-btn-padding-y: 0.1rem;
+}
+</style>
