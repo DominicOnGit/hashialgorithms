@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, onBeforeUpdate } from 'vue';
+import { computed } from 'vue';
 import {
   type AlgorithmPath,
   type SelectorKind,
@@ -29,13 +29,6 @@ const options = computed(() => {
   );
   const allTerms = termBuilderService.getAllTermOptions(props.allowSum);
   return allTerms;
-});
-
-onBeforeMount(() => {
-  console.log('TermBuilder mount', props.term, props.path);
-});
-onBeforeUpdate(() => {
-  console.log('TermBuilder', props.term, props.path);
 });
 </script>
 

@@ -50,7 +50,6 @@ export function setComponent(
   } else {
     setActionComponent(rule, path.slice(2), newComponent);
   }
-  console.log('after setComponent', algo.rules);
 }
 
 // path:  [selectorIndex, conditionIndex, termIndex, termPart]
