@@ -9,7 +9,9 @@ import {
 import type {
   AlgorithmPath,
   HashiAlgorithm,
+  PlusTerm,
   Selector,
+  SumTerm,
   Term
 } from '@/algorithm/stores/HashiAlgorithm';
 
@@ -61,7 +63,11 @@ const algorithmTemplate: HashiAlgorithm = {
                 what: { kind: 'constant', value: 1 }
               },
               operator: 'eq',
-              rhs: { kind: 'constant', value: 1 }
+              rhs: {
+                kind: 'plus',
+                lhs: { kind: 'constant', value: 10 },
+                rhs: { kind: 'constant', value: 11 }
+              }
             }
           ]
         }
@@ -74,6 +80,53 @@ const algorithmTemplate: HashiAlgorithm = {
 let algorithm: HashiAlgorithm;
 beforeEach(() => {
   algorithm = JSON.parse(JSON.stringify(algorithmTemplate));
+});
+
+test('toSumParts', () => {
+  const path: AlgorithmPath = pathAppend(
+    pathAppend(pathAppend(pathSelectorAndAppend(createPathToRule(2), 0), 0), 0),
+    0
+  );
+  expect(getComponent(algorithm, path)).toEqual(
+    (algorithm.rules[2].selectorSequence[0].conditions[0].lhs as SumTerm).over
+  );
+
+  const path2: AlgorithmPath = pathAppend(
+    pathAppend(pathAppend(pathSelectorAndAppend(createPathToRule(2), 0), 0), 0),
+    1
+  );
+  expect(getComponent(algorithm, path2)).toEqual(
+    (algorithm.rules[2].selectorSequence[0].conditions[0].lhs as SumTerm).what
+  );
+});
+
+test('toPlusParts', () => {
+  const path: AlgorithmPath = pathAppend(
+    pathAppend(pathAppend(pathSelectorAndAppend(createPathToRule(2), 0), 0), 1),
+    0
+  );
+  expect(getComponent(algorithm, path)).toEqual(
+    (algorithm.rules[2].selectorSequence[0].conditions[0].rhs as PlusTerm).lhs
+  );
+
+  const path2: AlgorithmPath = pathAppend(
+    pathAppend(pathAppend(pathSelectorAndAppend(createPathToRule(2), 0), 0), 1),
+    1
+  );
+  expect(getComponent(algorithm, path2)).toEqual(
+    (algorithm.rules[2].selectorSequence[0].conditions[0].rhs as PlusTerm).rhs
+  );
+});
+
+test('setPlusParts', () => {
+  const newTerm: Term = { kind: 'constant', value: 42 };
+  const path: AlgorithmPath = pathAppend(
+    pathAppend(pathAppend(pathSelectorAndAppend(createPathToRule(2), 0), 0), 1),
+    0
+  );
+  setComponent(algorithm, path, newTerm);
+
+  expect((algorithm.rules[2].selectorSequence[0].conditions[0].rhs as PlusTerm).lhs).toBe(newTerm);
 });
 
 test('toRule', () => {

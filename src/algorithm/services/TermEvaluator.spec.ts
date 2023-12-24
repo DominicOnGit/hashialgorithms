@@ -71,6 +71,39 @@ describe('propertyAccess', () => {
   });
 });
 
+describe('plus', () => {
+  const mockSelectorEvaluator: ISelectorEvaluator = {
+    SelectAll: (): Selectable[] => {
+      throw new Error();
+    }
+  };
+
+  test('adding constants', () => {
+    const hashi = new HashiUtil({
+      vertices: [
+        { posX: 1, posY: 1, targetDegree: 2 },
+        { posX: 1, posY: 2, targetDegree: 3 },
+        { posX: 1, posY: 3, targetDegree: 1 },
+        { posX: 5, posY: 5, targetDegree: 1 }
+      ],
+      edges: [
+        { v1: 0, v2: 1, multiplicity: 1 },
+        { v1: 1, v2: 2, multiplicity: 2 }
+      ]
+    });
+
+    const term: Term = {
+      kind: 'plus',
+      lhs: { kind: 'constant', value: 3 },
+      rhs: { kind: 'constant', value: 2 }
+    };
+
+    const evaluator = new TermEvaluator(hashi, mockSelectorEvaluator);
+
+    expect(evaluator.evaluate(term, hashi.vertices[0], [])).toBe(3 + 2);
+  });
+});
+
 describe('sum', () => {
   test('count incident edges', () => {
     const hashi = new HashiUtil({

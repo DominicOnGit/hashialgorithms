@@ -9,15 +9,24 @@ import type {
 } from '@/algorithm/stores/HashiAlgorithm';
 import { type Rule } from '../stores/HashiAlgorithm';
 
-// path: [ruleIndex, selectorOrAction, ...]
 export function getComponent(algo: HashiAlgorithm, path: AlgorithmPath): AlgorithmPiece {
+  const res = getComponent2(algo, path);
+  console.log('getComponent ', path, res);
+  return res;
+}
+
+// path: [ruleIndex, selectorOrAction, ...]
+export function getComponent2(algo: HashiAlgorithm, path: AlgorithmPath): AlgorithmPiece {
   if (path.length === 0) throw new Error();
 
   const rule = algo.rules[path[0]];
+  if (rule == null) throw new Error();
+
   if (path.length > 1) {
-    return path[1] === 0
-      ? getSelectorComponent(rule, path.slice(2))
-      : getActionComponent(rule, path);
+    const res =
+      path[1] === 0 ? getSelectorComponent(rule, path.slice(2)) : getActionComponent(rule, path);
+    if (res == null) throw new Error();
+    return res;
   }
   return rule;
 }
@@ -41,6 +50,7 @@ export function setComponent(
   } else {
     setActionComponent(rule, path.slice(2), newComponent);
   }
+  console.log('after setComponent', algo.rules);
 }
 
 // path:  [selectorIndex, conditionIndex, termIndex, termPart]
@@ -98,7 +108,9 @@ function getActionComponent(rule: Rule, path: AlgorithmPath): AlgorithmPiece {
     if (path[1] !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
     const term = action.value;
     if (path.length > 2) {
-      return getTermPart(term, path.slice(2));
+      const part = getTermPart(term, path.slice(2));
+      if (part == null) console.warn('part null', term, path.slice(2));
+      return part;
     }
     return term;
   }
@@ -126,14 +138,19 @@ function setActionComponent(rule: Rule, path: AlgorithmPath, newComponent: Algor
 }
 
 function getTermPart(term: Term, termPath: AlgorithmPath): Selector | Term {
-  if (term.kind === 'sum') {
+  if (term.kind === 'plus') {
+    return termPath[0] === 0 ? term.lhs : term.rhs;
+  } else if (term.kind === 'sum') {
     const part = termPath[0] === 0 ? term.over : term.what;
     return part;
   } else throw new Error();
 }
 
 function setTermPart(term: Term, termPath: AlgorithmPath, newComponent: AlgorithmPiece): void {
-  if (term.kind === 'sum') {
+  if (term.kind === 'plus') {
+    if (termPath[0] === 0) term.lhs = newComponent as Term;
+    else term.rhs = newComponent as Term;
+  } else if (term.kind === 'sum') {
     if (termPath[0] === 0) term.over = newComponent as Selector;
     else term.what = newComponent as Term;
   } else throw new Error();

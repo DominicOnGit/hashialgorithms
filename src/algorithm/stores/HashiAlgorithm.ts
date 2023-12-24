@@ -56,13 +56,19 @@ export interface ConstantTerm {
   value: number;
 }
 
+export interface PlusTerm {
+  kind: 'plus';
+  lhs: Term;
+  rhs: Term;
+}
+
 export interface SumTerm {
   kind: 'sum';
   over: Selector;
   what: Term;
 }
 
-export type Term = ProperyAccessTerm | CustomProperyAccessTerm | ConstantTerm | SumTerm;
+export type Term = ProperyAccessTerm | CustomProperyAccessTerm | ConstantTerm | SumTerm | PlusTerm;
 
 export type AlgorithmPiece = Rule | Selector | Condition | Term | HashiAction;
 

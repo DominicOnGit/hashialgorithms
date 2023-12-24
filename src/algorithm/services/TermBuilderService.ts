@@ -10,7 +10,8 @@ export class TermBuilderService {
   commonTerms: Term[] = [
     { kind: 'constant', value: 0 },
     { kind: 'constant', value: 1 },
-    { kind: 'constant', value: 2 }
+    { kind: 'constant', value: 2 },
+    { kind: 'plus', lhs: { kind: 'constant', value: 1 }, rhs: { kind: 'constant', value: 1 } }
   ];
 
   vertexTerms: Term[] = [
@@ -60,6 +61,8 @@ export function termToString(term: Term): string {
       return `@${term.property}`;
     case 'custompropertyAccess':
       return `@${term.property}`;
+    case 'plus':
+      return `${termToString(term.lhs)} + ${termToString(term.rhs)}`;
     case 'sum':
       return `sum_${term.over.kind}(${termToString(term.what)})`;
   }

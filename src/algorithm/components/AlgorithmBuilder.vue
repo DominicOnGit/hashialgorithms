@@ -120,6 +120,7 @@ function deleteRule(index: number): void {
   </ul>
 
   <RuleBuilder
+    v-if="hashiAlgorithmStore.rules.length > 0"
     :rule="hashiAlgorithmStore.rules[activeRuleIndex]"
     :path="createPathToRule(activeRuleIndex)"
   />

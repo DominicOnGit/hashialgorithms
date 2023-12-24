@@ -9,6 +9,7 @@
 
 ## Prio 2
 
+- empty Term
 - undo/redo
 
 ## Bugs

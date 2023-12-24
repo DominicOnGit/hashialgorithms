@@ -1,5 +1,5 @@
 import { type CustomPropertyDef } from './../../stores/CustomPropertyDef';
-import type { ProperyAccessTerm, SumTerm, Term } from '@/algorithm/stores/HashiAlgorithm';
+import type { PlusTerm, ProperyAccessTerm, SumTerm, Term } from '@/algorithm/stores/HashiAlgorithm';
 import { HashiEdge, HashiUtil, HashiVertex, type Selectable } from '../../hashi/services/HashiUtil';
 import type { ISelectorEvaluator } from './interfaces';
 
@@ -26,10 +26,19 @@ export class TermEvaluator {
       case 'custompropertyAccess': {
         return this.evaluateCustomPropertyAccess(term.property, item);
       }
+      case 'plus': {
+        return this.evaluatePlus(term, item, selectedAncestors);
+      }
       case 'sum': {
         return this.evaluateSum(term, item, selectedAncestors);
       }
     }
+  }
+
+  private evaluatePlus(plus: PlusTerm, item: Selectable, selectedAncestors: Selectable[]): number {
+    const left = this.evaluate2(plus.lhs, item, selectedAncestors);
+    const right = this.evaluate2(plus.rhs, item, selectedAncestors);
+    return left + right;
   }
 
   private evaluateSum(sum: SumTerm, item: Selectable, selectedAncestors: Selectable[]): number {
