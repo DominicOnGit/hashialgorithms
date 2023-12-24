@@ -30,7 +30,7 @@ const onEdgeOrVertex = computed((): SelectorKind => {
     @mousedown.stop
     :term="term.what"
     :path="pathAppend(path, 1)"
-    :on-edge-or-vertex="onEdgeOrVertex"
+    :on-edge-or-vertex="term.over.kind"
     :allowSum="false"
   ></TermBuilder>
   Over

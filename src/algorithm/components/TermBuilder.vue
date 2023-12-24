@@ -5,7 +5,11 @@ import {
   type SelectorKind,
   type Term
 } from '@/algorithm/stores/HashiAlgorithm';
-import { TermBuilderService, getTermId } from '@/algorithm/services/TermBuilderService';
+import {
+  TermBuilderService,
+  getTermId,
+  termToString
+} from '@/algorithm/services/TermBuilderService';
 import SumBuilder from './SumBuilder.vue';
 import PlusBuilder from './PlusBuilder.vue';
 import ComboboxMultiSelect from '../../components/ComboboxMultiSelect.vue';
@@ -28,6 +32,7 @@ const options = computed(() => {
     customPropertiesStore.defs
   );
   const allTerms = termBuilderService.getAllTermOptions(props.allowSum);
+  // console.log(`options for ${termToString(props.term)}: ${allTerms.map(termToString)}`);
   return allTerms;
 });
 </script>

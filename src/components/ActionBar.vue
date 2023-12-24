@@ -16,11 +16,6 @@ const canLoad = ref(false);
 
 onMounted(() => (canLoad.value = CanLoad()));
 
-function reset(): void {
-  console.log('reset');
-  hashiStore.$reset();
-}
-
 function step(): void {
   console.log('step');
   const runner = new AlgorithmRunner(hashiAlgorithmStore, hashiStore);
@@ -76,18 +71,27 @@ function Save(): void {
 
 <template>
   <div>
-    <button @click="reset">reset</button>
-    <button @click="step">step</button>
-    <button @click="toggleRunning">{{ miscStore.isRunning ? 'stop' : 'start' }}</button>
+    <label class="category">Hashi:</label>
     <button @click="grow">grow</button>
     <button @click="clearEdges">clear</button>
     <button @click="growSomeAndClear">growProblem</button>
     <button @click="hashi1">Hashi1</button>
   </div>
   <div>
+    <label class="category">Algo:</label>
+    <button @click="step">step</button>
+    <button @click="toggleRunning">{{ miscStore.isRunning ? 'stop' : 'start' }}</button>
+  </div>
+  <div>
+    <label class="category">File:</label>
     <button @click="Save">save</button>
     <button @click="LoadAll" :disabled="!canLoad">load</button>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.category {
+  display: inline-block;
+  width: 3em;
+}
+</style>

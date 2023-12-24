@@ -60,7 +60,7 @@ export function termToString(term: Term): string {
     case 'propertyAccess':
       return `@${term.property}`;
     case 'custompropertyAccess':
-      return `@${term.property}`;
+      return `@${term.property.name}`;
     case 'plus':
       return `${termToString(term.lhs)} + ${termToString(term.rhs)}`;
     case 'sum':
