@@ -2,6 +2,7 @@ import { type CustomPropertyDef } from './../../stores/CustomPropertyDef';
 import type { PlusTerm, ProperyAccessTerm, SumTerm, Term } from '@/algorithm/stores/HashiAlgorithm';
 import { HashiEdge, HashiUtil, HashiVertex, type Selectable } from '../../hashi/services/HashiUtil';
 import type { ISelectorEvaluator } from './interfaces';
+import { termToString } from './TermBuilderService';
 
 export class TermEvaluator {
   constructor(
@@ -44,11 +45,14 @@ export class TermEvaluator {
   private evaluateSum(sum: SumTerm, item: Selectable, selectedAncestors: Selectable[]): number {
     const chainToItem = [...selectedAncestors, item];
     const itemsToSumOver = this.selectorEvaluator.SelectAll(sum.over, chainToItem);
-    // console.log('evaluateSum on ' + item.toString(), itemsToSumOver);
-    const res = itemsToSumOver.reduce(
-      (acc, summandItem) => acc + this.evaluate2(sum.what, summandItem, chainToItem),
-      0
+    const itemValues = itemsToSumOver.map((summandItem) =>
+      this.evaluate2(sum.what, summandItem, chainToItem)
     );
+    console.debug(
+      `evaluateSum ${termToString(sum)} on ${item.toString()}: `,
+      itemsToSumOver.map((summandItem, index) => `${summandItem.toString()}=${itemValues[index]}`)
+    );
+    const res = itemValues.reduce((acc, summand) => acc + summand, 0);
     return res;
   }
 

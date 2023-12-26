@@ -79,11 +79,11 @@ export function buildInvalid(): Hashi {
 export function buildWithMaxMultiplicity(): Hashi {
   const res: Hashi = {
     vertices: [
-      { posX: 1, posY: 1, targetDegree: 1 },
-      { posX: 2, posY: 1, targetDegree: 2 },
+      { posX: 1, posY: 1, targetDegree: 2 },
+      { posX: 2, posY: 1, targetDegree: 1 },
       { posX: 1, posY: 2, targetDegree: 3 },
       { posX: 5, posY: 2, targetDegree: 4 },
-      { posX: 5, posY: 4, targetDegree: 5 }
+      { posX: 5, posY: 4, targetDegree: 2 }
     ],
     edges: [
       {

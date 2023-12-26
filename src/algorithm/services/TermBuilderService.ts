@@ -48,6 +48,8 @@ export function getTermId(term: Term): string {
   switch (term.kind) {
     case 'sum':
       return 'sum';
+    case 'plus':
+      return 'plus';
     default:
       return termToString(term);
   }
