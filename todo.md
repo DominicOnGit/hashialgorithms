@@ -4,8 +4,8 @@
 - advanced hashi builder, difficulties
 - manual bridge drawing
 - tutorial
-- any operatior
 - beautify
+- list rules
 
 ## Prio 2
 

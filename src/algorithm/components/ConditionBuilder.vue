@@ -23,14 +23,14 @@ const onEdgeOrVertex = computed((): SelectorKind => {
   return ancestorSelector.kind;
 });
 
-const operators: Operator[] = ['eq', 'le', 'lt'];
+const operators: Operator[] = ['lt', 'le', 'eq', 'ge', 'gt'];
 
 const operatorLabels: { [key in Operator]: string } = {
   eq: '\u003d',
   le: '\u2264',
-  lt: '\u003c'
-  // gt: '\u003e'
-  // ge: '\u2265'
+  lt: '\u003c',
+  gt: '\u003e',
+  ge: '\u2265'
 };
 </script>
 

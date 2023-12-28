@@ -33,7 +33,7 @@ export interface SetPropertyAction {
 
 export type HashiAction = AddEdgeAction | SetPropertyAction;
 
-export type Operator = 'lt' | 'le' | 'eq';
+export type Operator = 'lt' | 'le' | 'eq' | 'gt' | 'ge';
 
 export interface Condition {
   lhs: Term;

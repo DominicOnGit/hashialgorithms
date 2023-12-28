@@ -1,5 +1,5 @@
 import { HashiUtil, HashiVertex, type Selectable, HashiEdge } from '../../hashi/services/HashiUtil';
-import type { Condition, Selector } from '@/algorithm/stores/HashiAlgorithm';
+import type { Condition, Operator, Selector } from '@/algorithm/stores/HashiAlgorithm';
 import { TermEvaluator } from './TermEvaluator';
 import type { ISelectorEvaluator } from './interfaces';
 import { termToString } from './TermBuilderService';
@@ -95,7 +95,7 @@ export class SelectorEvaluator implements ISelectorEvaluator {
     return `${termToString(cond.lhs)} ${cond.operator} ${termToString(cond.rhs)}`;
   }
 
-  private evaluateOperator(lhs: number, op: Condition['operator'], rhs: number): boolean {
+  private evaluateOperator(lhs: number, op: Operator, rhs: number): boolean {
     switch (op) {
       case 'eq':
         return lhs === rhs;
@@ -103,6 +103,10 @@ export class SelectorEvaluator implements ISelectorEvaluator {
         return lhs <= rhs;
       case 'lt':
         return lhs < rhs;
+      case 'gt':
+        return lhs > rhs;
+      case 'ge':
+        return lhs >= rhs;
     }
   }
 }
