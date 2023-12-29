@@ -19,6 +19,30 @@ and adjacent Vertex with
 @targetDegree + 1 >= 2\*|incident edges|
 -> set 1 bridge
 
+## Need maxPossible
+
+v with
+@targetDegree = $\Sigma_{incident edge e} maxMultiplicity(e)$
+-> set maxMultiplicity on all incident edges
+
+Edge with multiplicity < maxMultiplicity
+and incident vertex with
+@targetDegree = $\Sigma_{adjacent edges} maxMultiplicity(e)$
+-> set mult = maxMultiplicity
+
+Equivalent (but more complicated):
+Edge with multiplicity < 2
+and incident vertex with
+@targetDegree +1 < $\Sigma_{other adjacent edges} maxMultiplicity(e)$
+-> set mult = 2
+
+## Need at least one bridge due to maxMultiplicity
+
+Edge with multiplicity < maxMultiplicity
+and incident vertex with
+@targetDegree < $\Sigma_{other adjacent edges} maxMultiplicity(e)$
+-> set mult = 1
+
 # Impossible rules
 
 ## Single empty bridge

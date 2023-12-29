@@ -56,7 +56,7 @@ export const NeedAtLeastOneBridge: Rule = {
             lhs: { kind: 'propertyAccess', property: 'targetDegree' },
             rhs: { kind: 'constant', value: 1 }
           },
-          operator: 'eq',
+          operator: 'ge',
           rhs: {
             kind: 'sum',
             over: { kind: 'edge', conditions: [] },
@@ -68,4 +68,53 @@ export const NeedAtLeastOneBridge: Rule = {
   ],
   action: { kind: 'addEdge' },
   name: 'NeedAtLeastOneBridge'
+};
+
+export const NeedMaxMultiplicity: Rule = {
+  selectorSequence: [
+    {
+      kind: 'edge',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'multiplicity' },
+          operator: 'lt',
+          rhs: {
+            kind: 'custompropertyAccess',
+            property: {
+              name: 'maxMultiplicity',
+              onVertex: false,
+              initialValue: 2,
+              color: 'blue'
+            }
+          }
+        }
+      ]
+    },
+    {
+      kind: 'vertex',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+          operator: 'eq',
+          rhs: {
+            kind: 'sum',
+            over: { kind: 'edge', conditions: [] },
+            what: {
+              kind: 'custompropertyAccess',
+              property: {
+                name: 'maxMultiplicity',
+                onVertex: false,
+                initialValue: 2,
+                color: 'blue'
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  action: { kind: 'addEdge' },
+  name: 'NeedMaxMultiplicity'
 };

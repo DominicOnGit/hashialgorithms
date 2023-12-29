@@ -101,3 +101,48 @@ export function buildWithMaxMultiplicity(): Hashi {
   validateHashi(res);
   return res;
 }
+
+export const basic: Hashi = {
+  vertices: [
+    { posX: 1, posY: 1, targetDegree: 2 },
+    { posX: 2, posY: 1, targetDegree: 1 },
+    { posX: 1, posY: 2, targetDegree: 3 },
+    { posX: 5, posY: 2, targetDegree: 4 },
+    { posX: 5, posY: 4, targetDegree: 2 }
+  ],
+  edges: []
+};
+
+export const singleTriangle: Hashi = {
+  vertices: [
+    { posX: 1, posY: 1, targetDegree: 2 },
+    { posX: 2, posY: 1, targetDegree: 1 },
+    { posX: 1, posY: 2, targetDegree: 1 }
+  ],
+  edges: []
+};
+
+export const doubleTriangle: Hashi = {
+  vertices: [
+    { posX: 1, posY: 1, targetDegree: 4 },
+    { posX: 2, posY: 1, targetDegree: 2 },
+    { posX: 1, posY: 2, targetDegree: 2 }
+  ],
+  edges: []
+};
+
+export const singleSquare: Hashi = {
+  vertices: [
+    { posX: 1, posY: 1, targetDegree: 2 },
+    { posX: 2, posY: 1, targetDegree: 2 },
+    { posX: 1, posY: 2, targetDegree: 2 },
+    { posX: 2, posY: 2, targetDegree: 2 }
+  ],
+  edges: []
+};
+
+export function cloneAndValidate(hashi: Hashi): Hashi {
+  const clone = JSON.parse(JSON.stringify(hashi));
+  validateHashi(clone);
+  return clone;
+}
