@@ -136,23 +136,54 @@ function setActionComponent(rule: Rule, path: AlgorithmPath, newComponent: Algor
   setTermPart(term, path.slice(2), newComponent);
 }
 
+function isTerm(obj: Selector | Term): obj is Term {
+  return (
+    obj.kind === 'constant' ||
+    obj.kind === 'custompropertyAccess' ||
+    obj.kind === 'propertyAccess' ||
+    obj.kind === 'sum' ||
+    obj.kind === 'plus'
+  );
+}
+
 function getTermPart(term: Term, termPath: AlgorithmPath): Selector | Term {
+  // console.log('getTermPart', term, termPath);
+  if (termPath.length === 0) throw new Error();
+
+  const path0Term = getTermFor(term, termPath[0]);
+  if (termPath.length > 1) {
+    if (!isTerm(path0Term)) throw new Error('path to selector cannot continue');
+    return getTermPart(path0Term, termPath.slice(1));
+  }
+  return path0Term;
+}
+
+function getTermFor(term: Term, index: number): Selector | Term {
   if (term.kind === 'plus') {
-    return termPath[0] === 0 ? term.lhs : term.rhs;
+    return index === 0 ? term.lhs : term.rhs;
   } else if (term.kind === 'sum') {
-    const part = termPath[0] === 0 ? term.over : term.what;
+    const part = index === 0 ? term.over : term.what;
     return part;
   } else throw new Error();
 }
 
 function setTermPart(term: Term, termPath: AlgorithmPath, newComponent: AlgorithmPiece): void {
-  if (term.kind === 'plus') {
-    if (termPath[0] === 0) term.lhs = newComponent as Term;
-    else term.rhs = newComponent as Term;
-  } else if (term.kind === 'sum') {
-    if (termPath[0] === 0) term.over = newComponent as Selector;
-    else term.what = newComponent as Term;
-  } else throw new Error();
+  console.log('setTermPart', term, termPath);
+  if (termPath.length === 0) throw new Error();
+
+  if (termPath.length === 1) {
+    if (term.kind === 'plus') {
+      if (termPath[0] === 0) term.lhs = newComponent as Term;
+      else term.rhs = newComponent as Term;
+    } else if (term.kind === 'sum') {
+      if (termPath[0] === 0) term.over = newComponent as Selector;
+      else term.what = newComponent as Term;
+    } else throw new Error();
+  } else {
+    const path0Term = getTermFor(term, termPath[0]);
+    if (!isTerm(path0Term)) throw new Error('path to selector cannot continue');
+    setTermPart(path0Term, termPath.slice(1), newComponent);
+  }
 }
 
 // path: [ruleIndex, selectorOrAction, ...]

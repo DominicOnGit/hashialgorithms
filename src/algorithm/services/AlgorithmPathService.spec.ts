@@ -8,6 +8,7 @@ import {
 } from './AlgorithmPathService';
 import type {
   AlgorithmPath,
+  Condition,
   HashiAlgorithm,
   PlusTerm,
   Selector,
@@ -182,4 +183,54 @@ test('setConditionConditionTerm', () => {
   setComponent(algorithm, path, newTerm);
 
   expect(algorithm.rules[1].selectorSequence[1].conditions[0].lhs).toBe(newTerm);
+});
+
+test('sum in plus', () => {
+  const sum: Term = {
+    kind: 'sum',
+    over: { kind: 'edge', conditions: [] },
+    what: { kind: 'constant', value: 3 }
+  };
+  const cond: Condition = {
+    lhs: { kind: 'constant', value: 1 },
+    operator: 'eq',
+    rhs: { kind: 'plus', lhs: { kind: 'constant', value: 2 }, rhs: sum }
+  };
+  const algoOrig: HashiAlgorithm = {
+    rules: [
+      {
+        selectorSequence: [
+          {
+            kind: 'vertex',
+            conditions: [cond]
+          }
+        ],
+        action: { kind: 'addEdge' }
+      }
+    ]
+  };
+
+  const algo = JSON.parse(JSON.stringify(algoOrig));
+
+  const pathToCond: AlgorithmPath = pathAppend(pathSelectorAndAppend(createPathToRule(0), 0), 0);
+  expect(getComponent(algo, pathToCond)).toEqual(cond);
+
+  const pathToPlus: AlgorithmPath = pathAppend(pathToCond, 1);
+  expect(getComponent(algo, pathToPlus)).toEqual(cond.rhs);
+
+  const pathToSum: AlgorithmPath = pathAppend(pathToPlus, 1);
+  expect(getComponent(algo, pathToSum)).toEqual(sum);
+
+  const pathToOver: AlgorithmPath = pathAppend(pathToSum, 0);
+  expect(getComponent(algo, pathToOver)).toEqual(sum.over);
+
+  const pathToWhat: AlgorithmPath = pathAppend(pathToSum, 1);
+  expect(getComponent(algo, pathToWhat)).toEqual(sum.what);
+
+  const newTerm: Term = { kind: 'constant', value: 42 };
+  setComponent(algo, pathToWhat, newTerm);
+
+  ((algoOrig.rules[0].selectorSequence[0].conditions[0].rhs as PlusTerm).rhs as SumTerm).what =
+    newTerm;
+  expect(algo).toEqual(algoOrig);
 });
