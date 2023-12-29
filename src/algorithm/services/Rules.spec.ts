@@ -1,4 +1,10 @@
-import { NeedAllBridges, NeedAtLeastOneBridge, NeedMaxMultiplicity } from './../stores/rules';
+import { HashiUtil } from './../../hashi/services/HashiUtil';
+import {
+  NeedAllBridges,
+  NeedAtLeastOneBridge,
+  NeedMaxMultiplicity,
+  SetMaxMultIfRemainingDegreeIs1
+} from './../stores/rules';
 import { type HashiAlgorithm } from './../stores/HashiAlgorithm';
 import { expect, test } from 'vitest';
 import { useHashiStore, type Edge, type Hashi } from '@/hashi/stores/hashi';
@@ -66,6 +72,32 @@ function testSingleRule(hashi: Hashi, rule: Rule, expectedEdges: Edge[]): void {
 
   expect(finalHashi.vertices).toEqual(hashi.vertices);
   expect(finalHashi.edges).toEqual(expectedEdges);
+}
+
+function testSinglePropertyRule(
+  hashi: Hashi,
+  rule: Rule,
+  expectedPropName: string,
+  expectedPropEdges: Edge[]
+): void {
+  const algo: HashiAlgorithm = {
+    rules: [rule]
+  };
+
+  const hashi2 = cloneAndValidate(hashi);
+  hashi2.edges.push();
+  const finalHashi = runTillEnd(hashi2, algo);
+
+  expect(finalHashi.vertices).toEqual(hashi.vertices);
+
+  new HashiUtil(finalHashi).edges.forEach((e) => {
+    const expectedProp = expectedPropEdges.find((x) => x.v1 === e.v1 && x.v2 === e.v2);
+    expect(e.wrappedItem.customPropertyValues?.[expectedPropName]).toEqual(
+      expectedProp?.multiplicity
+    );
+    const expectedMult = hashi.edges.find((x) => x.v1 === e.v1 && x.v2 === e.v2);
+    expect(e.wrappedItem.multiplicity).toEqual(expectedMult?.multiplicity ?? 0);
+  });
 }
 
 test('NeedAllBridges', () => {
@@ -146,4 +178,15 @@ test('NeedMaxMultiplicity with some maxMulti', () => {
   test(rule.name + ' cannot solve singleSquare', () => {
     testSingleRule(singleSquare, rule, []);
   });
+});
+
+test('SetMaxMultIfRemainingDegreeIs1 on singleTriange', () => {
+  testSinglePropertyRule(singleTriangle, SetMaxMultIfRemainingDegreeIs1, 'maxMultiplicity', [
+    { v1: 0, v2: 1, multiplicity: 1 },
+    { v1: 0, v2: 2, multiplicity: 1 }
+  ]);
+});
+
+test('SetMaxMultIfRemainingDegreeIs1 on doubleTriange', () => {
+  testSinglePropertyRule(doubleTriangle, SetMaxMultIfRemainingDegreeIs1, 'maxMultiplicity', []);
 });

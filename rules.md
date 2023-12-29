@@ -43,6 +43,19 @@ and incident vertex with
 @targetDegree < $\Sigma_{other adjacent edges} maxMultiplicity(e)$
 -> set mult = 1
 
+## Set MaxMulti if remaining degree is 0
+
+Vertex with targetDegree = degree
+incident edge with maxMultiplicity > multiplicity
+-> set maxMultiplicity = multiplicity
+
+## Set MaxMulti 1 if remaining degree is 1
+
+Vertex with targetDegree = degree + 1
+incident edge with multiplicity 0
+and maxMultiplicity = 2
+-> maxMultiplicity = 1
+
 # Impossible rules
 
 ## Single empty bridge

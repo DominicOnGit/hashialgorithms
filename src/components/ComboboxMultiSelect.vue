@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { removeProxy } from '@/services/misc';
 import { computed } from 'vue';
 import Multiselect from 'vue-multiselect';
 
@@ -40,7 +41,7 @@ const optionsData = computed(() => {
   const activeData = toOptionData(props.active);
   const activeAt = dataFromOptions.findIndex((x) => x.key === activeData.key);
   if (activeAt === -1) {
-    console.error('active item not found', props.active, props.options);
+    console.error('active item not found', removeProxy(props.active), props.options);
     throw new Error('active item not found in options');
   }
   dataFromOptions.splice(activeAt, 1, activeData);
