@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TestAlgorithm, useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { vElementDeselected } from '@/directives/vElementDeselected';
 import RuleBuilder from './RuleBuilder.vue';
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
@@ -10,6 +10,7 @@ import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { RuleRunner } from '../services/RuleRunner';
+import { AllRulesAlgorithm } from '../stores/rules';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const runState = useAlgorithmRunnerStore();
@@ -32,7 +33,7 @@ function updateRuleState(): void {
 }
 
 onBeforeMount(() => {
-  hashiAlgorithmStore.$patch(TestAlgorithm);
+  hashiAlgorithmStore.$patch(AllRulesAlgorithm);
 });
 
 function getName(rule: Rule, index: number): string {

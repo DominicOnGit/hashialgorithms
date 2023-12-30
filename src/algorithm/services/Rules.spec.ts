@@ -1,6 +1,6 @@
 import { HashiUtil } from './../../hashi/services/HashiUtil';
 import {
-  NeedAllBridges,
+  Need2Bridges,
   NeedAtLeastOneBridge,
   NeedMaxMultiplicity,
   SetMaxMultIfRemainingDegreeIs1
@@ -100,18 +100,18 @@ function testSinglePropertyRule(
   });
 }
 
-test('NeedAllBridges', () => {
-  testSingleRule(basic, NeedAllBridges, [
+test('Need2Bridges', () => {
+  testSingleRule(basic, Need2Bridges, [
     { v1: 2, v2: 3, multiplicity: 2 },
     { v1: 3, v2: 4, multiplicity: 2 }
   ]);
 });
 
-test('NeedAllBridges on singleTriangle', () => {
-  testSingleRule(singleTriangle, NeedAllBridges, []);
+test('Need2Bridges on singleTriangle', () => {
+  testSingleRule(singleTriangle, Need2Bridges, []);
 });
-test('NeedAllBridges on doubleTriangle', () => {
-  testSingleRule(doubleTriangle, NeedAllBridges, [
+test('Need2Bridges on doubleTriangle', () => {
+  testSingleRule(doubleTriangle, Need2Bridges, [
     { v1: 0, v2: 1, multiplicity: 2 },
     { v1: 0, v2: 2, multiplicity: 2 }
   ]);
@@ -174,7 +174,7 @@ test('NeedMaxMultiplicity with some maxMulti', () => {
   ]);
 });
 
-[NeedAtLeastOneBridge, NeedAllBridges, NeedMaxMultiplicity].forEach((rule) => {
+[NeedAtLeastOneBridge, Need2Bridges, NeedMaxMultiplicity].forEach((rule) => {
   test(rule.name + ' cannot solve singleSquare', () => {
     testSingleRule(singleSquare, rule, []);
   });

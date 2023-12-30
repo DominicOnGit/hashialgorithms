@@ -1,6 +1,6 @@
-import type { Rule } from './HashiAlgorithm';
+import type { HashiAlgorithm, Rule } from './HashiAlgorithm';
 
-export const NeedAllBridges: Rule = {
+export const Need2Bridges: Rule = {
   selectorSequence: [
     {
       kind: 'edge',
@@ -30,44 +30,7 @@ export const NeedAllBridges: Rule = {
     }
   ],
   action: { kind: 'addEdge' },
-  name: 'NeedAllBridges'
-};
-
-export const NeedAtLeastOneBridge: Rule = {
-  selectorSequence: [
-    {
-      kind: 'edge',
-      excludeAncestor: false,
-      conditions: [
-        {
-          lhs: { kind: 'propertyAccess', property: 'multiplicity' },
-          operator: 'eq',
-          rhs: { kind: 'constant', value: 0 }
-        }
-      ]
-    },
-    {
-      kind: 'vertex',
-      excludeAncestor: false,
-      conditions: [
-        {
-          lhs: {
-            kind: 'plus',
-            lhs: { kind: 'propertyAccess', property: 'targetDegree' },
-            rhs: { kind: 'constant', value: 1 }
-          },
-          operator: 'ge',
-          rhs: {
-            kind: 'sum',
-            over: { kind: 'edge', conditions: [] },
-            what: { kind: 'constant', value: 2 }
-          }
-        }
-      ]
-    }
-  ],
-  action: { kind: 'addEdge' },
-  name: 'NeedAtLeastOneBridge'
+  name: 'Need2Bridges'
 };
 
 export const NeedMaxMultiplicity: Rule = {
@@ -117,6 +80,84 @@ export const NeedMaxMultiplicity: Rule = {
   ],
   action: { kind: 'addEdge' },
   name: 'NeedMaxMultiplicity'
+};
+
+export const NeedAtLeastOneBridge: Rule = {
+  selectorSequence: [
+    {
+      kind: 'edge',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'multiplicity' },
+          operator: 'eq',
+          rhs: { kind: 'constant', value: 0 }
+        }
+      ]
+    },
+    {
+      kind: 'vertex',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: {
+            kind: 'plus',
+            lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+            rhs: { kind: 'constant', value: 1 }
+          },
+          operator: 'ge',
+          rhs: {
+            kind: 'sum',
+            over: { kind: 'edge', conditions: [] },
+            what: { kind: 'constant', value: 2 }
+          }
+        }
+      ]
+    }
+  ],
+  action: { kind: 'addEdge' },
+  name: 'NeedAtLeastOneBridge'
+};
+
+export const NeedAtLeastOneBridgeMaxMulti: Rule = {
+  selectorSequence: [
+    {
+      kind: 'edge',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'multiplicity' },
+          operator: 'eq',
+          rhs: { kind: 'constant', value: 0 }
+        }
+      ]
+    },
+    {
+      kind: 'vertex',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+          operator: 'gt',
+          rhs: {
+            kind: 'sum',
+            over: { kind: 'edge', excludeAncestor: true, conditions: [] },
+            what: {
+              kind: 'custompropertyAccess',
+              property: {
+                name: 'maxMultiplicity',
+                onVertex: false,
+                initialValue: 2,
+                color: 'blue'
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  action: { kind: 'addEdge' },
+  name: 'NeedAtLeastOneBridgeMaxMulti'
 };
 
 export const SetMaxMultIfRemainingDegreeIs0: Rule = {
@@ -207,4 +248,15 @@ export const SetMaxMultIfRemainingDegreeIs1: Rule = {
     value: { kind: 'constant', value: 1 }
   },
   name: 'SetMaxMultIfRemainingDegreeIs1'
+};
+
+export const AllRulesAlgorithm: HashiAlgorithm = {
+  rules: [
+    Need2Bridges,
+    NeedMaxMultiplicity,
+    NeedAtLeastOneBridge,
+    NeedAtLeastOneBridgeMaxMulti,
+    SetMaxMultIfRemainingDegreeIs0,
+    SetMaxMultIfRemainingDegreeIs1
+  ]
 };

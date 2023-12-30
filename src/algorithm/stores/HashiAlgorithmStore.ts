@@ -19,57 +19,6 @@ const EmptyAlgorithm: HashiAlgorithm = {
   rules: []
 };
 
-export const TestAlgorithm: HashiAlgorithm = {
-  rules: [
-    {
-      name: 'set maxMultiplicity',
-      selectorSequence: [
-        {
-          kind: 'edge',
-          conditions: [
-            {
-              lhs: { kind: 'propertyAccess', property: 'multiplicity' },
-              operator: 'lt',
-              rhs: { kind: 'constant', value: 2 }
-            }
-          ]
-        },
-        {
-          kind: 'vertex',
-          conditions: [
-            {
-              lhs: { kind: 'propertyAccess', property: 'degree' },
-              operator: 'lt',
-              rhs: { kind: 'propertyAccess', property: 'targetDegree' }
-            },
-            {
-              lhs: {
-                kind: 'sum',
-                over: { kind: 'edge', excludeAncestor: true, conditions: [] },
-                what: { kind: 'constant', value: 2 }
-              },
-              operator: 'lt',
-              rhs: { kind: 'propertyAccess', property: 'targetDegree' }
-            }
-          ]
-        }
-      ],
-      action: {
-        kind: 'setProperty',
-        property: 'maxMultiplicity',
-        value: { kind: 'constant', value: 1 }
-      }
-    },
-    {
-      name: 'add edge',
-      selectorSequence: [],
-      action: {
-        kind: 'addEdge'
-      }
-    }
-  ]
-};
-
 function buildEmptyRule(): Rule {
   return {
     selectorSequence: [],
