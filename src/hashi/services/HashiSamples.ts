@@ -122,15 +122,6 @@ export const singleTriangle: Hashi = {
   edges: []
 };
 
-export const doubleTriangle: Hashi = {
-  vertices: [
-    { posX: 1, posY: 1, targetDegree: 4 },
-    { posX: 2, posY: 1, targetDegree: 2 },
-    { posX: 1, posY: 2, targetDegree: 2 }
-  ],
-  edges: []
-};
-
 export const singleSquare: Hashi = {
   vertices: [
     { posX: 1, posY: 1, targetDegree: 2 },
@@ -140,6 +131,60 @@ export const singleSquare: Hashi = {
   ],
   edges: []
 };
+
+export const singleSnake: Hashi = {
+  vertices: [
+    { posX: 1, posY: 1, targetDegree: 1 },
+    { posX: 2, posY: 1, targetDegree: 2 },
+    { posX: 3, posY: 1, targetDegree: 2 },
+    { posX: 4, posY: 1, targetDegree: 2 },
+    { posX: 5, posY: 1, targetDegree: 1 }
+  ],
+  edges: []
+};
+
+export const singleTee: Hashi = {
+  vertices: [
+    { posX: 1, posY: 1, targetDegree: 1 },
+    { posX: 1, posY: 2, targetDegree: 3 },
+    { posX: 2, posY: 2, targetDegree: 1 },
+    { posX: 1, posY: 3, targetDegree: 1 }
+  ],
+  edges: []
+};
+
+export const singleStar: Hashi = {
+  vertices: [
+    { posX: 2, posY: 1, targetDegree: 1 },
+    { posX: 1, posY: 2, targetDegree: 1 },
+    { posX: 2, posY: 2, targetDegree: 4 },
+    { posX: 3, posY: 2, targetDegree: 1 },
+    { posX: 2, posY: 3, targetDegree: 1 }
+  ],
+  edges: []
+};
+
+export const doubleTriangle = doubleHashi(singleTriangle);
+
+export const namedHashis: Record<string, Hashi> = {
+  singleTriangle: singleTriangle,
+  doubleTriangle: doubleTriangle,
+  singleSquare: singleSquare,
+  singleSnake: singleSnake,
+  singleTee: singleTee,
+  singleStar: singleStar
+};
+
+export function doubleHashi(hashi: Hashi): Hashi {
+  return {
+    vertices: hashi.vertices.map((v) => ({
+      posX: v.posX,
+      posY: v.posY,
+      targetDegree: 2 * v.targetDegree
+    })),
+    edges: []
+  };
+}
 
 export function cloneAndValidate(hashi: Hashi): Hashi {
   const clone = JSON.parse(JSON.stringify(hashi));

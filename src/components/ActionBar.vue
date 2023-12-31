@@ -4,7 +4,11 @@ import { AlgorithmRunner } from '@/algorithm/services/AlgorithmRunner';
 import { useMiscStore } from '@/stores/MiscStore';
 import { HashiBuilder } from '@/hashi/services/HashiBuilder';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
-import { buildWithMaxMultiplicity } from '@/hashi/services/HashiSamples';
+import {
+  buildWithMaxMultiplicity,
+  cloneAndValidate,
+  namedHashis
+} from '@/hashi/services/HashiSamples';
 import { SaveAll, LoadAll, CanLoad } from '@/services/storageService';
 import { onMounted, ref } from 'vue';
 
@@ -63,6 +67,11 @@ function hashi1(): void {
   hashiStore.setHashi(hashi);
 }
 
+function setHashi(name: string): void {
+  const hashi = cloneAndValidate(namedHashis[name]);
+  hashiStore.setHashi(hashi);
+}
+
 function Save(): void {
   SaveAll();
   canLoad.value = CanLoad();
@@ -72,10 +81,20 @@ function Save(): void {
 <template>
   <div>
     <label class="category">Hashi:</label>
+    <button
+      v-for="hashiName in Object.keys(namedHashis)"
+      :key="hashiName"
+      @click="setHashi(hashiName)"
+    >
+      {{ hashiName }}
+    </button>
+    <button @click="hashi1">Hashi1</button>
+  </div>
+  <div>
+    <label class="category">Builder:</label>
     <button @click="grow">grow</button>
     <button @click="clearEdges">clear</button>
     <button @click="growSomeAndClear">growProblem</button>
-    <button @click="hashi1">Hashi1</button>
   </div>
   <div>
     <label class="category">Algo:</label>
