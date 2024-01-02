@@ -52,10 +52,16 @@ and maxMultiplicity = 2
 
 # Hashi solved by single rule
 
-|                      | singleTriangle | doubleTriangle | singleSquare | doubleSquare |
-| -------------------- | :------------: | :------------: | :----------: | :----------: |
-| Need2Bridges         |                |       x        |              |      x       |
-| NeedAtLeastOneBridge |       x        |                |              |              |
+|                | Need2Bridges | NeedAtLeastOneBridge |
+| -------------- | :----------: | :------------------: |
+| singleTriangle |              |          x           |
+| doubleTriangle |      x       |          p           |
+| singleSquare   |              |                      |
+| doubleSquare   |      x       |          p           |
+| singleTee      |              |          x           |
+| doubleTee      |      x       |          p           |
+| singleStar     |              |          x           |
+| doubleStar     |      x       |          p           |
 
 # Impossible rules
 

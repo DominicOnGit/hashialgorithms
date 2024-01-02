@@ -16,7 +16,11 @@ import {
   singleSquare,
   singleTriangle,
   doubleTriangle,
-  doubleSquare
+  doubleSquare,
+  singleTee,
+  doubleTee,
+  singleStar,
+  doubleStar
 } from '@/hashi/services/HashiSamples';
 import { AlgorithmRunner } from './AlgorithmRunner';
 
@@ -137,6 +141,27 @@ describe('Need2Bridges', () => {
       { v1: 2, v2: 3, multiplicity: 2 }
     ]);
   });
+  test('on singleTee', () => {
+    testSingleRule(singleTee, Need2Bridges, []);
+  });
+  test('on doubleTee', () => {
+    testSingleRule(doubleTee, Need2Bridges, [
+      { v1: 0, v2: 1, multiplicity: 2 },
+      { v1: 1, v2: 2, multiplicity: 2 },
+      { v1: 1, v2: 3, multiplicity: 2 }
+    ]);
+  });
+  test('on singleStar', () => {
+    testSingleRule(singleStar, Need2Bridges, []);
+  });
+  test('on doubleStar', () => {
+    testSingleRule(doubleStar, Need2Bridges, [
+      { v1: 0, v2: 2, multiplicity: 2 },
+      { v1: 1, v2: 2, multiplicity: 2 },
+      { v1: 2, v2: 3, multiplicity: 2 },
+      { v1: 2, v2: 4, multiplicity: 2 }
+    ]);
+  });
 });
 
 describe('NeedAtLeastOneBridge', () => {
@@ -170,6 +195,36 @@ describe('NeedAtLeastOneBridge', () => {
       { v1: 0, v2: 2, multiplicity: 1 },
       { v1: 1, v2: 3, multiplicity: 1 },
       { v1: 2, v2: 3, multiplicity: 1 }
+    ]);
+  });
+  test('on singleTee', () => {
+    testSingleRule(singleTee, NeedAtLeastOneBridge, [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 1, v2: 2, multiplicity: 1 },
+      { v1: 1, v2: 3, multiplicity: 1 }
+    ]);
+  });
+  test('on doubleTee', () => {
+    testSingleRule(doubleTee, NeedAtLeastOneBridge, [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 1, v2: 2, multiplicity: 1 },
+      { v1: 1, v2: 3, multiplicity: 1 }
+    ]);
+  });
+  test('on singleStar', () => {
+    testSingleRule(singleStar, NeedAtLeastOneBridge, [
+      { v1: 0, v2: 2, multiplicity: 1 },
+      { v1: 1, v2: 2, multiplicity: 1 },
+      { v1: 2, v2: 3, multiplicity: 1 },
+      { v1: 2, v2: 4, multiplicity: 1 }
+    ]);
+  });
+  test('on doubleStar', () => {
+    testSingleRule(doubleStar, NeedAtLeastOneBridge, [
+      { v1: 0, v2: 2, multiplicity: 1 },
+      { v1: 1, v2: 2, multiplicity: 1 },
+      { v1: 2, v2: 3, multiplicity: 1 },
+      { v1: 2, v2: 4, multiplicity: 1 }
     ]);
   });
 });

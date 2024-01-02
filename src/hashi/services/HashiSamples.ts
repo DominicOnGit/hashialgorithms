@@ -166,6 +166,8 @@ export const singleStar: Hashi = {
 
 export const doubleTriangle = doubleHashi(singleTriangle);
 export const doubleSquare = doubleHashi(singleSquare);
+export const doubleTee = doubleHashi(singleTee);
+export const doubleStar = doubleHashi(singleStar);
 
 export const namedHashis: Record<string, Hashi> = {
   singleTriangle: singleTriangle,

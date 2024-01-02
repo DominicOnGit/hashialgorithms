@@ -1,6 +1,13 @@
-import type { Hashi } from '@/hashi/stores/hashi';
+import { singleTee, namedHashis, singleStar } from './HashiSamples';
+import { validateHashi, type Hashi } from '@/hashi/stores/hashi';
 import { expect, test, describe } from 'vitest';
 import { HashiUtil } from './HashiUtil';
+
+test('validate sample hashis', () => {
+  Object.entries(namedHashis).forEach(([name, hashi]) => {
+    validateHashi(hashi);
+  });
+});
 
 describe('HashiUtil', () => {
   test('getAllEdges', () => {
@@ -58,6 +65,27 @@ describe('HashiUtil', () => {
     expect(actual.map((x) => x.edge)).toStrictEqual([
       { v1: 0, v2: 1, multiplicity: 0 },
       { v1: 0, v2: 2, multiplicity: 0 }
+    ]);
+  });
+
+  test('getAllEdges of Tee', () => {
+    const util = new HashiUtil(singleTee);
+    const actual = util.edges;
+    expect(actual.map((x) => x.edge)).toStrictEqual([
+      { v1: 0, v2: 1, multiplicity: 0 },
+      { v1: 1, v2: 2, multiplicity: 0 },
+      { v1: 1, v2: 3, multiplicity: 0 }
+    ]);
+  });
+
+  test('getAllEdges of Star', () => {
+    const util = new HashiUtil(singleStar);
+    const actual = util.edges;
+    expect(actual.map((x) => x.edge)).toStrictEqual([
+      { v1: 0, v2: 2, multiplicity: 0 },
+      { v1: 1, v2: 2, multiplicity: 0 },
+      { v1: 2, v2: 3, multiplicity: 0 },
+      { v1: 2, v2: 4, multiplicity: 0 }
     ]);
   });
 

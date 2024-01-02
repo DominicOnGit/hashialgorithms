@@ -206,8 +206,9 @@ export class HashiUtil {
           let valid = true;
           if (v1.posX === v2.posX) {
             for (let y = v1.posY + 1; y < v2.posY; y++) {
-              const hit = this.getEdgeAt(v1.posX, y);
-              if (hit != null) {
+              const hitVertex = this.getVertexAt(v1.posX, y);
+              const hitEdge = this.getEdgeAt(v1.posX, y);
+              if (hitVertex != null || hitEdge != null) {
                 valid = false;
                 break;
               }
@@ -218,8 +219,9 @@ export class HashiUtil {
           }
           if (v1.posY === v2.posY) {
             for (let x = v1.posX + 1; x < v2.posX; x++) {
-              const hit = this.getEdgeAt(x, v1.posY);
-              if (hit != null) {
+              const hitVertex = this.getVertexAt(x, v1.posY);
+              const hitEdge = this.getEdgeAt(x, v1.posY);
+              if (hitVertex != null || hitEdge != null) {
                 valid = false;
                 break;
               }
