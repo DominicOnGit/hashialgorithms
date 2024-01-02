@@ -6,7 +6,7 @@ import {
   SetMaxMultIfRemainingDegreeIs1
 } from './../stores/rules';
 import { type HashiAlgorithm } from './../stores/HashiAlgorithm';
-import { expect, test } from 'vitest';
+import { expect, test, describe } from 'vitest';
 import { useHashiStore, type Edge, type Hashi } from '@/hashi/stores/hashi';
 import { type Rule } from '@/algorithm/stores/HashiAlgorithm';
 import { setActivePinia, createPinia } from 'pinia';
@@ -15,7 +15,8 @@ import {
   cloneAndValidate,
   singleSquare,
   singleTriangle,
-  doubleTriangle
+  doubleTriangle,
+  doubleSquare
 } from '@/hashi/services/HashiSamples';
 import { AlgorithmRunner } from './AlgorithmRunner';
 
@@ -62,6 +63,11 @@ function testSingleRuleWithMaxMult(
   expect(finalHashi.edges).toEqual(expectedEdges);
 }
 
+function orderEdges(edges: Edge[]): Edge[] {
+  edges.sort((a, b) => (a.v1 < b.v1 ? -1 : a.v1 > b.v1 ? 1 : 0));
+  return edges;
+}
+
 function testSingleRule(hashi: Hashi, rule: Rule, expectedEdges: Edge[]): void {
   const algo: HashiAlgorithm = {
     disabledRules: [],
@@ -73,7 +79,7 @@ function testSingleRule(hashi: Hashi, rule: Rule, expectedEdges: Edge[]): void {
   const finalHashi = runTillEnd(hashi2, algo);
 
   expect(finalHashi.vertices).toEqual(hashi.vertices);
-  expect(finalHashi.edges).toEqual(expectedEdges);
+  expect(orderEdges(finalHashi.edges)).toEqual(orderEdges(expectedEdges));
 }
 
 function testSinglePropertyRule(
@@ -103,83 +109,108 @@ function testSinglePropertyRule(
   });
 }
 
-test('Need2Bridges', () => {
-  testSingleRule(basic, Need2Bridges, [
-    { v1: 2, v2: 3, multiplicity: 2 },
-    { v1: 3, v2: 4, multiplicity: 2 }
-  ]);
+describe('Need2Bridges', () => {
+  test('on basic', () => {
+    testSingleRule(basic, Need2Bridges, [
+      { v1: 2, v2: 3, multiplicity: 2 },
+      { v1: 3, v2: 4, multiplicity: 2 }
+    ]);
+  });
+
+  test('on singleTriangle', () => {
+    testSingleRule(singleTriangle, Need2Bridges, []);
+  });
+  test('on doubleTriangle', () => {
+    testSingleRule(doubleTriangle, Need2Bridges, [
+      { v1: 0, v2: 1, multiplicity: 2 },
+      { v1: 0, v2: 2, multiplicity: 2 }
+    ]);
+  });
+  test('on singleSquare', () => {
+    testSingleRule(singleSquare, Need2Bridges, []);
+  });
+  test('on doubleSquare', () => {
+    testSingleRule(doubleSquare, Need2Bridges, [
+      { v1: 0, v2: 1, multiplicity: 2 },
+      { v1: 0, v2: 2, multiplicity: 2 },
+      { v1: 1, v2: 3, multiplicity: 2 },
+      { v1: 2, v2: 3, multiplicity: 2 }
+    ]);
+  });
 });
 
-test('Need2Bridges on singleTriangle', () => {
-  testSingleRule(singleTriangle, Need2Bridges, []);
-});
-test('Need2Bridges on doubleTriangle', () => {
-  testSingleRule(doubleTriangle, Need2Bridges, [
-    { v1: 0, v2: 1, multiplicity: 2 },
-    { v1: 0, v2: 2, multiplicity: 2 }
-  ]);
+describe('NeedAtLeastOneBridge', () => {
+  test('on basic', () => {
+    testSingleRule(basic, NeedAtLeastOneBridge, [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 0, v2: 2, multiplicity: 1 },
+      { v1: 2, v2: 3, multiplicity: 1 },
+      { v1: 3, v2: 4, multiplicity: 1 }
+    ]);
+  });
+
+  test('on singleTriangle', () => {
+    testSingleRule(singleTriangle, NeedAtLeastOneBridge, [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 0, v2: 2, multiplicity: 1 }
+    ]);
+  });
+  test('on doubleTriangle', () => {
+    testSingleRule(doubleTriangle, NeedAtLeastOneBridge, [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 0, v2: 2, multiplicity: 1 }
+    ]);
+  });
+  test('on singleSquare', () => {
+    testSingleRule(singleSquare, NeedAtLeastOneBridge, []);
+  });
+  test('on doubleSquare', () => {
+    testSingleRule(doubleSquare, NeedAtLeastOneBridge, [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 0, v2: 2, multiplicity: 1 },
+      { v1: 1, v2: 3, multiplicity: 1 },
+      { v1: 2, v2: 3, multiplicity: 1 }
+    ]);
+  });
 });
 
-test('NeedAtLeastOneBridge', () => {
-  testSingleRule(basic, NeedAtLeastOneBridge, [
-    { v1: 0, v2: 1, multiplicity: 1 },
-    { v1: 0, v2: 2, multiplicity: 1 },
-    { v1: 2, v2: 3, multiplicity: 1 },
-    { v1: 3, v2: 4, multiplicity: 1 }
-  ]);
-});
+describe('NeedMaxMultiplicity', () => {
+  test('on basic', () => {
+    testSingleRule(basic, NeedMaxMultiplicity, [
+      { v1: 2, v2: 3, multiplicity: 2 },
+      { v1: 3, v2: 4, multiplicity: 2 }
+    ]);
+  });
 
-test('NeedAtLeastOneBridge on singleTriangle', () => {
-  testSingleRule(singleTriangle, NeedAtLeastOneBridge, [
-    { v1: 0, v2: 1, multiplicity: 1 },
-    { v1: 0, v2: 2, multiplicity: 1 }
-  ]);
-});
-test('NeedAtLeastOneBridge on doubleTriangle', () => {
-  testSingleRule(doubleTriangle, NeedAtLeastOneBridge, [
-    { v1: 0, v2: 1, multiplicity: 1 },
-    { v1: 0, v2: 2, multiplicity: 1 }
-  ]);
-});
+  test('on singleTriangle', () => {
+    testSingleRule(singleTriangle, NeedMaxMultiplicity, []);
+  });
+  test('on singleSquare', () => {
+    testSingleRule(singleSquare, NeedMaxMultiplicity, []);
+  });
 
-test('NeedMaxMultiplicity with default maxMulti', () => {
-  testSingleRule(basic, NeedMaxMultiplicity, [
-    { v1: 2, v2: 3, multiplicity: 2 },
-    { v1: 3, v2: 4, multiplicity: 2 }
-  ]);
-});
+  test('on singleTriangle with some maxMulti', () => {
+    testSingleRuleWithMaxMult(
+      singleTriangle,
+      [{ v1: 0, v2: 1, multiplicity: 1 }],
+      NeedMaxMultiplicity,
+      [{ v1: 0, v2: 1, multiplicity: 1 }]
+    );
 
-test('NeedMaxMultiplicity on singleTriangle', () => {
-  testSingleRule(singleTriangle, NeedMaxMultiplicity, []);
-});
+    testSingleRuleWithMaxMult(
+      singleTriangle,
+      [{ v1: 0, v2: 2, multiplicity: 1 }],
+      NeedMaxMultiplicity,
+      [{ v1: 0, v2: 2, multiplicity: 1 }]
+    );
+  });
 
-test('NeedMaxMultiplicity on singleTriangle with some maxMulti', () => {
-  testSingleRuleWithMaxMult(
-    singleTriangle,
-    [{ v1: 0, v2: 1, multiplicity: 1 }],
-    NeedMaxMultiplicity,
-    [{ v1: 0, v2: 1, multiplicity: 1 }]
-  );
-
-  testSingleRuleWithMaxMult(
-    singleTriangle,
-    [{ v1: 0, v2: 2, multiplicity: 1 }],
-    NeedMaxMultiplicity,
-    [{ v1: 0, v2: 2, multiplicity: 1 }]
-  );
-});
-
-test('NeedMaxMultiplicity with some maxMulti', () => {
-  testSingleRuleWithMaxMult(basic, [{ v1: 0, v2: 1, multiplicity: 1 }], NeedMaxMultiplicity, [
-    { v1: 0, v2: 1, multiplicity: 1 },
-    { v1: 2, v2: 3, multiplicity: 2 },
-    { v1: 3, v2: 4, multiplicity: 2 }
-  ]);
-});
-
-[NeedAtLeastOneBridge, Need2Bridges, NeedMaxMultiplicity].forEach((rule) => {
-  test(rule.name + ' cannot solve singleSquare', () => {
-    testSingleRule(singleSquare, rule, []);
+  test('on basic with some maxMulti', () => {
+    testSingleRuleWithMaxMult(basic, [{ v1: 0, v2: 1, multiplicity: 1 }], NeedMaxMultiplicity, [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 2, v2: 3, multiplicity: 2 },
+      { v1: 3, v2: 4, multiplicity: 2 }
+    ]);
   });
 });
 

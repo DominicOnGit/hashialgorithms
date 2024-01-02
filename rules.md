@@ -54,7 +54,7 @@ and maxMultiplicity = 2
 
 |                      | singleTriangle | doubleTriangle | singleSquare | doubleSquare |
 | -------------------- | :------------: | :------------: | :----------: | :----------: |
-| NeedAllBridges       |                |       x        |              |      x       |
+| Need2Bridges         |                |       x        |              |      x       |
 | NeedAtLeastOneBridge |       x        |                |              |              |
 
 # Impossible rules

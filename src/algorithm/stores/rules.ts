@@ -100,16 +100,15 @@ export const NeedAtLeastOneBridge: Rule = {
       excludeAncestor: false,
       conditions: [
         {
-          lhs: {
-            kind: 'plus',
-            lhs: { kind: 'propertyAccess', property: 'targetDegree' },
-            rhs: { kind: 'constant', value: 1 }
-          },
-          operator: 'ge',
+          lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+          operator: 'gt',
           rhs: {
             kind: 'sum',
-            over: { kind: 'edge', conditions: [] },
-            what: { kind: 'constant', value: 2 }
+            over: { kind: 'edge', excludeAncestor: true, conditions: [] },
+            what: {
+              kind: 'constant',
+              value: 2
+            }
           }
         }
       ]
