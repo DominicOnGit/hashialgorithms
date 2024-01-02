@@ -14,8 +14,10 @@ import {
   getComponent,
   setComponent
 } from '@/algorithm/services/AlgorithmPathService';
+import { textChangeRangeIsUnchanged } from 'typescript';
 
 const EmptyAlgorithm: HashiAlgorithm = {
+  disabledRules: [],
   rules: []
 };
 
@@ -35,6 +37,11 @@ function buildEmptyCondition(): Condition {
 
 function buildEmptySelector(kind: Selector['kind']): Selector {
   return { kind: kind, excludeAncestor: false, conditions: [] };
+}
+
+export function isRuleEnabled(algo: HashiAlgorithm, ruleIndex: number): boolean {
+  const isDisabled = algo.disabledRules != null && algo.disabledRules.includes(ruleIndex);
+  return !isDisabled;
 }
 
 export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
@@ -108,6 +115,15 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
     deleteRule(pathToRule: AlgorithmPath): void {
       console.log('deleteRule', pathToRule);
       deleteComponent(this, pathToRule);
+    },
+
+    enableRule(ruleIndex: number): void {
+      this.disabledRules = this.disabledRules.filter((x) => x !== ruleIndex);
+    },
+    disableRule(ruleIndex: number): void {
+      if (!this.disabledRules.includes(ruleIndex)) {
+        this.disabledRules.push(ruleIndex);
+      }
     }
   }
 });

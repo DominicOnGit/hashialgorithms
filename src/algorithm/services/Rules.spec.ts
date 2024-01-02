@@ -40,6 +40,7 @@ function testSingleRuleWithMaxMult(
   expectedEdges: Edge[]
 ): void {
   const algo: HashiAlgorithm = {
+    disabledRules: [],
     rules: [rule]
   };
 
@@ -63,6 +64,7 @@ function testSingleRuleWithMaxMult(
 
 function testSingleRule(hashi: Hashi, rule: Rule, expectedEdges: Edge[]): void {
   const algo: HashiAlgorithm = {
+    disabledRules: [],
     rules: [rule]
   };
 
@@ -81,6 +83,7 @@ function testSinglePropertyRule(
   expectedPropEdges: Edge[]
 ): void {
   const algo: HashiAlgorithm = {
+    disabledRules: [],
     rules: [rule]
   };
 

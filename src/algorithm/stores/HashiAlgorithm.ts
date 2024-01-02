@@ -2,6 +2,7 @@ import type { CustomPropertyDef } from '@/stores/CustomPropertyDef';
 
 export interface HashiAlgorithm {
   rules: Rule[];
+  disabledRules: number[];
 }
 
 export interface Rule {

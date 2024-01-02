@@ -3,6 +3,7 @@ import { RuleRunner } from './RuleRunner';
 import { type Hashi } from '@/hashi/stores/hashi';
 import type { HashiAlgorithm } from '@/algorithm/stores/HashiAlgorithm';
 import { HashiUtil } from '../../hashi/services/HashiUtil';
+import { isRuleEnabled } from '../stores/HashiAlgorithmStore';
 
 export class AlgorithmRunner {
   private hashiUtil: HashiUtil;
@@ -18,12 +19,14 @@ export class AlgorithmRunner {
     const runnerStore = useAlgorithmRunnerStore();
     let ruleIndex = runnerStore.activeRule ?? 0;
     while (ruleIndex < this.algorithm.rules.length) {
-      const rule = this.algorithm.rules[ruleIndex];
-      const ruleRunner = new RuleRunner(rule, this.hashiUtil);
-      const hadEffect = ruleRunner.runRuleStep();
-      if (hadEffect) {
-        runnerStore.setActiveRule(ruleIndex);
-        return true;
+      if (isRuleEnabled(this.algorithm, ruleIndex)) {
+        const rule = this.algorithm.rules[ruleIndex];
+        const ruleRunner = new RuleRunner(rule, this.hashiUtil);
+        const hadEffect = ruleRunner.runRuleStep();
+        if (hadEffect) {
+          runnerStore.setActiveRule(ruleIndex);
+          return true;
+        }
       }
       ruleIndex++;
     }

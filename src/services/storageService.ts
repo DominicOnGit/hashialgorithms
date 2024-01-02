@@ -57,7 +57,8 @@ export function CanLoad(): boolean {
 }
 
 const extractAlgorithm = extract<HashiAlgorithm>({
-  rules: true
+  rules: true,
+  disabledRules: true
 });
 
 const extractHashi = extract<Hashi>({

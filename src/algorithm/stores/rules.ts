@@ -251,6 +251,7 @@ export const SetMaxMultIfRemainingDegreeIs1: Rule = {
 };
 
 export const AllRulesAlgorithm: HashiAlgorithm = {
+  disabledRules: [],
   rules: [
     Need2Bridges,
     NeedMaxMultiplicity,
@@ -260,3 +261,4 @@ export const AllRulesAlgorithm: HashiAlgorithm = {
     SetMaxMultIfRemainingDegreeIs1
   ]
 };
+AllRulesAlgorithm.disabledRules = Array.from(Array(AllRulesAlgorithm.rules.length).keys());

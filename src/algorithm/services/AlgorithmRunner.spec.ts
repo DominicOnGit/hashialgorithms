@@ -10,6 +10,7 @@ test('runs rule', () => {
   const hashiStore = useHashiStore();
   const runState: RunState = useAlgorithmRunnerStore();
   const algorithm: HashiAlgorithm = {
+    disabledRules: [],
     rules: [
       {
         selectorSequence: [
@@ -49,6 +50,7 @@ test('runStep retuns false if nothing executed', () => {
   setActivePinia(createPinia());
   const hashiStore = useHashiStore();
   const algorithm: HashiAlgorithm = {
+    disabledRules: [],
     rules: [
       {
         selectorSequence: [
@@ -88,6 +90,7 @@ test('runStep switches to next rule if nothing executed', () => {
   const hashiStore = useHashiStore();
   const runState: RunState = useAlgorithmRunnerStore();
   const algorithm: HashiAlgorithm = {
+    disabledRules: [],
     rules: [
       {
         selectorSequence: [

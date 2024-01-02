@@ -17,6 +17,7 @@ import type {
 } from '@/algorithm/stores/HashiAlgorithm';
 
 const algorithmTemplate: HashiAlgorithm = {
+  disabledRules: [],
   rules: [
     {
       selectorSequence: [
@@ -197,6 +198,7 @@ test('sum in plus', () => {
     rhs: { kind: 'plus', lhs: { kind: 'constant', value: 2 }, rhs: sum }
   };
   const algoOrig: HashiAlgorithm = {
+    disabledRules: [],
     rules: [
       {
         selectorSequence: [

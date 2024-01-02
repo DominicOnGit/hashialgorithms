@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { isRuleEnabled, useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { vElementDeselected } from '@/directives/vElementDeselected';
 import RuleBuilder from './RuleBuilder.vue';
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
@@ -33,6 +33,7 @@ function updateRuleState(): void {
 }
 
 onBeforeMount(() => {
+  console.log('loading AllRulesAlgorithm', AllRulesAlgorithm);
   hashiAlgorithmStore.$patch(AllRulesAlgorithm);
 });
 
@@ -62,6 +63,13 @@ function newRule(): void {
 
 function deleteRule(index: number): void {
   hashiAlgorithmStore.deleteRule(createPathToRule(index));
+}
+
+function enableRule(index: number): void {
+  hashiAlgorithmStore.enableRule(index);
+}
+function disableRule(index: number): void {
+  hashiAlgorithmStore.disableRule(index);
 }
 </script>
 
@@ -110,6 +118,16 @@ function deleteRule(index: number): void {
           <span>{{ getName(rule, index) }} </span>
           <button class="ruleBtn btn" @click="editName(index)">
             <i class="bi-pencil"></i>
+          </button>
+          <button
+            v-if="isRuleEnabled(hashiAlgorithmStore, index)"
+            class="ruleBtn btn"
+            @click="disableRule(index)"
+          >
+            <i class="bi-stop"></i>
+          </button>
+          <button v-else class="ruleBtn btn" @click="enableRule(index)">
+            <i class="bi-play"></i>
           </button>
           <SlowPressButton class="ruleBtn btn" @activated="() => deleteRule(index)">
             <i class="bi-trash"></i>
