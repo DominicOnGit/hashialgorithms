@@ -17,8 +17,9 @@ export class AlgorithmRunner {
 
   runStep(): boolean {
     const runnerStore = useAlgorithmRunnerStore();
-    let ruleIndex = runnerStore.activeRule ?? 0;
-    while (ruleIndex < this.algorithm.rules.length) {
+    const startingRuleIndex = runnerStore.activeRule ?? 0;
+    for (let i = 0; i < this.algorithm.rules.length; i++) {
+      const ruleIndex = (startingRuleIndex + i) % this.algorithm.rules.length;
       if (isRuleEnabled(this.algorithm, ruleIndex)) {
         const rule = this.algorithm.rules[ruleIndex];
         const ruleRunner = new RuleRunner(rule, this.hashiUtil);
@@ -28,7 +29,6 @@ export class AlgorithmRunner {
           return true;
         }
       }
-      ruleIndex++;
     }
     runnerStore.setActiveRule(null);
     return false;

@@ -20,7 +20,7 @@ export const useAlgorithmRunnerStore = defineStore('algorithmRunner', {
       this.activeRule = ruleIndex;
     },
     setRuleState(ruleIndex: number, state: RuleState): void {
-      console.log(`setRuleState(${ruleIndex}, ${state})`);
+      console.debug(`setRuleState(${ruleIndex}, ${state})`);
       this.ruleStates[ruleIndex] = state;
     }
   }

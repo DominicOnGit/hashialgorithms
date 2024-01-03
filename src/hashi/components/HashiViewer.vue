@@ -11,7 +11,7 @@ const customPropertiesStore = useCustomPropertyStore();
 const vueCanvas = ref<CanvasRenderingContext2D>();
 
 onMounted(() => {
-  console.log('mounted');
+  console.debug('mounted');
   const c = document.getElementById('canvas') as HTMLCanvasElement;
 
   const ctx = c.getContext('2d');
@@ -22,12 +22,12 @@ onMounted(() => {
 });
 
 watch(hashiStore, () => {
-  console.log('changed');
+  console.debug('changed');
   draw();
 });
 
 function draw() {
-  console.log('draw');
+  console.debug('draw');
 
   if (vueCanvas.value == null) {
     throw new Error();

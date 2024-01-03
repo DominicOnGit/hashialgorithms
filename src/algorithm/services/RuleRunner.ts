@@ -14,7 +14,7 @@ export class RuleRunner {
     const selectorRunner = new SelectorRunner(this.rule.selectorSequence, this.hashiUtil);
 
     const selected = selectorRunner.SelectNext();
-    console.log('Rule selected ', selected);
+    console.log(`Rule ${this.rule.name}: selector retured `, selected);
 
     if (selected != null) {
       const actionRunner = new ActionRunner(this.rule.action, this.hashiUtil);

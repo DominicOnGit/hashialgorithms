@@ -50,18 +50,21 @@ incident edge with multiplicity 0
 and maxMultiplicity = 2
 -> maxMultiplicity = 1
 
-# Hashi solved by single rule
+# Hashi solved by algorithms
 
-|                | Need2Bridges | NeedAtLeastOneBridge |
-| -------------- | :----------: | :------------------: |
-| singleTriangle |              |          x           |
-| doubleTriangle |      x       |          p           |
-| singleSquare   |              |                      |
-| doubleSquare   |      x       |          p           |
-| singleTee      |              |          x           |
-| doubleTee      |      x       |          p           |
-| singleStar     |              |          x           |
-| doubleStar     |      x       |          p           |
+4MaxMultiAlgo = [NeedMaxMultiplicity, NeedAtLeastOneBridgeMaxMulti, SetMaxMultIfRemainingDegreeIs0, SetMaxMultIfRemainingDegreeIs1]
+
+|                | Need2Bridges | NeedAtLeastOneBridge | 4MaxMultiAlgo |
+| -------------- | :----------: | :------------------: | :-----------: |
+| singleTriangle |              |          x           |       x       |
+| doubleTriangle |      x       |          p           |       x       |
+| singleSquare   |              |                      |               |
+| doubleSquare   |      x       |          p           |       x       |
+| singleTee      |              |          x           |       x       |
+| doubleTee      |      x       |          p           |       x       |
+| singleStar     |              |          x           |       x       |
+| doubleStar     |      x       |          p           |       x       |
+| singleH        |              |                      |       p       |
 
 # Impossible rules
 
@@ -70,3 +73,10 @@ and maxMultiplicity = 2
 Vertex with @targetDegree > @degree
 and |incident edges with mult 0| = 1
 -> set 1 1 bridge on that edge
+
+## General need more bridge rule
+
+Edge with multiplicity < maxMultiplicity
+and incident vertex with
+@targetDegree = prev's edge @multiplicity + $\Sigma_{other incident edges} maxMultiplicity(e)$
+-> addEdge

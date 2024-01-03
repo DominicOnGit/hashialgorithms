@@ -11,7 +11,7 @@ import { type Rule } from '../stores/HashiAlgorithm';
 
 export function getComponent(algo: HashiAlgorithm, path: AlgorithmPath): AlgorithmPiece {
   const res = getComponent2(algo, path);
-  console.log('getComponent ', path, res);
+  console.debug('getComponent ', path, res);
   return res;
 }
 

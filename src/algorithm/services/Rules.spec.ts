@@ -20,11 +20,12 @@ import {
   singleTee,
   doubleTee,
   singleStar,
-  doubleStar
+  doubleStar,
+  singleH
 } from '@/hashi/services/HashiSamples';
 import { AlgorithmRunner } from './AlgorithmRunner';
 
-function runTillEnd(hashi: Hashi, algo: HashiAlgorithm): Hashi {
+export function runTillEnd(hashi: Hashi, algo: HashiAlgorithm): Hashi {
   setActivePinia(createPinia());
   const hashiStore = useHashiStore();
   hashiStore.setHashi(hashi);
@@ -36,6 +37,14 @@ function runTillEnd(hashi: Hashi, algo: HashiAlgorithm): Hashi {
     stepOk = runner.runStep();
   }
   return hashiStore;
+}
+
+export function checkResult(original: Hashi, final: Hashi, expectedEdges: Edge[]): void {
+  const finalEdges: Edge[] = final.edges
+    .filter((e) => e.multiplicity > 0)
+    .map((e) => ({ v1: e.v1, v2: e.v2, multiplicity: e.multiplicity }));
+  expect(final.vertices).toEqual(original.vertices);
+  expect(orderEdges(finalEdges)).toEqual(orderEdges(expectedEdges));
 }
 
 function testSingleRuleWithMaxMult(
@@ -60,11 +69,8 @@ function testSingleRuleWithMaxMult(
   );
   const finalHashi = runTillEnd(hashi2, algo);
 
-  console.log('actual edges', finalHashi.edges);
-
-  expect(finalHashi.vertices).toEqual(hashi.vertices);
-  finalHashi.edges.forEach((e) => delete e.customPropertyValues);
-  expect(finalHashi.edges).toEqual(expectedEdges);
+  //  console.log('actual edges', finalHashi.edges);
+  checkResult(hashi, finalHashi, expectedEdges);
 }
 
 function orderEdges(edges: Edge[]): Edge[] {
@@ -82,8 +88,7 @@ function testSingleRule(hashi: Hashi, rule: Rule, expectedEdges: Edge[]): void {
   hashi2.edges.push();
   const finalHashi = runTillEnd(hashi2, algo);
 
-  expect(finalHashi.vertices).toEqual(hashi.vertices);
-  expect(orderEdges(finalHashi.edges)).toEqual(orderEdges(expectedEdges));
+  checkResult(hashi, finalHashi, expectedEdges);
 }
 
 function testSinglePropertyRule(
@@ -162,6 +167,10 @@ describe('Need2Bridges', () => {
       { v1: 2, v2: 4, multiplicity: 2 }
     ]);
   });
+
+  test('on singleH', () => {
+    testSingleRule(singleH, Need2Bridges, []);
+  });
 });
 
 describe('NeedAtLeastOneBridge', () => {
@@ -226,6 +235,9 @@ describe('NeedAtLeastOneBridge', () => {
       { v1: 2, v2: 3, multiplicity: 1 },
       { v1: 2, v2: 4, multiplicity: 1 }
     ]);
+  });
+  test('on singleH', () => {
+    testSingleRule(singleH, NeedAtLeastOneBridge, []);
   });
 });
 

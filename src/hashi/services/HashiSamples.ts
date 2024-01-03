@@ -164,6 +164,18 @@ export const singleStar: Hashi = {
   edges: []
 };
 
+export const singleH: Hashi = {
+  vertices: [
+    { posX: 1, posY: 1, targetDegree: 1 },
+    { posX: 2, posY: 1, targetDegree: 3 },
+    { posX: 3, posY: 1, targetDegree: 1 },
+    { posX: 1, posY: 2, targetDegree: 1 },
+    { posX: 2, posY: 2, targetDegree: 3 },
+    { posX: 3, posY: 2, targetDegree: 1 }
+  ],
+  edges: []
+};
+
 export const doubleTriangle = doubleHashi(singleTriangle);
 export const doubleSquare = doubleHashi(singleSquare);
 export const doubleTee = doubleHashi(singleTee);
@@ -175,7 +187,8 @@ export const namedHashis: Record<string, Hashi> = {
   singleSquare: singleSquare,
   singleSnake: singleSnake,
   singleTee: singleTee,
-  singleStar: singleStar
+  singleStar: singleStar,
+  singleH: singleH
 };
 
 export function doubleHashi(hashi: Hashi): Hashi {
