@@ -1,11 +1,10 @@
 ## Prio 1
 
-- multi rule running
+- Detect success (hashi correct and algo stops)
 - advanced hashi builder, difficulties
 - manual bridge drawing
 - tutorial
 - beautify
-- list rules
 
 ## Prio 2
 

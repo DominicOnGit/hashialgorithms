@@ -50,6 +50,21 @@ incident edge with multiplicity 0
 and maxMultiplicity = 2
 -> maxMultiplicity = 1
 
+## Avoid two vertex islands
+
+Note: These rules are wrong if entire hashi has only two vertex
+
+edge with both vertices having degree 1
+-> set maxMulti 0
+
+select vertex with targetDegree 1
+incident edge with maxMulti > 0
+incident (other) vertex with targetDegree 1
+-> set maxMulti 0
+
+edge with both vertices having degree 2
+-> set maxMulti 1
+
 # Hashi solved by algorithms
 
 4MaxMultiAlgo = [NeedMaxMultiplicity, NeedAtLeastOneBridgeMaxMulti, SetMaxMultIfRemainingDegreeIs0, SetMaxMultIfRemainingDegreeIs1]

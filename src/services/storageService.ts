@@ -61,7 +61,7 @@ const extractAlgorithm = extract<HashiAlgorithm>({
   disabledRules: true
 });
 
-const extractHashi = extract<Hashi>({
+export const extractHashi = extract<Hashi>({
   edges: true,
   vertices: true
 });

@@ -1,8 +1,11 @@
+import { checker } from 'vite-plugin-checker';
 import { HashiUtil } from './../../hashi/services/HashiUtil';
 import {
   Need2Bridges,
   NeedAtLeastOneBridge,
   NeedMaxMultiplicity,
+  NoPairIslandDouble,
+  NoPairIslandSingle,
   SetMaxMultIfRemainingDegreeIs1
 } from './../stores/rules';
 import { type HashiAlgorithm } from './../stores/HashiAlgorithm';
@@ -24,6 +27,9 @@ import {
   singleH
 } from '@/hashi/services/HashiSamples';
 import { AlgorithmRunner } from './AlgorithmRunner';
+import { removeProxy } from '@/services/misc';
+import { extractHashi } from '@/services/storageService';
+import { toRaw } from 'vue';
 
 export function runTillEnd(hashi: Hashi, algo: HashiAlgorithm): Hashi {
   setActivePinia(createPinia());
@@ -39,9 +45,14 @@ export function runTillEnd(hashi: Hashi, algo: HashiAlgorithm): Hashi {
   return hashiStore;
 }
 
-export function checkResult(original: Hashi, final: Hashi, expectedEdges: Edge[]): void {
+export function checkResult(
+  original: Hashi,
+  final: Hashi,
+  expectedEdges: Edge[],
+  ignoreMult0Edges = true
+): void {
   const finalEdges: Edge[] = final.edges
-    .filter((e) => e.multiplicity > 0)
+    .filter((e) => e.multiplicity > 0 || !ignoreMult0Edges)
     .map((e) => ({ v1: e.v1, v2: e.v2, multiplicity: e.multiplicity }));
   expect(final.vertices).toEqual(original.vertices);
   expect(orderEdges(finalEdges)).toEqual(orderEdges(expectedEdges));
@@ -106,16 +117,37 @@ function testSinglePropertyRule(
   hashi2.edges.push();
   const finalHashi = runTillEnd(hashi2, algo);
 
-  expect(finalHashi.vertices).toEqual(hashi.vertices);
+  // console.log(toRaw(extractHashi(finalHashi)));
+  //console.log(removeProxy(finalHashi));
 
-  new HashiUtil(finalHashi).edges.forEach((e) => {
-    const expectedProp = expectedPropEdges.find((x) => x.v1 === e.v1 && x.v2 === e.v2);
-    expect(e.wrappedItem.customPropertyValues?.[expectedPropName]).toEqual(
-      expectedProp?.multiplicity
-    );
-    const expectedMult = hashi.edges.find((x) => x.v1 === e.v1 && x.v2 === e.v2);
-    expect(e.wrappedItem.multiplicity).toEqual(expectedMult?.multiplicity ?? 0);
-  });
+  checkResult(hashi, finalHashi, []);
+
+  const actualPropertyHashi = propertyToMultiplicity(finalHashi, expectedPropName);
+  console.log(toRaw(actualPropertyHashi));
+  // const expectedPropertyHashi: Hashi = {vertices: hashi.vertices, edges: expectedPropEdges};
+  checkResult(hashi, actualPropertyHashi, expectedPropEdges, false);
+
+  // expect(finalHashi.vertices).toEqual(hashi.vertices);
+
+  // new HashiUtil(finalHashi).edges.forEach((e) => {
+  //   const expectedProp = expectedPropEdges.find((x) => x.v1 === e.v1 && x.v2 === e.v2);
+  //   expect(e.wrappedItem.customPropertyValues?.[expectedPropName]).toEqual(
+  //     expectedProp?.multiplicity
+  //   );
+  //   const expectedMult = hashi.edges.find((x) => x.v1 === e.v1 && x.v2 === e.v2);
+  //   expect(e.wrappedItem.multiplicity).toEqual(expectedMult?.multiplicity ?? 0);
+  // });
+}
+
+function propertyToMultiplicity(hashi: Hashi, property: string): Hashi {
+  hashi.edges.forEach((e) => console.log(toRaw(e)));
+  const res: Hashi = {
+    vertices: hashi.vertices,
+    edges: hashi.edges
+      .filter((e) => e.customPropertyValues?.[property] != null)
+      .map((e) => ({ v1: e.v1, v2: e.v2, multiplicity: e.customPropertyValues?.[property] ?? -1 }))
+  };
+  return res;
 }
 
 describe('Need2Bridges', () => {
@@ -281,13 +313,37 @@ describe('NeedMaxMultiplicity', () => {
   });
 });
 
-test('SetMaxMultIfRemainingDegreeIs1 on singleTriange', () => {
-  testSinglePropertyRule(singleTriangle, SetMaxMultIfRemainingDegreeIs1, 'maxMultiplicity', [
-    { v1: 0, v2: 1, multiplicity: 1 },
-    { v1: 0, v2: 2, multiplicity: 1 }
-  ]);
+describe('SetMaxMultIfRemainingDegree', () => {
+  test('SetMaxMultIfRemainingDegreeIs1 on singleTriange', () => {
+    testSinglePropertyRule(singleTriangle, SetMaxMultIfRemainingDegreeIs1, 'maxMultiplicity', [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 0, v2: 2, multiplicity: 1 }
+    ]);
+  });
+
+  test('SetMaxMultIfRemainingDegreeIs1 on doubleTriange', () => {
+    testSinglePropertyRule(doubleTriangle, SetMaxMultIfRemainingDegreeIs1, 'maxMultiplicity', []);
+  });
 });
 
-test('SetMaxMultIfRemainingDegreeIs1 on doubleTriange', () => {
-  testSinglePropertyRule(doubleTriangle, SetMaxMultIfRemainingDegreeIs1, 'maxMultiplicity', []);
+describe('NoPairIsland', () => {
+  test('NoPairIslandSingle on singleSquare', () => {
+    testSinglePropertyRule(singleSquare, NoPairIslandSingle, 'maxMultiplicity', []);
+  });
+
+  test('NoPairIslandDouble on singleSquare', () => {
+    testSinglePropertyRule(singleSquare, NoPairIslandDouble, 'maxMultiplicity', [
+      { v1: 0, v2: 1, multiplicity: 1 },
+      { v1: 0, v2: 2, multiplicity: 1 },
+      { v1: 1, v2: 3, multiplicity: 1 },
+      { v1: 2, v2: 3, multiplicity: 1 }
+    ]);
+  });
+
+  test('NoPairIslandSingle on singleH', () => {
+    testSinglePropertyRule(singleH, NoPairIslandSingle, 'maxMultiplicity', [
+      { v1: 0, v2: 3, multiplicity: 0 },
+      { v1: 2, v2: 5, multiplicity: 0 }
+    ]);
+  });
 });

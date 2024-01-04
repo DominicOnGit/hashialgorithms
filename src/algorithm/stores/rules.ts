@@ -249,6 +249,110 @@ export const SetMaxMultIfRemainingDegreeIs1: Rule = {
   name: 'SetMaxMultIfRemainingDegreeIs1'
 };
 
+export const NoPairIslandSingle: Rule = {
+  selectorSequence: [
+    {
+      kind: 'vertex',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+          operator: 'eq',
+          rhs: { kind: 'constant', value: 1 }
+        }
+      ]
+    },
+    {
+      kind: 'edge',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: {
+            kind: 'custompropertyAccess',
+            property: {
+              name: 'maxMultiplicity',
+              onVertex: false,
+              initialValue: 2,
+              color: 'blue'
+            }
+          },
+          operator: 'gt',
+          rhs: { kind: 'constant', value: 0 }
+        }
+      ]
+    },
+    {
+      kind: 'vertex',
+      excludeAncestor: true,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+          operator: 'eq',
+          rhs: { kind: 'constant', value: 1 }
+        }
+      ]
+    }
+  ],
+  action: {
+    kind: 'setProperty',
+    property: 'maxMultiplicity',
+    value: { kind: 'constant', value: 0 }
+  },
+  name: 'NoPairIslandSingle'
+};
+
+export const NoPairIslandDouble: Rule = {
+  selectorSequence: [
+    {
+      kind: 'vertex',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+          operator: 'eq',
+          rhs: { kind: 'constant', value: 2 }
+        }
+      ]
+    },
+    {
+      kind: 'edge',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: {
+            kind: 'custompropertyAccess',
+            property: {
+              name: 'maxMultiplicity',
+              onVertex: false,
+              initialValue: 2,
+              color: 'blue'
+            }
+          },
+          operator: 'gt',
+          rhs: { kind: 'constant', value: 1 }
+        }
+      ]
+    },
+    {
+      kind: 'vertex',
+      excludeAncestor: false,
+      conditions: [
+        {
+          lhs: { kind: 'propertyAccess', property: 'targetDegree' },
+          operator: 'eq',
+          rhs: { kind: 'constant', value: 2 }
+        }
+      ]
+    }
+  ],
+  action: {
+    kind: 'setProperty',
+    property: 'maxMultiplicity',
+    value: { kind: 'constant', value: 1 }
+  },
+  name: 'NoPairIslandDouble'
+};
+
 export const AllRulesAlgorithm: HashiAlgorithm = {
   disabledRules: [0, 2],
   rules: [
@@ -257,7 +361,9 @@ export const AllRulesAlgorithm: HashiAlgorithm = {
     NeedAtLeastOneBridge,
     NeedAtLeastOneBridgeMaxMulti,
     SetMaxMultIfRemainingDegreeIs0,
-    SetMaxMultIfRemainingDegreeIs1
+    SetMaxMultIfRemainingDegreeIs1,
+    NoPairIslandSingle,
+    NoPairIslandDouble
   ]
 };
 // AllRulesAlgorithm.disabledRules = Array.from(Array(AllRulesAlgorithm.rules.length).keys());
