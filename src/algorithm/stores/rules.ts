@@ -335,7 +335,7 @@ export const NoPairIslandDouble: Rule = {
     },
     {
       kind: 'vertex',
-      excludeAncestor: false,
+      excludeAncestor: true,
       conditions: [
         {
           lhs: { kind: 'propertyAccess', property: 'targetDegree' },

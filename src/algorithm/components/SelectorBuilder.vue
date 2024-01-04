@@ -15,6 +15,10 @@ const isFirst = computed(() => {
   return getSelectorIndex(props.path) === 0;
 });
 
+const isFirstOrSecond = computed(() => {
+  return getSelectorIndex(props.path) <= 1;
+});
+
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 </script>
 
@@ -25,7 +29,7 @@ const hashiAlgorithmStore = useHashiAlgorithmStore();
       <SelectorTypeOption
         :value="selector"
         :useIncident="!isFirst"
-        :allowExcludeAncestor="false"
+        :allowExcludeAncestor="!isFirstOrSecond"
         @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(path, newKind)"
       />
     </td>
