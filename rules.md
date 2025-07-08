@@ -95,3 +95,19 @@ Edge with multiplicity < maxMultiplicity
 and incident vertex with
 @targetDegree = prev's edge @multiplicity + $\Sigma_{other incident edges} maxMultiplicity(e)$
 -> addEdge
+
+## Do not close component
+
+Select component with remaining degree 2 (4)
+and is not entire hashi
+select edge in component with remaining multi 1 (2)
+decrease maxMulti
+
+## Do not connect single remaining degree components
+
+Select component with remaining degree 1 (2)
+select vertex in component with remaining degree 1 (2)
+select edge with remainingMulti 1 (2) (this goes to another component)
+select incident other component
+with remaining degree 1 (2)
+-> decrease maxMulti

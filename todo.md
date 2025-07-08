@@ -1,15 +1,20 @@
 ## Prio 1
 
+- Connected Component rules (select componet). Component has @isEntireHashi
 - Detect success (hashi correct and algo stops)
 - advanced hashi builder, difficulties
-- manual bridge drawing
 - tutorial
 - beautify
 
 ## Prio 2
 
+- manual bridge drawing
+
+## Prio 3
+
 - empty Term
 - undo/redo
+- show remaining degree
 
 ## Bugs
 

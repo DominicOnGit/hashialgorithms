@@ -35,12 +35,27 @@ export class HashiCanvasService {
     this.gridSize = this.islandRadius * GridSizeFactor;
   }
 
+  private getVertexCenterX(vertex: Vertex): number {
+    return (vertex.posX - 0.5) * this.gridSize;
+  }
+
+  private getVertexCenterY(vertex: Vertex): number {
+    return (vertex.posY - 0.5) * this.gridSize;
+  }
+
+  private getEdgeCenterX(edge: HashiEdge): number {
+    return (this.getVertexCenterX(edge.vertex1) + this.getVertexCenterX(edge.vertex2)) / 2;
+  }
+  private getEdgeCenterY(edge: HashiEdge): number {
+    return (this.getVertexCenterY(edge.vertex1) + this.getVertexCenterY(edge.vertex2)) / 2;
+  }
+
   private drawVertex(vertex: HashiVertex): void {
     this.canvas.beginPath();
     this.canvas.strokeStyle = NormalStyle;
     this.canvas.arc(
-      vertex.posX * this.gridSize,
-      vertex.posY * this.gridSize,
+      this.getVertexCenterX(vertex),
+      this.getVertexCenterY(vertex),
       this.islandRadius,
       0,
       2 * Math.PI
@@ -57,11 +72,9 @@ export class HashiCanvasService {
     this.canvas.textBaseline = 'alphabetic';
     this.canvas.strokeText(
       vertex.targetDegree.toString(),
-      vertex.posX * this.gridSize,
-      vertex.posY * this.gridSize + this.textHeight / 2.0
+      this.getVertexCenterX(vertex),
+      this.getVertexCenterY(vertex) + this.textHeight / 2.0
     );
-    // this.canvas.textBaseline = "middle"
-    // this.canvas.strokeText(vertex.targetDegree.toString(), vertex.posX * gridSize, vertex.posY * gridSize);
   }
 
   private line(v1: Vertex, v2: Vertex, offset: number): void {
@@ -69,12 +82,12 @@ export class HashiCanvasService {
     const dy = compareNumbers(v1.posY, v2.posY);
 
     this.canvas.moveTo(
-      v1.posX * this.gridSize + dx * this.islandRadius + dy * offset,
-      v1.posY * this.gridSize + dy * this.islandRadius + dx * offset
+      this.getVertexCenterX(v1) + dx * this.islandRadius + dy * offset,
+      this.getVertexCenterY(v1) + dy * this.islandRadius + dx * offset
     );
     this.canvas.lineTo(
-      v2.posX * this.gridSize - dx * this.islandRadius + dy * offset,
-      v2.posY * this.gridSize - dy * this.islandRadius + dx * offset
+      this.getVertexCenterX(v2) - dx * this.islandRadius + dy * offset,
+      this.getVertexCenterY(v2) - dy * this.islandRadius + dx * offset
     );
   }
 
@@ -112,8 +125,8 @@ export class HashiCanvasService {
 
     const xOffset = edge.vertex1.posX === edge.vertex2.posX ? 10 : 0;
     const yOffset = edge.vertex1.posY === edge.vertex2.posY ? -10 : 0;
-    const x = ((edge.vertex1.posX + edge.vertex2.posX) * this.gridSize) / 2 + xOffset;
-    const y = ((edge.vertex1.posY + edge.vertex2.posY) * this.gridSize) / 2 + yOffset;
+    const x = this.getEdgeCenterX(edge) + xOffset;
+    const y = this.getEdgeCenterY(edge) + yOffset;
 
     edge.getCustomProperties(this.customPropertyDefs).forEach((prop) => {
       this.canvas.strokeText(prop.value.toString(), x, y);

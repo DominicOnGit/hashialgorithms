@@ -47,7 +47,7 @@ function toggleRunning(): void {
 
 function grow(): void {
   const builder = new HashiBuilder(hashiStore);
-  builder.grow({ nx: 11, ny: 11 });
+  builder.grow({ nx: 7, ny: 7 });
 }
 
 function clearEdges(): void {
@@ -57,7 +57,7 @@ function clearEdges(): void {
 function growSomeAndClear(): void {
   const builder = new HashiBuilder(hashiStore);
   for (let i = 0; i < 5; i++) {
-    builder.grow({ nx: 11, ny: 11 });
+    builder.grow({ nx: 7, ny: 7 });
   }
   clearEdges();
 }
