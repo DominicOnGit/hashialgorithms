@@ -13,7 +13,6 @@ dist
 dist-ssr
 coverage
 *.local
-html
 
 /cypress/videos/
 /cypress/screenshots/
@@ -27,3 +26,8 @@ html
 *.njsproj
 *.sln
 *.sw?
+
+*.tsbuildinfo
+
+test-results/
+playwright-report/
