@@ -4,13 +4,14 @@ import { vElementDeselected } from '@/directives/vElementDeselected';
 import RuleBuilder from './RuleBuilder.vue';
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
 import type { Rule } from '../stores/HashiAlgorithm';
-import { ref, nextTick, onBeforeMount } from 'vue';
+import { ref, nextTick, onBeforeMount, toRef } from 'vue';
 import SlowPressButton from '@/components/SlowPressButton.vue';
 import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { RuleRunner } from '../services/RuleRunner';
 import { AllRulesAlgorithm } from '../stores/rules';
+import EditableLabel from '@/components/EditableLabel.vue';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const runState = useAlgorithmRunnerStore();
@@ -71,10 +72,21 @@ function enableRule(index: number): void {
 function disableRule(index: number): void {
   hashiAlgorithmStore.disableRule(index);
 }
+
+function stepRule(index: number): void {
+  const ruleRunner = new RuleRunner(hashiAlgorithmStore.rules[index], new HashiUtil(hashiState));
+  const stepResult = ruleRunner.runRuleStep();
+}
+
+const algorithmName = toRef(hashiAlgorithmStore.name);
 </script>
 
 <template>
-  <ul class="nav nav-pills">
+  <h2>
+    <EditableLabel v-model="algorithmName" />
+  </h2>
+
+  <ul class="nav flex-column nav-pills">
     <li v-for="(rule, index) in hashiAlgorithmStore.rules" :key="index" class="nav-item">
       <a
         :ref="'a' + index"
@@ -83,7 +95,7 @@ function disableRule(index: number): void {
         @click="activeRuleIndex = index"
       >
         <i v-if="runState.activeRule === index" class="ruleState bi-activity"></i>
-        <!-- bi-bullseye bi-caret-right-square-->
+
         <template v-else>
           <i v-if="runState.ruleStates[index] == 'matching'" class="ruleState bi-play-circle"></i>
           <i
@@ -132,6 +144,10 @@ function disableRule(index: number): void {
           <SlowPressButton class="ruleBtn btn" @activated="() => deleteRule(index)">
             <i class="bi-trash"></i>
           </SlowPressButton>
+
+          <button class="ruleBtn btn" @click="stepRule(index)">
+            <i class="bi-arrow-right"></i>
+          </button>
         </template>
       </a>
     </li>
@@ -140,7 +156,6 @@ function disableRule(index: number): void {
 
   <RuleBuilder
     v-if="hashiAlgorithmStore.rules.length > 0"
-    :rule="hashiAlgorithmStore.rules[activeRuleIndex]"
     :path="createPathToRule(activeRuleIndex)"
   />
 </template>

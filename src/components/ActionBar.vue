@@ -11,6 +11,7 @@ import {
 } from '@/hashi/services/HashiSamples';
 import { SaveAll, LoadAll, CanLoad } from '@/services/storageService';
 import { onMounted, ref } from 'vue';
+import { HashiUtil } from '@/hashi/services/HashiUtil';
 
 const hashiStore = useHashiStore();
 const hashiAlgorithmStore = useHashiAlgorithmStore();
@@ -22,13 +23,13 @@ onMounted(() => (canLoad.value = CanLoad()));
 
 function step(): void {
   console.log('step');
-  const runner = new AlgorithmRunner(hashiAlgorithmStore, hashiStore);
+  const runner = new AlgorithmRunner(hashiAlgorithmStore, new HashiUtil(hashiStore));
   runner.runStep();
 }
 
 function animate(): void {
   if (miscStore.isRunning) {
-    const runner = new AlgorithmRunner(hashiAlgorithmStore, hashiStore);
+    const runner = new AlgorithmRunner(hashiAlgorithmStore, new HashiUtil(hashiStore));
     const ok = runner.runStep();
     if (ok) {
       setTimeout(() => animate(), 1000);

@@ -4,16 +4,19 @@ import SelectorBuilder from './SelectorBuilder.vue';
 import ActionBuilder from './ActionBuilder.vue';
 import {
   pathSelectorAndAppend,
-  pathActionAndAppend
+  pathActionAndAppend,
+  getComponent
 } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { computed } from 'vue';
 
-defineProps<{
-  rule: Rule;
+const props = defineProps<{
   path: AlgorithmPath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
+
+const rule = computed(() => getComponent(hashiAlgorithmStore, props.path) as Rule);
 </script>
 
 <template>

@@ -17,6 +17,7 @@ import {
 import { textChangeRangeIsUnchanged } from 'typescript';
 
 const EmptyAlgorithm: HashiAlgorithm = {
+  name: 'New Algorithm',
   disabledRules: [],
   rules: []
 };

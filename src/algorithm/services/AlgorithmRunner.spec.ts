@@ -4,6 +4,7 @@ import { AlgorithmRunner } from './AlgorithmRunner';
 import { useHashiStore, type Edge, type Hashi } from '@/hashi/stores/hashi';
 import { type HashiAlgorithm } from '@/algorithm/stores/HashiAlgorithm';
 import { createPinia, setActivePinia } from 'pinia';
+import { HashiUtil } from '@/hashi/services/HashiUtil';
 
 test('runs rule', () => {
   setActivePinia(createPinia());
@@ -33,7 +34,7 @@ test('runs rule', () => {
   };
   hashiStore.setHashi(hashi);
 
-  const runner = new AlgorithmRunner(algorithm, hashi);
+  const runner = new AlgorithmRunner(algorithm, new HashiUtil(hashi));
   const ok = runner.runStep();
   expect(ok).toBe(true);
   const expectedEdge: Edge = {
@@ -79,7 +80,7 @@ test('runStep retuns false if nothing executed', () => {
   };
   hashiStore.setHashi(hashi);
 
-  const runner = new AlgorithmRunner(algorithm, hashi);
+  const runner = new AlgorithmRunner(algorithm, new HashiUtil(hashi));
   const ok = runner.runStep();
   expect(ok).toBe(false);
   expect(hashiStore.edges).toStrictEqual([]);
@@ -127,7 +128,7 @@ test('runStep switches to next rule if nothing executed', () => {
   };
   hashiStore.setHashi(hashi);
 
-  const runner = new AlgorithmRunner(algorithm, hashi);
+  const runner = new AlgorithmRunner(algorithm, new HashiUtil(hashi));
   const ok = runner.runStep();
   expect(ok).toBe(true);
   const expectedEdge: Edge = {

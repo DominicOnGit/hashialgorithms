@@ -276,6 +276,10 @@ export class HashiUtil {
     if (this.IsSolved()) return 'solved';
     return 'open';
   }
+
+  public clearEdges(): void {
+    this.edges.forEach((e) => (e.multiplicity = 0));
+  }
 }
 
 export type SolutionState = 'solved' | 'invalid' | 'wrong' | 'open';

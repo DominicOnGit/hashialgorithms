@@ -354,16 +354,17 @@ export const NoPairIslandDouble: Rule = {
 };
 
 export const AllRulesAlgorithm: HashiAlgorithm = {
+  name: 'All Rules Algorithm',
   disabledRules: [0, 2],
   rules: [
     Need2Bridges,
     NeedMaxMultiplicity,
     NeedAtLeastOneBridge,
-    NeedAtLeastOneBridgeMaxMulti,
-    SetMaxMultIfRemainingDegreeIs0,
-    SetMaxMultIfRemainingDegreeIs1,
-    NoPairIslandSingle,
-    NoPairIslandDouble
+    NeedAtLeastOneBridgeMaxMulti
+    // SetMaxMultIfRemainingDegreeIs0,
+    // SetMaxMultIfRemainingDegreeIs1,
+    // NoPairIslandSingle,
+    // NoPairIslandDouble
   ]
 };
 // AllRulesAlgorithm.disabledRules = Array.from(Array(AllRulesAlgorithm.rules.length).keys());

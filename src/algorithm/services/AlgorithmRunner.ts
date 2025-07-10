@@ -1,4 +1,4 @@
-import { useAlgorithmRunnerStore } from './../stores/AlgorithmRunnerStore';
+import { useAlgorithmRunnerStore, type RunState } from './../stores/AlgorithmRunnerStore';
 import { RuleRunner } from './RuleRunner';
 import { type Hashi } from '@/hashi/stores/hashi';
 import type { HashiAlgorithm } from '@/algorithm/stores/HashiAlgorithm';
@@ -6,14 +6,10 @@ import { HashiUtil } from '../../hashi/services/HashiUtil';
 import { isRuleEnabled } from '../stores/HashiAlgorithmStore';
 
 export class AlgorithmRunner {
-  private hashiUtil: HashiUtil;
-
   constructor(
     private algorithm: HashiAlgorithm,
-    hashi: Hashi
-  ) {
-    this.hashiUtil = new HashiUtil(hashi);
-  }
+    private hashiUtil: HashiUtil
+  ) {}
 
   runStep(): boolean {
     const runnerStore = useAlgorithmRunnerStore();
