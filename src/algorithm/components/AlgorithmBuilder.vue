@@ -12,6 +12,7 @@ import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { RuleRunner } from '../services/RuleRunner';
 import { AllRulesAlgorithm } from '../stores/rules';
 import EditableLabel from '@/components/EditableLabel.vue';
+import { AlgorithmRunner } from '../services/AlgorithmRunner';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const runState = useAlgorithmRunnerStore();
@@ -78,12 +79,36 @@ function stepRule(index: number): void {
   const stepResult = ruleRunner.runRuleStep();
 }
 
+let shakeTimeout: NodeJS.Timeout | null = null;
+function stepAlgorithm(): void {
+  const algoRunner = new AlgorithmRunner(hashiAlgorithmStore, new HashiUtil(hashiState));
+  const res = algoRunner.runStep();
+  if (shakeTimeout != null) {
+    clearTimeout(shakeTimeout);
+  }
+  if (res) {
+    shakeRunning.value = true;
+    console.log('shake');
+    shakeTimeout = setTimeout(() => {
+      shakeRunning.value = false;
+      console.log('shake end');
+    }, 500);
+  } else {
+    shakeRunning.value = false;
+    console.log('no shake');
+  }
+}
+
+const shakeRunning = ref(false);
 const algorithmName = toRef(hashiAlgorithmStore.name);
 </script>
 
 <template>
   <h2>
     <EditableLabel v-model="algorithmName" />
+    <button class="ruleBtn btn" @click="stepAlgorithm()">
+      <i class="bi-arrow-right"></i>
+    </button>
   </h2>
 
   <ul class="nav flex-column nav-pills">
@@ -91,23 +116,34 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
       <a
         :ref="'a' + index"
         class="nav-link"
-        :class="{ active: activeRuleIndex === index }"
+        :class="{
+          active: activeRuleIndex === index
+        }"
         @click="activeRuleIndex = index"
       >
-        <i v-if="runState.activeRule === index" class="ruleState bi-activity"></i>
+        <span
+          :class="{ shake: shakeRunning && runState.activeRule === index }"
+          style="display: inline-flex"
+        >
+          <i v-if="runState.activeRule === index" class="ruleState bi-activity"></i>
 
-        <template v-else>
-          <i v-if="runState.ruleStates[index] == 'matching'" class="ruleState bi-play-circle"></i>
-          <i
-            v-else-if="runState.ruleStates[index] == 'noMatch'"
-            class="ruleState bi-stop-circle"
-          ></i>
-          <i v-else-if="runState.ruleStates[index] == 'unknown'" class="ruleState bi-hourglass"></i>
-          <i
-            v-else-if="runState.ruleStates[index] == 'infiniteLoop'"
-            class="ruleState bi-repeat"
-          ></i>
-        </template>
+          <template v-else>
+            <i v-if="runState.ruleStates[index] == 'matching'" class="ruleState bi-play-circle"></i>
+            <i
+              v-else-if="runState.ruleStates[index] == 'noMatch'"
+              class="ruleState bi-stop-circle"
+            ></i>
+            <i
+              v-else-if="runState.ruleStates[index] == 'unknown'"
+              class="ruleState bi-hourglass"
+            ></i>
+            <i
+              v-else-if="runState.ruleStates[index] == 'infiniteLoop'"
+              class="ruleState bi-repeat"
+            ></i>
+          </template>
+        </span>
+
         <!-- <span
           v-if="runState.activeRule === index"
           class="spinner-border spinner-border-sm"
@@ -161,6 +197,38 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
 </template>
 
 <style scoped>
+.shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) none;
+  transform: translate3d(0, 0, 0);
+}
+
+.test {
+  transform: translate3d(50px, 0, 0);
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-0.5px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(1px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(2px, 0, 0);
+  }
+}
+
 .ruleState {
   margin-right: 5px;
 }
