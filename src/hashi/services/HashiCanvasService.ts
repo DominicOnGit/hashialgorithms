@@ -1,8 +1,8 @@
 import { type Vertex } from '@/hashi/stores/hashi';
 import type { HashiEdge, HashiUtil, HashiVertex } from './HashiUtil';
 import type { CustomPropertyDefs } from '@/stores/CustomPropertyDef';
+import { HashiTextConverter } from './HashiTextConverter';
 
-const GridSizeFactor = 5;
 const IslandRadiusFactor = 1;
 const LineGap = 4;
 
@@ -25,14 +25,28 @@ export class HashiCanvasService {
     private hashi: HashiUtil,
     private customPropertyDefs: CustomPropertyDefs
   ) {
-    this.canvas.font = '15px sans-serif';
+    const hashiSize = this.hashi.getSize();
+    const canvasWidth = this.canvas.canvas.width;
+    const canvasHeight = this.canvas.canvas.height;
+
+    this.gridSize = Math.min(canvasWidth / hashiSize.nx, canvasHeight / hashiSize.ny);
+
+    const fontSize = this.gridSize < 50 ? 12 : this.gridSize < 100 ? 15 : 20;
+
+    this.canvas.font = `${fontSize}px sans-serif`;
     this.canvas.textAlign = 'center';
     const textMeasure = this.canvas.measureText('5');
     this.textHeight = textMeasure.actualBoundingBoxAscent + textMeasure.actualBoundingBoxDescent;
     this.textSize = Math.max(this.textHeight, textMeasure.width);
 
     this.islandRadius = IslandRadiusFactor * this.textSize;
-    this.gridSize = this.islandRadius * GridSizeFactor;
+
+    console.log(
+      'HashiCanvasService initialized',
+      `canvas size: ${canvasWidth} x ${canvasHeight}`,
+      new HashiTextConverter().toText(this.hashi),
+      `gridSize: ${this.gridSize}, islandRadius: ${this.islandRadius}, textHeight: ${this.textHeight}, textSize: ${this.textSize}`
+    );
   }
 
   private getVertexCenterX(vertex: Vertex): number {
@@ -51,6 +65,9 @@ export class HashiCanvasService {
   }
 
   private drawVertex(vertex: HashiVertex): void {
+    console.log(
+      `Drawing vertex ${vertex.posX}, ${vertex.posY} at ${this.getVertexCenterX(vertex)}, ${this.getVertexCenterY(vertex)}`
+    );
     this.canvas.beginPath();
     this.canvas.strokeStyle = NormalStyle;
     this.canvas.arc(
@@ -70,7 +87,7 @@ export class HashiCanvasService {
     }
 
     this.canvas.textBaseline = 'alphabetic';
-    this.canvas.strokeText(
+    this.canvas.fillText(
       vertex.targetDegree.toString(),
       this.getVertexCenterX(vertex),
       this.getVertexCenterY(vertex) + this.textHeight / 2.0

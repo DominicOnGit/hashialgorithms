@@ -2,8 +2,8 @@ import { empty } from '@/hashi/services/HashiSamples';
 import { defineStore } from 'pinia';
 
 export interface Vertex {
-  posX: number;
-  posY: number;
+  posX: number; // start at 1
+  posY: number; // start at 1
 
   targetDegree: number;
 }

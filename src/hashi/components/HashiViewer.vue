@@ -4,6 +4,8 @@ import { HashiCanvasService } from '@/hashi/services/HashiCanvasService';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
+import { assert } from 'console';
+import { assertNotNull } from '@/services/misc';
 
 const hashiStore = useHashiStore();
 const customPropertiesStore = useCustomPropertyStore();
@@ -28,10 +30,7 @@ watch(hashiStore, () => {
 
 function draw() {
   console.debug('draw');
-
-  if (vueCanvas.value == null) {
-    throw new Error();
-  }
+  assertNotNull(vueCanvas.value, 'vueCanvas is null');
   new HashiCanvasService(
     vueCanvas.value,
     new HashiUtil(hashiStore),

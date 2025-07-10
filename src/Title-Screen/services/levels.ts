@@ -12,7 +12,8 @@ export class TextLevel implements Level {
 
   load(): HashiUtil {
     const converter = new HashiTextConverter();
-    return converter.parse(this.hashiText);
+    const parsed = converter.parse(this.hashiText);
+    return converter.shrink(parsed);
   }
 }
 

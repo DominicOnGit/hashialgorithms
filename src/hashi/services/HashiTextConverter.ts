@@ -2,6 +2,36 @@ import type { Hashi, Vertex } from '../stores/hashi';
 import { HashiUtil } from './HashiUtil';
 
 export class HashiTextConverter {
+  toText(hashi: HashiUtil): string {
+    const size = hashi.getSize();
+    return `${size.nx} x ${size.ny}`;
+  }
+
+  public shrink(orig: HashiUtil): HashiUtil {
+    const size = orig.getSize();
+
+    let newX = 0;
+    for (let x = 1; x <= size.nx; x++) {
+      if (orig.vertices.some((v) => v.posX === x)) {
+        newX++;
+        orig.vertices.forEach((v) => {
+          if (v.posX === x) v.wrappedItem.posX = newX;
+        });
+      }
+    }
+
+    let newY = 0;
+    for (let y = 1; y <= size.ny; y++) {
+      if (orig.vertices.some((v) => v.posY === y)) {
+        newY++;
+        orig.vertices.forEach((v) => {
+          if (v.posY === y) v.wrappedItem.posY = newY;
+        });
+      }
+    }
+    return orig;
+  }
+
   public parse(text: string): HashiUtil {
     const lines = this.getLines(text);
 
@@ -48,8 +78,8 @@ export class HashiTextConverter {
 
         if (char === 'x') {
           const vertex: Vertex = {
-            posX: col,
-            posY: index,
+            posX: col + 1,
+            posY: index + 1,
             targetDegree: 0
           };
           vertices.push(vertex);
@@ -73,7 +103,7 @@ export class HashiTextConverter {
 
         if (char === '0' || char === '1' || char === '2') {
           const multiplicity = parseInt(char, 10);
-          const edge = hashiUtil.getEdgeAt(x, y);
+          const edge = hashiUtil.getEdgeAt(x + 1, y + 1);
           if (edge == null) {
             throw new Error(`Edge not found at (${x}, ${y})`);
           }

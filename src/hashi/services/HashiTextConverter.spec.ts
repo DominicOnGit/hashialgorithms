@@ -10,8 +10,8 @@ describe('HashiTextConverter', () => {
 
     const expected: Hashi = {
       vertices: [
-        { posX: 0, posY: 0, targetDegree: 1 },
-        { posX: 4, posY: 0, targetDegree: 1 }
+        { posX: 1, posY: 1, targetDegree: 1 },
+        { posX: 5, posY: 1, targetDegree: 1 }
       ],
       edges: [{ v1: 0, v2: 1, multiplicity: 1 }]
     };
@@ -25,8 +25,8 @@ describe('HashiTextConverter', () => {
 
     const expected: Hashi = {
       vertices: [
-        { posX: 0, posY: 0, targetDegree: 1 },
-        { posX: 0, posY: 2, targetDegree: 1 }
+        { posX: 1, posY: 1, targetDegree: 1 },
+        { posX: 1, posY: 3, targetDegree: 1 }
       ],
       edges: [{ v1: 0, v2: 1, multiplicity: 1 }]
     };
@@ -42,8 +42,8 @@ describe('HashiTextConverter', () => {
 
     const expected: Hashi = {
       vertices: [
-        { posX: 0, posY: 0, targetDegree: 1 },
-        { posX: 4, posY: 0, targetDegree: 1 }
+        { posX: 1, posY: 1, targetDegree: 1 },
+        { posX: 5, posY: 1, targetDegree: 1 }
       ],
       edges: [{ v1: 0, v2: 1, multiplicity: 1 }]
     };
@@ -60,10 +60,10 @@ x 1 x`;
 
     const expected: Hashi = {
       vertices: [
-        { posX: 0, posY: 0, targetDegree: 2 },
-        { posX: 4, posY: 0, targetDegree: 2 },
-        { posX: 0, posY: 2, targetDegree: 2 },
-        { posX: 4, posY: 2, targetDegree: 2 }
+        { posX: 1, posY: 1, targetDegree: 2 },
+        { posX: 5, posY: 1, targetDegree: 2 },
+        { posX: 1, posY: 3, targetDegree: 2 },
+        { posX: 5, posY: 3, targetDegree: 2 }
       ],
       edges: [
         { v1: 0, v2: 1, multiplicity: 1 },
