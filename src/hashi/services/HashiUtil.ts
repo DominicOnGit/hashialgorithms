@@ -69,6 +69,11 @@ export class HashiEdge implements Selectable, Edge {
     return this.edge.multiplicity;
   }
 
+  public set multiplicity(value: number) {
+    if (value < 0 || value > 2) throw new Error('invalid multiplicity');
+    this.edge.multiplicity = value;
+  }
+
   public getCustomProperties(propertyDefs: CustomPropertyDefs): CustomPropertyData[] {
     if (this.edge.customPropertyValues != null) {
       return Object.entries(this.edge.customPropertyValues)
@@ -108,13 +113,17 @@ export class HashiUtil {
   vertices: HashiVertex[];
   edges: HashiEdge[];
 
+  public get wrappedItem(): Hashi {
+    return this.hashi;
+  }
+
   constructor(private hashi: Hashi) {
     validateHashi(hashi);
 
     this.vertices = hashi.vertices.map((v, i) => new HashiVertex(v, i));
     this.edges = hashi.edges.map((e) => new HashiEdge(e, this.vertices));
 
-    this.edges.push(...this.findMissingEdges());
+    this.addMissingEdges();
   }
 
   incidentEdges(v: HashiVertex): HashiEdge[] {
@@ -148,40 +157,14 @@ export class HashiUtil {
     };
   }
 
-  // makeGrid(): EdgeVertexNull[][] {
-  //   const size = this.getSize()
-  //   const grid: EdgeVertexNull[][] = Array.from({ length: size.ny }, () =>
-  //     Array.from({ length: size.nx })
-  //   )
-
-  //   this.hashi.vertices.forEach((vertex) => {
-  //     grid[vertex.posY][vertex.posX] = vertex
-  //   })
-  //   this.hashi.edges.forEach((edge) => {
-  //     const v1 = this.hashi.vertices[edge.v1]
-  //     const v2 = this.hashi.vertices[edge.v2]
-  //     if (v1.posX === v2.posX) {
-  //       for (let y = v1.posY + 1; y < v2.posY; y++) {
-  //         grid[y][v1.posX] = edge
-  //       }
-  //     }
-  //     if (v1.posY === v2.posY) {
-  //       for (let x = v1.posX + 1; x < v2.posX; x++) {
-  //         grid[v1.posY][x] = edge
-  //       }
-  //     }
-  //   })
-  //   return grid
-  // }
-
-  getVertexAt(x: number, y: number): Vertex | undefined {
-    return this.hashi.vertices.find((v) => v.posX === x && v.posY === y);
+  getVertexAt(x: number, y: number): HashiVertex | undefined {
+    return this.vertices.find((v) => v.posX === x && v.posY === y);
   }
 
-  getEdgeAt(x: number, y: number): Edge | undefined {
-    const found = this.hashi.edges.find((edge) => {
-      const v1 = this.hashi.vertices[edge.v1];
-      const v2 = this.hashi.vertices[edge.v2];
+  getEdgeAt(x: number, y: number): HashiEdge | undefined {
+    const found = this.edges.find((edge) => {
+      const v1 = edge.vertex1;
+      const v2 = edge.vertex2;
 
       if (v1.posX === v2.posX && v1.posX === x) {
         return v1.posY <= y && y <= v2.posY;
@@ -194,8 +177,20 @@ export class HashiUtil {
     return found;
   }
 
-  private findMissingEdges(): HashiEdge[] {
-    const res: HashiEdge[] = [];
+  getNextVertex(xStart: number, yStart: number, dx: number, dy: number): Vertex | null {
+    const size = this.getSize();
+    for (
+      let x = xStart + dx, y = yStart + dy;
+      0 <= x && x <= size.nx && 0 <= y && y <= size.ny;
+      x += dx, y += dy
+    ) {
+      const vertex = this.getVertexAt(x, y);
+      if (vertex != null) return vertex;
+    }
+    return null;
+  }
+
+  private addMissingEdges(): void {
     for (let v1Index = 0; v1Index < this.vertices.length; v1Index++)
       for (let v2Index = v1Index + 1; v2Index < this.vertices.length; v2Index++) {
         const v1 = this.vertices[v1Index];
@@ -214,7 +209,7 @@ export class HashiUtil {
               }
             }
             if (valid) {
-              res.push(new HashiEdge({ v1: v1Index, v2: v2Index, multiplicity: 0 }, this.vertices));
+              this.addEdge(v1Index, v2Index, 0);
             }
           }
           if (v1.posY === v2.posY) {
@@ -227,12 +222,26 @@ export class HashiUtil {
               }
             }
             if (valid) {
-              res.push(new HashiEdge({ v1: v1Index, v2: v2Index, multiplicity: 0 }, this.vertices));
+              this.addEdge(v1Index, v2Index, 0);
             }
           }
         }
       }
-    return res;
+  }
+
+  private addEdge(v1: number, v2: number, multiplicity: number): void {
+    const edge = { v1, v2, multiplicity };
+    this.hashi.edges.push(edge);
+    this.edges.push(new HashiEdge(edge, this.vertices));
+  }
+
+  public calculateTargetDegrees(): void {
+    this.vertices.forEach((v) => {
+      v.wrappedItem.targetDegree = this.incidentEdges(v).reduce(
+        (sum, e) => sum + e.multiplicity,
+        0
+      );
+    });
   }
 
   public IsValid(): boolean {

@@ -11,9 +11,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import TitleScreen from './Title-Screen/components/TitleScreen.vue';
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', component: GameScreen },
+  { path: '/', component: TitleScreen },
+  { path: '/play/:level', component: GameScreen },
+
   { path: '/test', component: TestScreen }
 ];
 
