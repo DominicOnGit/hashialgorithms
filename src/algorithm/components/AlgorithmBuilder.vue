@@ -101,27 +101,41 @@ function stepAlgorithm(): boolean {
 }
 
 function stepAndQueue(): void {
-  if (isPlaying.value) {
+  if (playState.value !== 'paused') {
     const stepOk = stepAlgorithm();
     if (stepOk) {
-      setTimeout(() => {
-        stepAndQueue();
-      }, 1000);
+      setTimeout(
+        () => {
+          stepAndQueue();
+        },
+        playState.value === 'fast' ? 250 : 1000
+      );
     } else {
-      isPlaying.value = false;
+      playState.value = 'paused';
       console.log('algorithm ended');
     }
   }
 }
 
-const isPlaying = ref(false);
-function togglePlayAlgorithm(): void {
-  isPlaying.value = !isPlaying.value;
+type PlayState = 'normal' | 'fast' | 'paused';
 
-  if (isPlaying.value) {
+const playState = ref<PlayState>('paused');
+
+function setPlayState(state: PlayState): void {
+  const oldState = playState.value;
+  if (oldState === state) {
+    return;
+  }
+  playState.value = state;
+  if (oldState === 'paused') {
     console.log('start playing algorithm');
     stepAndQueue();
   }
+}
+
+function stepAndPause(): void {
+  setPlayState('paused');
+  stepAlgorithm();
 }
 
 const shakeRunning = ref(false);
@@ -131,13 +145,25 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
 <template>
   <h2>
     <EditableLabel v-model="algorithmName" />
-    <button class="ruleBtn btn" @click="stepAlgorithm()">
-      <i class="bi-arrow-right"></i>
+
+    <!-- Pause -->
+    <button class="ruleBtn btn" @click="() => setPlayState('paused')">
+      <i class="bi-stop" :class="{ activeState: playState === 'paused' }"></i>
     </button>
 
-    <button class="ruleBtn btn" @click="togglePlayAlgorithm()">
-      <i v-if="isPlaying" class="bi-stop"></i>
-      <i v-else class="bi-play"></i>
+    <!-- Step -->
+    <button class="ruleBtn btn" @click="stepAndPause">
+      <i class="bi-arrow-bar-right"></i>
+    </button>
+
+    <!-- Play Normal -->
+    <button class="ruleBtn btn" @click="() => setPlayState('normal')">
+      <i class="bi-play" :class="{ activeState: playState === 'normal' }"></i>
+    </button>
+
+    <!-- Play Fast -->
+    <button class="ruleBtn btn" @click="() => setPlayState('fast')">
+      <i class="bi-fast-forward" :class="{ activeState: playState === 'fast' }"></i>
     </button>
   </h2>
 
@@ -265,5 +291,8 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
 .ruleBtn {
   --bs-btn-padding-x: 0.5rem;
   --bs-btn-padding-y: 0.1rem;
+}
+.activeState {
+  color: var(--bs-primary);
 }
 </style>
