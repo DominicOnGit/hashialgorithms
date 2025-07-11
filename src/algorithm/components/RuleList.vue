@@ -109,7 +109,7 @@ function stepRule(index: number): void {
       </span>
 
       <!-- name -->
-      <EditableLabel v-model="rule.name" :display-name-if-null="newRuleName(index)" />
+      <span>{{ rule.name ?? newRuleName(index) }}</span>
 
       <!-- enable / disable  -->
       <button

@@ -7,7 +7,7 @@ export interface HashiAlgorithm {
 }
 
 export interface Rule {
-  name?: string;
+  name: string;
   selectorSequence: Selector[];
   action: HashiAction;
 }

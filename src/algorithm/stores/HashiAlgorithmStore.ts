@@ -22,8 +22,9 @@ const EmptyAlgorithm: HashiAlgorithm = {
   rules: []
 };
 
-function buildEmptyRule(): Rule {
+function buildEmptyRule(index: number): Rule {
   return {
+    name: `Rule ${index + 1}`,
     selectorSequence: [],
     action: { kind: 'addEdge' }
   };
@@ -76,7 +77,7 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
 
     newRule(): void {
       console.log('newRule');
-      const rule = buildEmptyRule();
+      const rule = buildEmptyRule(this.rules.length);
       this.rules.push(rule);
     },
 

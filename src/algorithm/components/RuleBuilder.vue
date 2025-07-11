@@ -9,6 +9,7 @@ import {
 } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { computed } from 'vue';
+import EditableLabel from '@/components/EditableLabel.vue';
 
 const props = defineProps<{
   path: AlgorithmPath;
@@ -20,6 +21,8 @@ const rule = computed(() => getComponent(hashiAlgorithmStore, props.path) as Rul
 </script>
 
 <template>
+  <h2><EditableLabel v-model="rule.name" /></h2>
+
   <table>
     <template v-for="(selector, index) in rule.selectorSequence" :key="index">
       <SelectorBuilder :selector="selector" :path="pathSelectorAndAppend(path, index)" />
