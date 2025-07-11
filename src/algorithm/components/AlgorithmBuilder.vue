@@ -80,7 +80,7 @@ function stepRule(index: number): void {
 }
 
 let shakeTimeout: NodeJS.Timeout | null = null;
-function stepAlgorithm(): void {
+function stepAlgorithm(): boolean {
   const algoRunner = new AlgorithmRunner(hashiAlgorithmStore, new HashiUtil(hashiState));
   const res = algoRunner.runStep();
   if (shakeTimeout != null) {
@@ -97,6 +97,31 @@ function stepAlgorithm(): void {
     shakeRunning.value = false;
     console.log('no shake');
   }
+  return res;
+}
+
+function stepAndQueue(): void {
+  if (isPlaying.value) {
+    const stepOk = stepAlgorithm();
+    if (stepOk) {
+      setTimeout(() => {
+        stepAndQueue();
+      }, 1000);
+    } else {
+      isPlaying.value = false;
+      console.log('algorithm ended');
+    }
+  }
+}
+
+const isPlaying = ref(false);
+function togglePlayAlgorithm(): void {
+  isPlaying.value = !isPlaying.value;
+
+  if (isPlaying.value) {
+    console.log('start playing algorithm');
+    stepAndQueue();
+  }
 }
 
 const shakeRunning = ref(false);
@@ -108,6 +133,11 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
     <EditableLabel v-model="algorithmName" />
     <button class="ruleBtn btn" @click="stepAlgorithm()">
       <i class="bi-arrow-right"></i>
+    </button>
+
+    <button class="ruleBtn btn" @click="togglePlayAlgorithm()">
+      <i v-if="isPlaying" class="bi-stop"></i>
+      <i v-else class="bi-play"></i>
     </button>
   </h2>
 
@@ -125,7 +155,7 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
           :class="{ shake: shakeRunning && runState.activeRule === index }"
           style="display: inline-flex"
         >
-          <i v-if="runState.activeRule === index" class="ruleState bi-activity"></i>
+          <i v-if="runState.activeRule === index && shakeRunning" class="ruleState bi-activity"></i>
 
           <template v-else>
             <i v-if="runState.ruleStates[index] == 'matching'" class="ruleState bi-play-circle"></i>
