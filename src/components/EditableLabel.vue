@@ -4,6 +4,10 @@ import { vElementDeselected } from '@/directives/vElementDeselected';
 
 const model = defineModel<string>();
 
+const props = defineProps<{
+  displayNameIfNull?: string;
+}>();
+
 const editing = ref(false);
 </script>
 
@@ -20,7 +24,7 @@ const editing = ref(false);
     </button>
   </template>
   <template v-else>
-    <span>{{ model }} </span>
+    <span>{{ model ?? displayNameIfNull }} </span>
     <button class="ruleBtn btn" @click="() => (editing = true)">
       <i class="bi-pencil"></i>
     </button>
