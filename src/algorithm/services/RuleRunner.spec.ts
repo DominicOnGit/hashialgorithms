@@ -1,9 +1,8 @@
 import { expect, test } from 'vitest';
-import { useHashiStore, type Edge, type Hashi } from '@/hashi/stores/hashi';
+import { type Edge, type Hashi } from '@/hashi/stores/hashi';
 import { type Rule } from '@/algorithm/stores/HashiAlgorithm';
 import { RuleRunner } from './RuleRunner';
 import { HashiUtil } from '../../hashi/services/HashiUtil';
-import { setActivePinia, createPinia } from 'pinia';
 
 test('runs rule', () => {
   const rule: Rule = {
@@ -24,9 +23,6 @@ test('runs rule', () => {
     ],
     edges: []
   };
-  setActivePinia(createPinia());
-  const hashiStore = useHashiStore();
-  hashiStore.setHashi(hashi);
 
   const runner = new RuleRunner(rule, new HashiUtil(hashi));
   const ok = runner.runRuleStep();
@@ -36,7 +32,7 @@ test('runs rule', () => {
     v2: 1,
     multiplicity: 1
   };
-  expect(hashiStore.edges).toStrictEqual([expectedEdge]);
+  expect(hashi.edges).toStrictEqual([expectedEdge]);
 });
 
 test('runStep retuns false if nothing selected', () => {
@@ -64,15 +60,12 @@ test('runStep retuns false if nothing selected', () => {
     ],
     edges: []
   };
-  setActivePinia(createPinia());
-  const hashiStore = useHashiStore();
-  hashiStore.setHashi(hashi);
 
   const runner = new RuleRunner(rule, new HashiUtil(hashi));
   const ok = runner.runRuleStep();
   expect(ok).toBe(false);
 
-  hashiStore.edges.forEach((edge) => expect(edge.multiplicity).toBe(0));
+  hashi.edges.forEach((edge) => expect(edge.multiplicity).toBe(0));
 });
 
 test('runs action on selected ancestor', () => {
@@ -120,14 +113,11 @@ test('runs action on selected ancestor', () => {
     ],
     edges: [{ v1: 0, v2: 1, multiplicity: 2 }]
   };
-  setActivePinia(createPinia());
-  const hashiStore = useHashiStore();
-  hashiStore.setHashi(hashi);
 
   const runner = new RuleRunner(rule, new HashiUtil(hashi));
   const ok = runner.runRuleStep();
   expect(ok).toBe(true);
-  expect(hashiStore.edges).toStrictEqual([
+  expect(hashi.edges).toStrictEqual([
     { v1: 0, v2: 1, multiplicity: 2 },
     { v1: 1, v2: 2, multiplicity: 1 }
   ]);

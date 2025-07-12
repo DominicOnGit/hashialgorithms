@@ -1,14 +1,13 @@
 import { useAlgorithmRunnerStore, type RunState } from './../stores/AlgorithmRunnerStore';
 import { expect, test } from 'vitest';
 import { AlgorithmRunner } from './AlgorithmRunner';
-import { useHashiStore, type Edge, type Hashi } from '@/hashi/stores/hashi';
+import { type Edge, type Hashi } from '@/hashi/stores/hashi';
 import { type HashiAlgorithm } from '@/algorithm/stores/HashiAlgorithm';
 import { createPinia, setActivePinia } from 'pinia';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 
 test('runs rule', () => {
   setActivePinia(createPinia());
-  const hashiStore = useHashiStore();
   const runState: RunState = useAlgorithmRunnerStore();
   const algorithm: HashiAlgorithm = {
     name: '',
@@ -34,7 +33,6 @@ test('runs rule', () => {
     ],
     edges: []
   };
-  hashiStore.setHashi(hashi);
 
   const runner = new AlgorithmRunner(algorithm, new HashiUtil(hashi));
   const ok = runner.runStep();
@@ -44,14 +42,13 @@ test('runs rule', () => {
     v2: 1,
     multiplicity: 1
   };
-  expect(hashiStore.edges).toStrictEqual([expectedEdge]);
+  expect(hashi.edges).toStrictEqual([expectedEdge]);
 
   expect(runState.activeRule).toBe(0);
 });
 
 test('runStep retuns false if nothing executed', () => {
   setActivePinia(createPinia());
-  const hashiStore = useHashiStore();
   const algorithm: HashiAlgorithm = {
     name: 'algo',
     disabledRules: [],
@@ -82,17 +79,15 @@ test('runStep retuns false if nothing executed', () => {
     ],
     edges: []
   };
-  hashiStore.setHashi(hashi);
 
   const runner = new AlgorithmRunner(algorithm, new HashiUtil(hashi));
   const ok = runner.runStep();
   expect(ok).toBe(false);
-  hashiStore.edges.forEach((edge) => expect(edge.multiplicity).toBe(0));
+  hashi.edges.forEach((edge) => expect(edge.multiplicity).toBe(0));
 });
 
 test('runStep switches to next rule if nothing executed', () => {
   setActivePinia(createPinia());
-  const hashiStore = useHashiStore();
   const runState: RunState = useAlgorithmRunnerStore();
   const algorithm: HashiAlgorithm = {
     name: 'algo',
@@ -133,7 +128,6 @@ test('runStep switches to next rule if nothing executed', () => {
     ],
     edges: []
   };
-  hashiStore.setHashi(hashi);
 
   const runner = new AlgorithmRunner(algorithm, new HashiUtil(hashi));
   const ok = runner.runStep();
@@ -143,7 +137,7 @@ test('runStep switches to next rule if nothing executed', () => {
     v2: 1,
     multiplicity: 1
   };
-  expect(hashiStore.edges).toStrictEqual([expectedEdge]);
+  expect(hashi.edges).toStrictEqual([expectedEdge]);
 
   expect(runState.activeRule).toBe(1);
 });

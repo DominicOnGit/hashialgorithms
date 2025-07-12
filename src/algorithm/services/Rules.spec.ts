@@ -30,16 +30,13 @@ import { HashiUtil } from '@/hashi/services/HashiUtil';
 
 export function runTillEnd(hashi: Hashi, algo: HashiAlgorithm): Hashi {
   setActivePinia(createPinia());
-  const hashiStore = useHashiStore();
-  hashiStore.setHashi(hashi);
 
   let stepOk = true;
   while (stepOk) {
-    const currentHashi = hashiStore;
-    const runner = new AlgorithmRunner(algo, new HashiUtil(currentHashi));
+    const runner = new AlgorithmRunner(algo, new HashiUtil(hashi));
     stepOk = runner.runStep();
   }
-  return hashiStore;
+  return hashi;
 }
 
 export function checkResult(

@@ -357,7 +357,7 @@ export const AllRulesAlgorithm: HashiAlgorithm = {
   name: 'All Rules Algorithm',
   disabledRules: [],
   rules: [
-    // Need2Bridges,
+    Need2Bridges
     // NeedMaxMultiplicity,
     // NeedAtLeastOneBridge,
     // NeedAtLeastOneBridgeMaxMulti

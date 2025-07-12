@@ -47,17 +47,6 @@ export const useHashiStore = defineStore('hashi', {
     setHashi(hashi: Hashi): void {
       console.log(`setHashi()`, hashi);
       this.$patch(hashi);
-    },
-    addEdge(v1: number, v2: number): void {
-      console.log(`addEdge(${v1}, ${v2})`);
-      const edge = findOrCreateEdge(this, v1, v2);
-      edge.multiplicity++;
-    },
-    setCustomPropertyValue(v1: number, v2: number, name: string, value: number): void {
-      console.log(`setCustomPropertyValue(${v1}, ${v2}, ${name}, ${value})`);
-      const edge = findOrCreateEdge(this, v1, v2);
-      if (edge.customPropertyValues == null) edge.customPropertyValues = {};
-      edge.customPropertyValues[name] = value;
     }
   }
 });

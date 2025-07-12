@@ -70,7 +70,7 @@ export class HashiEdge implements Selectable, Edge {
   }
 
   public set multiplicity(value: number) {
-    if (value < 0 || value > 2) throw new Error('invalid multiplicity');
+    // if (value < 0 || value > 2) throw new Error('invalid multiplicity');
     this.edge.multiplicity = value;
   }
 
@@ -88,6 +88,11 @@ export class HashiEdge implements Selectable, Edge {
         });
     }
     return [];
+  }
+
+  public setCustomPropertyValue(name: string, value: number): void {
+    if (this.edge.customPropertyValues == null) this.edge.customPropertyValues = {};
+    this.edge.customPropertyValues[name] = value;
   }
 
   public equals(other: Edge): boolean {
