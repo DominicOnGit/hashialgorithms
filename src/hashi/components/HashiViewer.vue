@@ -4,7 +4,6 @@ import { HashiCanvasService } from '@/hashi/services/HashiCanvasService';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
-import { assert } from 'console';
 import { assertNotNull } from '@/services/misc';
 
 const hashiStore = useHashiStore();

@@ -1,5 +1,3 @@
-import { checker } from 'vite-plugin-checker';
-import { HashiUtil } from './../../hashi/services/HashiUtil';
 import {
   Need2Bridges,
   NeedAtLeastOneBridge,
@@ -27,9 +25,8 @@ import {
   singleH
 } from '@/hashi/services/HashiSamples';
 import { AlgorithmRunner } from './AlgorithmRunner';
-import { removeProxy } from '@/services/misc';
-import { extractHashi } from '@/services/storageService';
 import { toRaw } from 'vue';
+import { HashiUtil } from '@/hashi/services/HashiUtil';
 
 export function runTillEnd(hashi: Hashi, algo: HashiAlgorithm): Hashi {
   setActivePinia(createPinia());
@@ -39,7 +36,7 @@ export function runTillEnd(hashi: Hashi, algo: HashiAlgorithm): Hashi {
   let stepOk = true;
   while (stepOk) {
     const currentHashi = hashiStore;
-    const runner = new AlgorithmRunner(algo, currentHashi);
+    const runner = new AlgorithmRunner(algo, new HashiUtil(currentHashi));
     stepOk = runner.runStep();
   }
   return hashiStore;
@@ -65,6 +62,7 @@ function testSingleRuleWithMaxMult(
   expectedEdges: Edge[]
 ): void {
   const algo: HashiAlgorithm = {
+    name: '',
     disabledRules: [],
     rules: [rule]
   };
@@ -91,6 +89,7 @@ function orderEdges(edges: Edge[]): Edge[] {
 
 function testSingleRule(hashi: Hashi, rule: Rule, expectedEdges: Edge[]): void {
   const algo: HashiAlgorithm = {
+    name: '',
     disabledRules: [],
     rules: [rule]
   };
@@ -109,6 +108,7 @@ function testSinglePropertyRule(
   expectedPropEdges: Edge[]
 ): void {
   const algo: HashiAlgorithm = {
+    name: '',
     disabledRules: [],
     rules: [rule]
   };

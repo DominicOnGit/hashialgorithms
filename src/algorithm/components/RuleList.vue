@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import { isRuleEnabled, useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
-import { vElementDeselected } from '@/directives/vElementDeselected';
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
-import { ref, nextTick, onBeforeMount, toRef, watch } from 'vue';
+import { ref, watch } from 'vue';
 import SlowPressButton from '@/components/SlowPressButton.vue';
 import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { RuleRunner } from '../services/RuleRunner';
-import EditableLabel from '@/components/EditableLabel.vue';
-import type { Rule } from '../stores/HashiAlgorithm';
 
 const emit = defineEmits<{
   selected: [index: number];
@@ -42,6 +39,7 @@ watch(
 );
 
 function updateRuleState(): void {
+  console.log('updateRuleState');
   hashiAlgorithmStore.rules.forEach((rule, index) => {
     const runner = new RuleRunner(rule, new HashiUtil(hashiState));
     const state = runner.getRuleState();
@@ -72,7 +70,7 @@ function disableRule(index: number): void {
 
 function stepRule(index: number): void {
   const ruleRunner = new RuleRunner(hashiAlgorithmStore.rules[index], new HashiUtil(hashiState));
-  const stepResult = ruleRunner.runRuleStep();
+  ruleRunner.runRuleStep();
 }
 </script>
 

@@ -71,20 +71,3 @@ export interface SumTerm {
 }
 
 export type Term = ProperyAccessTerm | CustomProperyAccessTerm | ConstantTerm | SumTerm | PlusTerm;
-
-export type AlgorithmPiece = Rule | Selector | Condition | Term | HashiAction;
-
-// selectorpath [ruleIndex, selectorOrAction, selectorIndex, conditionIndex, termIndex, termPart]
-// actionPath: [ ruleIndex, selectorOrAction, actionIndex, termIndex, termPart]
-export type AlgorithmPath = number[];
-// {
-//   kind: 'selector' | 'action';
-//   sequence: number[];
-// };
-// export interface AlgorithmPath {
-//   ruleIndex: number;
-//   selectorIndex?: number;
-//   conditionIndex?: number;
-//   termIndex?: number; // lhs or rhs
-//   termPath?: AlgorithmPath;
-// }

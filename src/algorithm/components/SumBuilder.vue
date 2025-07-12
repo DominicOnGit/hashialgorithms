@@ -1,27 +1,18 @@
 <script setup lang="ts">
-import {
-  type AlgorithmPath,
-  type SelectorKind,
-  type SumTerm
-} from '@/algorithm/stores/HashiAlgorithm';
+import { type SumTerm } from '@/algorithm/stores/HashiAlgorithm';
 import TermBuilder from './TermBuilder.vue';
-import { getAncestorSelector, pathAppend } from '@/algorithm/services/AlgorithmPathService';
+import { extendTermPath } from '@/algorithm/services/AlgorithmPathService';
 
 import SelectorTypeOption from './SelectorTypeOption.vue';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
-import { computed } from 'vue';
+import type { AlgorithmTermPath } from '../stores/AlgorithmPath';
 
-const props = defineProps<{
+defineProps<{
   term: SumTerm;
-  path: AlgorithmPath;
+  path: AlgorithmTermPath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
-
-const onEdgeOrVertex = computed((): SelectorKind => {
-  const ancestorSelector = getAncestorSelector(hashiAlgorithmStore, props.path);
-  return ancestorSelector.kind;
-});
 </script>
 
 <template>
@@ -29,7 +20,7 @@ const onEdgeOrVertex = computed((): SelectorKind => {
   <TermBuilder
     @mousedown.stop
     :term="term.what"
-    :path="pathAppend(path, 1)"
+    :path="extendTermPath(path, 1)"
     :on-edge-or-vertex="term.over.kind"
     :allowSum="false"
   ></TermBuilder>
@@ -39,7 +30,7 @@ const onEdgeOrVertex = computed((): SelectorKind => {
     :value="term.over"
     :useIncident="false"
     :allow-exclude-ancestor="true"
-    @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(pathAppend(path, 0), newKind)"
+    @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(extendTermPath(path, 0), newKind)"
   />
 </template>
 

@@ -65,9 +65,9 @@ export class HashiCanvasService {
   }
 
   private drawVertex(vertex: HashiVertex): void {
-    console.log(
-      `Drawing vertex ${vertex.posX}, ${vertex.posY} at ${this.getVertexCenterX(vertex)}, ${this.getVertexCenterY(vertex)}`
-    );
+    // console.log(
+    //   `Drawing vertex ${vertex.posX}, ${vertex.posY} at ${this.getVertexCenterX(vertex)}, ${this.getVertexCenterY(vertex)}`
+    // );
     this.canvas.beginPath();
     this.canvas.strokeStyle = NormalStyle;
     this.canvas.arc(

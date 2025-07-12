@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { type Rule, type AlgorithmPath } from '@/algorithm/stores/HashiAlgorithm';
+import { type Rule } from '@/algorithm/stores/HashiAlgorithm';
 import SelectorBuilder from './SelectorBuilder.vue';
 import ActionBuilder from './ActionBuilder.vue';
 import {
-  pathSelectorAndAppend,
-  pathActionAndAppend,
-  getComponent
+  getComponent,
+  selectAction,
+  selectSelector
 } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { computed } from 'vue';
 import EditableLabel from '@/components/EditableLabel.vue';
+import type { RulePath } from '../stores/AlgorithmPath';
 
 const props = defineProps<{
-  path: AlgorithmPath;
+  path: RulePath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
@@ -25,7 +26,7 @@ const rule = computed(() => getComponent(hashiAlgorithmStore, props.path) as Rul
 
   <table>
     <template v-for="(selector, index) in rule.selectorSequence" :key="index">
-      <SelectorBuilder :selector="selector" :path="pathSelectorAndAppend(path, index)" />
+      <SelectorBuilder :path="selectSelector(path, index)" />
     </template>
     <tr>
       <td colspan="2">
@@ -35,7 +36,7 @@ const rule = computed(() => getComponent(hashiAlgorithmStore, props.path) as Rul
     <tr>
       <td>then</td>
       <td>
-        <ActionBuilder :action="rule.action" :path="pathActionAndAppend(path, 0)"></ActionBuilder>
+        <ActionBuilder :action="rule.action" :path="selectAction(path)"></ActionBuilder>
       </td>
     </tr>
   </table>

@@ -3,18 +3,18 @@ import type {
   HashiAlgorithm,
   Condition,
   Selector,
-  AlgorithmPath,
   Term,
   Rule,
   SelectorKindAndExcludeAncestor,
   HashiAction
 } from './HashiAlgorithm';
 import {
+  createPathToRule,
   deleteComponent,
   getComponent,
   setComponent
 } from '@/algorithm/services/AlgorithmPathService';
-import { textChangeRangeIsUnchanged } from 'typescript';
+import type { AlgorithmPath } from './AlgorithmPath';
 
 const EmptyAlgorithm: HashiAlgorithm = {
   name: 'New Algorithm',
@@ -22,7 +22,7 @@ const EmptyAlgorithm: HashiAlgorithm = {
   rules: []
 };
 
-function buildEmptyRule(index: number): Rule {
+export function buildEmptyRule(index: number): Rule {
   return {
     name: `Rule ${index + 1}`,
     selectorSequence: [],
@@ -79,6 +79,8 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
       console.log('newRule');
       const rule = buildEmptyRule(this.rules.length);
       this.rules.push(rule);
+      const pathToRule = createPathToRule(this.rules.length - 1);
+      this.newSelector(pathToRule);
     },
 
     newSelector(pathToRule: AlgorithmPath): void {

@@ -1,24 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import {
-  type AlgorithmPath,
-  type SelectorKind,
-  type Term
-} from '@/algorithm/stores/HashiAlgorithm';
-import {
-  TermBuilderService,
-  getTermId,
-  termToString
-} from '@/algorithm/services/TermBuilderService';
+import { type SelectorKind, type Term } from '@/algorithm/stores/HashiAlgorithm';
+import { TermBuilderService, getTermId } from '@/algorithm/services/TermBuilderService';
 import SumBuilder from './SumBuilder.vue';
 import PlusBuilder from './PlusBuilder.vue';
 import ComboboxMultiSelect from '../../components/ComboboxMultiSelect.vue';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
+import type { AlgorithmTermPath } from '../stores/AlgorithmPath';
 
 const props = defineProps<{
   term: Term;
-  path: AlgorithmPath;
+  path: AlgorithmTermPath;
   allowSum: boolean;
   onEdgeOrVertex: SelectorKind;
 }>();

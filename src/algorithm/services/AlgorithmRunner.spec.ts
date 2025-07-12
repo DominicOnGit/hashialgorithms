@@ -11,9 +11,11 @@ test('runs rule', () => {
   const hashiStore = useHashiStore();
   const runState: RunState = useAlgorithmRunnerStore();
   const algorithm: HashiAlgorithm = {
+    name: '',
     disabledRules: [],
     rules: [
       {
+        name: '',
         selectorSequence: [
           {
             kind: 'edge',
@@ -51,9 +53,11 @@ test('runStep retuns false if nothing executed', () => {
   setActivePinia(createPinia());
   const hashiStore = useHashiStore();
   const algorithm: HashiAlgorithm = {
+    name: 'algo',
     disabledRules: [],
     rules: [
       {
+        name: 'rule 1',
         selectorSequence: [
           {
             kind: 'edge',
@@ -83,7 +87,7 @@ test('runStep retuns false if nothing executed', () => {
   const runner = new AlgorithmRunner(algorithm, new HashiUtil(hashi));
   const ok = runner.runStep();
   expect(ok).toBe(false);
-  expect(hashiStore.edges).toStrictEqual([]);
+  hashiStore.edges.forEach((edge) => expect(edge.multiplicity).toBe(0));
 });
 
 test('runStep switches to next rule if nothing executed', () => {
@@ -91,9 +95,11 @@ test('runStep switches to next rule if nothing executed', () => {
   const hashiStore = useHashiStore();
   const runState: RunState = useAlgorithmRunnerStore();
   const algorithm: HashiAlgorithm = {
+    name: 'algo',
     disabledRules: [],
     rules: [
       {
+        name: 'rule 1',
         selectorSequence: [
           {
             kind: 'edge',
@@ -109,6 +115,7 @@ test('runStep switches to next rule if nothing executed', () => {
         action: { kind: 'addEdge' }
       },
       {
+        name: 'rule 2',
         selectorSequence: [
           {
             kind: 'edge',

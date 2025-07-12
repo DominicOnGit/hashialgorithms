@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { type AlgorithmPath, type SetPropertyAction } from '@/algorithm/stores/HashiAlgorithm';
+import { type SetPropertyAction } from '@/algorithm/stores/HashiAlgorithm';
 import ComboboxMultiSelect from '@/components/ComboboxMultiSelect.vue';
-import { pathAppend } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { computed } from 'vue';
 import TermBuilder from './TermBuilder.vue';
 import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
+import type { ActionPath } from '../stores/AlgorithmPath';
+import { selectActionPart, toTermPath } from '../services/AlgorithmPathService';
 
 const props = defineProps<{
   action: SetPropertyAction;
-  path: AlgorithmPath;
+  path: ActionPath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
@@ -42,7 +43,7 @@ function changeProperty(newProperty: string): void {
   <TermBuilder
     @mousedown.stop
     :term="action.value"
-    :path="pathAppend(path, 0)"
+    :path="toTermPath(selectActionPart(path, 0))"
     :on-edge-or-vertex="'edge'"
     :allow-sum="false"
   ></TermBuilder>

@@ -1,6 +1,4 @@
 import type {
-  AlgorithmPath,
-  AlgorithmPiece,
   Condition,
   HashiAction,
   HashiAlgorithm,
@@ -8,132 +6,207 @@ import type {
   Term
 } from '@/algorithm/stores/HashiAlgorithm';
 import { type Rule } from '../stores/HashiAlgorithm';
+import {
+  isActionPath,
+  isActionTermPath,
+  isConditionPartPath,
+  isConditionPath,
+  isConditionTermPath,
+  isSelectorPath,
+  type ActionPath,
+  type ActionPartPath,
+  type AlgorithmPath,
+  type AlgorithmPiece,
+  type AlgorithmTermPath,
+  type ConditionPartPath,
+  type ConditionPath,
+  type RulePath,
+  type SelectorPath,
+  isActionPartPath,
+  isAlgorithmTermPath
+} from '../stores/AlgorithmPath';
+import { assertNotNull } from '@/services/misc';
 
 export function getComponent(algo: HashiAlgorithm, path: AlgorithmPath): AlgorithmPiece {
-  const res = getComponent2(algo, path);
+  const res = getRuleComponent(algo, path);
   console.debug('getComponent ', path, res);
   return res;
-}
-
-// path: [ruleIndex, selectorOrAction, ...]
-export function getComponent2(algo: HashiAlgorithm, path: AlgorithmPath): AlgorithmPiece {
-  if (path.length === 0) throw new Error();
-
-  const rule = algo.rules[path[0]];
-  if (rule == null) throw new Error();
-
-  if (path.length > 1) {
-    const res =
-      path[1] === 0 ? getSelectorComponent(rule, path.slice(2)) : getActionComponent(rule, path);
-    if (res == null) throw new Error();
-    return res;
-  }
-  return rule;
 }
 
 // path: [ruleIndex, selectorOrAction, ...]
 export function setComponent(
   algo: HashiAlgorithm,
   path: AlgorithmPath,
-  newComponent: AlgorithmPiece
+  newComponent: AlgorithmPiece | null
 ): void {
-  if (path.length === 0) throw new Error();
+  setRuleComponent(algo, path, newComponent);
+}
 
-  if (path.length === 1) {
-    algo.rules[path[0]] = newComponent as Rule;
+// path: [ruleIndex, selectorOrAction, ...]
+function getRuleComponent(algo: HashiAlgorithm, path: RulePath): AlgorithmPiece {
+  const rule = algo.rules[path.ruleIndex];
+  if (rule == null) throw new Error();
+
+  if (isSelectorPath(path)) {
+    return getSelectorComponent(rule, path);
+  } else if (isActionPath(path)) {
+    return getActionComponent(rule, path);
+  } else {
+    return rule;
+  }
+}
+
+function setRuleComponent(
+  algo: HashiAlgorithm,
+  path: RulePath,
+  newComponent: AlgorithmPiece | null
+): void {
+  if (!isSelectorPath(path) && !isActionPath(path)) {
+    if (newComponent == null) {
+      algo.rules.splice(path.ruleIndex, 1);
+      algo.disabledRules = algo.disabledRules.reduce<number[]>((acc, oldDisabledIndex) => {
+        if (oldDisabledIndex < path.ruleIndex) acc.push(oldDisabledIndex);
+        if (oldDisabledIndex > path.ruleIndex) acc.push(oldDisabledIndex - 1);
+        return acc;
+      }, []);
+    } else {
+      algo.rules[path.ruleIndex] = newComponent as Rule;
+    }
     return;
   }
-  const rule = algo.rules[path[0]];
 
-  if (path[1] === 0) {
-    setSelectorComponent(rule, path.slice(2), newComponent);
+  const rule = algo.rules[path.ruleIndex];
+
+  if (isSelectorPath(path)) {
+    setSelectorComponent(rule, path, newComponent);
   } else {
-    setActionComponent(rule, path.slice(2), newComponent);
+    assertNotNull(newComponent, 'newComponent must not be null for action path'); // todo: should not be necessary
+    setActionComponent(rule, path, newComponent);
   }
 }
 
 // path:  [selectorIndex, conditionIndex, termIndex, termPart]
-function getSelectorComponent(rule: Rule, path: AlgorithmPath): AlgorithmPiece {
-  if (path.length === 0) throw new Error();
+function getSelectorComponent(rule: Rule, path: SelectorPath): AlgorithmPiece {
+  const selector = rule.selectorSequence[path.selectorIndex];
 
-  const selector = rule.selectorSequence[path[0]];
-  if (path.length > 1) {
-    const condition = selector.conditions[path[1]];
-    if (path.length > 2) {
-      const term = path[2] === 0 ? condition.lhs : condition.rhs;
-      if (path.length > 3) {
-        return getTermPart(term, path.slice(3));
-      }
-      return term;
-    }
-    return condition;
+  if (isConditionPath(path)) {
+    return getConditionComponent(selector, path);
   }
   return selector;
 }
 
-// path:  [selectorIndex, conditionIndex, termIndex, termPart]
-function setSelectorComponent(rule: Rule, path: AlgorithmPath, newComponent: AlgorithmPiece): void {
-  if (path.length === 0) throw new Error();
-
-  if (path.length === 1) {
-    rule.selectorSequence[path[0]] = newComponent as Selector;
+function setSelectorComponent(
+  rule: Rule,
+  path: SelectorPath,
+  newComponent: AlgorithmPiece | null
+): void {
+  if (!isConditionPath(path)) {
+    if (newComponent == null) {
+      rule.selectorSequence.splice(path.selectorIndex, 1);
+    } else {
+      rule.selectorSequence[path.selectorIndex] = newComponent as Selector;
+    }
     return;
   }
-  const selector = rule.selectorSequence[path[0]];
+  const selector = rule.selectorSequence[path.selectorIndex];
+  setConditionComponent(selector, path, newComponent);
+}
 
-  if (path.length === 2) {
-    selector.conditions[path[1]] = newComponent as Condition;
+function getConditionComponent(selector: Selector, path: ConditionPath): AlgorithmPiece {
+  const condition = selector.conditions[path.conditionIndex];
+  if (isConditionPartPath(path)) {
+    return getConditionPartComponent(condition, path);
+  }
+  return condition;
+}
+
+function setConditionComponent(
+  selector: Selector,
+  path: ConditionPath,
+  newComponent: AlgorithmPiece | null
+): void {
+  if (!isConditionPartPath(path)) {
+    if (newComponent == null) {
+      selector.conditions.splice(path.conditionIndex, 1);
+    } else {
+      selector.conditions[path.conditionIndex] = newComponent as Condition;
+    }
     return;
   }
-  const condition = selector.conditions[path[1]];
+  const condition = selector.conditions[path.conditionIndex];
 
-  if (path.length === 3) {
-    if (path[2] === 0) condition.lhs = newComponent as Term;
+  assertNotNull(newComponent, 'newComponent must not be null for condition part path');
+  setConditionPartComponent(condition, path, newComponent);
+}
+
+function getConditionPartComponent(condition: Condition, path: ConditionPartPath): Selector | Term {
+  const term = path.conditionPart === 0 ? condition.lhs : condition.rhs;
+
+  if (isConditionTermPath(path)) {
+    return getTermPart(term, path.termPath.sequence);
+  }
+  return term;
+}
+
+function setConditionPartComponent(
+  condition: Condition,
+  path: ConditionPartPath,
+  newComponent: AlgorithmPiece
+): void {
+  if (!isConditionTermPath(path)) {
+    if (path.conditionPart === 0) condition.lhs = newComponent as Term;
     else condition.rhs = newComponent as Term;
     return;
   }
-  const term = path[2] === 0 ? condition.lhs : condition.rhs;
 
-  setTermPart(term, path.slice(3), newComponent);
+  const term = path.conditionPart === 0 ? condition.lhs : condition.rhs;
+
+  setTermPart(term, path.termPath.sequence, newComponent);
 }
 
-// path:  [actionIndex, termIndex, termPart]
-function getActionComponent(rule: Rule, path: AlgorithmPath): AlgorithmPiece {
-  if (path.length === 0) throw new Error();
-  if (path[0] !== 0) throw new Error('multiple actions not supported');
-
+function getActionComponent(rule: Rule, path: ActionPath): AlgorithmPiece {
   const action = rule.action;
-  if (path.length > 1) {
-    if (path[1] !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
-    const term = action.value;
-    if (path.length > 2) {
-      const part = getTermPart(term, path.slice(2));
-      if (part == null) console.warn('part null', term, path.slice(2));
-      return part;
-    }
-    return term;
+  if (isActionPartPath(path)) {
+    return getActionPartComponent(action, path);
   }
   return action;
 }
 
 // path:  [actionIndex, termIndex, termPart]
-function setActionComponent(rule: Rule, path: AlgorithmPath, newComponent: AlgorithmPiece): void {
-  if (path.length === 0) throw new Error();
-  if (path[0] !== 0) throw new Error('multiple actions not supported');
-
-  if (path.length === 1) {
+function setActionComponent(rule: Rule, path: ActionPath, newComponent: AlgorithmPiece): void {
+  if (!isActionPartPath(path)) {
     rule.action = newComponent as HashiAction;
     return;
   }
   const action = rule.action;
-  if (path[1] !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
+  setActionPartComponent(action, path, newComponent);
+}
 
-  if (path.length === 2) {
+function getActionPartComponent(action: HashiAction, path: ActionPartPath): Term {
+  if (path.actionPart !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
+  const term = action.value;
+
+  if (isActionTermPath(path)) {
+    const part = getTermPart(term, path.termPath.sequence);
+    if (!isTerm(part)) throw new Error('path to selector cannot continue');
+    return part;
+  }
+  return term;
+}
+
+function setActionPartComponent(
+  action: HashiAction,
+  path: ActionPartPath,
+  newComponent: AlgorithmPiece
+): void {
+  if (path.actionPart !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
+
+  if (!isActionTermPath(path)) {
     action.value = newComponent as Term;
     return;
   }
   const term = action.value;
-  setTermPart(term, path.slice(2), newComponent);
+  setTermPart(term, path.termPath.sequence, newComponent);
 }
 
 function isTerm(obj: Selector | Term): obj is Term {
@@ -146,9 +219,8 @@ function isTerm(obj: Selector | Term): obj is Term {
   );
 }
 
-function getTermPart(term: Term, termPath: AlgorithmPath): Selector | Term {
+function getTermPart(term: Term, termPath: number[]): Selector | Term {
   // console.log('getTermPart', term, termPath);
-  if (termPath.length === 0) throw new Error();
 
   const path0Term = getTermFor(term, termPath[0]);
   if (termPath.length > 1) {
@@ -167,9 +239,8 @@ function getTermFor(term: Term, index: number): Selector | Term {
   } else throw new Error();
 }
 
-function setTermPart(term: Term, termPath: AlgorithmPath, newComponent: AlgorithmPiece): void {
-  console.log('setTermPart', term, termPath);
-  if (termPath.length === 0) throw new Error();
+function setTermPart(term: Term, termPath: number[], newComponent: AlgorithmPiece): void {
+  // console.log('setTermPart', term, termPath);
 
   if (termPath.length === 1) {
     if (term.kind === 'plus') {
@@ -188,64 +259,91 @@ function setTermPart(term: Term, termPath: AlgorithmPath, newComponent: Algorith
 
 // path: [ruleIndex, selectorOrAction, ...]
 export function deleteComponent(algo: HashiAlgorithm, path: AlgorithmPath): void {
-  if (path.length === 0) throw new Error();
+  setComponent(algo, path, null);
+}
 
-  if (path.length === 1) {
-    algo.rules.splice(path[0], 1);
-    return;
+export function createPathToRule(ruleIndex: number): RulePath {
+  return { ruleIndex };
+}
+
+export function selectSelector(path: RulePath, selectorIndex: number): SelectorPath {
+  return {
+    ...path,
+    selectorIndex
+  };
+}
+
+export function selectCondition(path: SelectorPath, conditionIndex: number): ConditionPath {
+  return {
+    ...path,
+    conditionIndex
+  };
+}
+
+export function selectConditionPart(path: ConditionPath, conditionPart: number): ConditionPartPath {
+  return {
+    ...path,
+    conditionPart
+  };
+}
+
+// export function selectConditionPartTerm(
+//   path: ConditionPartPath,
+//   termPath: TermPath
+// ): ConditionTermPath {
+//   return {
+//     ...path,
+//     termPath
+//   };
+// }
+
+export function selectAction(path: RulePath): ActionPath {
+  return { ...path, actionIndex: 0 };
+}
+
+export function selectActionPart(path: ActionPath, termIndex: number): ActionPartPath {
+  return {
+    ...path,
+    actionPart: termIndex
+  };
+}
+
+export function toTermPath(path: ConditionPartPath | ActionPartPath): AlgorithmTermPath {
+  if (isAlgorithmTermPath(path)) {
+    return path;
   }
-  const rule = algo.rules[path[0]];
-
-  if (path[1] === 0) {
-    deleteSelectorComponent(rule, path.slice(2));
-  } else {
-    throw new Error('not supported');
-  }
+  return {
+    ...path,
+    termPath: { sequence: [] }
+  };
 }
 
-// path:  [selectorIndex, conditionIndex, termIndex, termPart]
-function deleteSelectorComponent(rule: Rule, path: AlgorithmPath): void {
-  if (path.length === 0) throw new Error();
-
-  if (path.length === 1) {
-    rule.selectorSequence.splice(path[0], 1);
-    return;
-  }
-  const selector = rule.selectorSequence[path[0]];
-
-  if (path.length === 2) {
-    selector.conditions.splice(path[1], 1);
-    return;
-  }
-
-  throw new Error();
+export function selectConditionPartTerm(
+  path: ConditionPartPath,
+  termPart: number
+): AlgorithmTermPath {
+  return extendTermPath(toTermPath(path), termPart);
+  // return { ...path, termPath: { sequence: [termPart] } };
 }
 
-export function createPathToRule(ruleIndex: number): AlgorithmPath {
-  return [ruleIndex];
+export function extendTermPath(path: AlgorithmTermPath, part: number): AlgorithmTermPath {
+  const sequence =
+    (isConditionPath(path) && isConditionTermPath(path)) ||
+    (isActionPath(path) && isActionTermPath(path))
+      ? [...path.termPath.sequence, part]
+      : [part];
+  return {
+    ...path,
+    termPath: {
+      sequence: sequence
+    }
+  };
 }
 
-export function pathSelectorAndAppend(path: AlgorithmPath, selectorIndex: number): AlgorithmPath {
-  if (path.length !== 1) throw new Error();
-  return [...path, 0, selectorIndex];
-}
-
-export function pathActionAndAppend(path: AlgorithmPath, selectorIndex: number): AlgorithmPath {
-  if (path.length !== 1) throw new Error();
-  return [...path, 1, selectorIndex];
-}
-
-export function pathAppend(path: AlgorithmPath, nextStep: number): AlgorithmPath {
-  if (path.length < 2) throw Error();
-  return [...path, nextStep];
-}
-
-export function getSelectorIndex(path: AlgorithmPath): number {
-  if (path.length < 3 || path[1] !== 0) throw new Error();
-  return path[2];
-}
-
-export function getAncestorSelector(algo: HashiAlgorithm, path: AlgorithmPath): Selector {
-  if (path.length < 3) throw new Error();
-  return getComponent(algo, path.slice(0, 3)) as Selector;
+export function getAncestorSelector(algo: HashiAlgorithm, path: SelectorPath): Selector {
+  const pureSelectorPath: SelectorPath = {
+    ruleIndex: path.ruleIndex,
+    selectorIndex: path.selectorIndex
+  };
+  return getComponent(algo, pureSelectorPath) as Selector;
 }

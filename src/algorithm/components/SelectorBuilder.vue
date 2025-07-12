@@ -1,25 +1,27 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { type Selector, type AlgorithmPath } from '@/algorithm/stores/HashiAlgorithm';
+import { type Selector } from '@/algorithm/stores/HashiAlgorithm';
 import SelectorTypeOption from './SelectorTypeOption.vue';
 import ConditionBuilder from './ConditionBuilder.vue';
-import { getSelectorIndex, pathAppend } from '@/algorithm/services/AlgorithmPathService';
+import { getComponent } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import type { SelectorPath } from '../stores/AlgorithmPath';
+import { selectCondition } from '@/algorithm/services/AlgorithmPathService';
 
 const props = defineProps<{
-  selector: Selector;
-  path: AlgorithmPath;
+  path: SelectorPath;
 }>();
 
+const hashiAlgorithmStore = useHashiAlgorithmStore();
+const selector = computed(() => getComponent(hashiAlgorithmStore, props.path) as Selector);
+
 const isFirst = computed(() => {
-  return getSelectorIndex(props.path) === 0;
+  return props.path.selectorIndex === 0;
 });
 
 const isFirstOrSecond = computed(() => {
-  return getSelectorIndex(props.path) <= 1;
+  return props.path.selectorIndex <= 1;
 });
-
-const hashiAlgorithmStore = useHashiAlgorithmStore();
 </script>
 
 <template>
@@ -38,10 +40,12 @@ const hashiAlgorithmStore = useHashiAlgorithmStore();
   <tr v-for="(condition, index) of selector.conditions" :key="index">
     <td class="rightAlign">{{ index === 0 ? 'with' : 'and' }}</td>
     <td>
-      <ConditionBuilder :condition="condition" :path="pathAppend(path, index)" />
+      <ConditionBuilder :condition="condition" :path="selectCondition(path, index)" />
     </td>
     <td>
-      <button @click="() => hashiAlgorithmStore.deleteCondition(pathAppend(path, index))">x</button>
+      <button @click="() => hashiAlgorithmStore.deleteCondition(selectCondition(path, index))">
+        x
+      </button>
     </td>
   </tr>
   <tr>

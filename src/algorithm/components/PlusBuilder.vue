@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import {
-  type AlgorithmPath,
-  type PlusTerm,
-  type SelectorKind
-} from '@/algorithm/stores/HashiAlgorithm';
+import { type PlusTerm, type SelectorKind } from '@/algorithm/stores/HashiAlgorithm';
 import TermBuilder from './TermBuilder.vue';
-import { pathAppend } from '@/algorithm/services/AlgorithmPathService';
+import type { AlgorithmTermPath } from '../stores/AlgorithmPath';
+import { extendTermPath } from '../services/AlgorithmPathService';
 
 defineProps<{
   term: PlusTerm;
-  path: AlgorithmPath;
+  path: AlgorithmTermPath;
   allowSum: boolean;
   onEdgeOrVertex: SelectorKind;
 }>();
@@ -19,7 +16,7 @@ defineProps<{
   <TermBuilder
     @mousedown.stop
     :term="term.lhs"
-    :path="pathAppend(path, 0)"
+    :path="extendTermPath(path, 0)"
     :on-edge-or-vertex="onEdgeOrVertex"
     :allowSum="allowSum"
   ></TermBuilder>
@@ -27,7 +24,7 @@ defineProps<{
   <TermBuilder
     @mousedown.stop
     :term="term.rhs"
-    :path="pathAppend(path, 1)"
+    :path="extendTermPath(path, 1)"
     :on-edge-or-vertex="onEdgeOrVertex"
     :allowSum="allowSum"
   ></TermBuilder>

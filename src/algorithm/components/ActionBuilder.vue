@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import {
-  type AlgorithmPath,
-  type HashiAction,
-  type SetPropertyAction
-} from '@/algorithm/stores/HashiAlgorithm';
+import { type HashiAction, type SetPropertyAction } from '@/algorithm/stores/HashiAlgorithm';
 import ComboboxMultiSelect from '@/components/ComboboxMultiSelect.vue';
 import SetPropertyActionBuilder from './SetPropertyActionBuilder.vue';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { computed } from 'vue';
 import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
+import { getComponent } from '../services/AlgorithmPathService';
+import type { ActionPath } from '../stores/AlgorithmPath';
 
-defineProps<{
-  action: HashiAction;
-  path: AlgorithmPath;
+const props = defineProps<{
+  path: ActionPath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const customPropertiesStore = useCustomPropertyStore();
+
+const action = computed(() => getComponent(hashiAlgorithmStore, props.path) as HashiAction);
 
 const options = computed((): HashiAction[] => {
   const actions: HashiAction[] = [{ kind: 'addEdge' }];

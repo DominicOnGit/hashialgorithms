@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { isRuleEnabled, useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
-import { vElementDeselected } from '@/directives/vElementDeselected';
+import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import RuleBuilder from './RuleBuilder.vue';
 import RuleList from './RuleList.vue';
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
-import type { Rule } from '../stores/HashiAlgorithm';
-import { ref, nextTick, onBeforeMount, toRef } from 'vue';
-import SlowPressButton from '@/components/SlowPressButton.vue';
-import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
+import { ref, onBeforeMount, toRef } from 'vue';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
-import { RuleRunner } from '../services/RuleRunner';
 import { AllRulesAlgorithm } from '../stores/rules';
 import EditableLabel from '@/components/EditableLabel.vue';
 import { AlgorithmRunner } from '../services/AlgorithmRunner';
