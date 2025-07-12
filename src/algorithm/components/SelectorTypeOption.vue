@@ -47,8 +47,8 @@ function getLabel(item: SelectorKindAndExcludeAncestor): string {
     props.allowExcludeAncestor && item.excludeAncestor
       ? 'Other '
       : props.useIncident
-      ? 'Incident '
-      : '';
+        ? 'Incident '
+        : '';
   return prefix + kindLabels[item.kind];
 }
 </script>
