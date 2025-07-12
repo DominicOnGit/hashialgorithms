@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // enables v-focus in templates
 export const vElementDeselected = {
   mounted: function (el: any, binding: any, vnode: any): void {

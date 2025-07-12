@@ -4,7 +4,7 @@ import { vElementDeselected } from '@/directives/vElementDeselected';
 
 const model = defineModel<string>();
 
-const props = defineProps<{
+defineProps<{
   displayNameIfNull?: string;
 }>();
 

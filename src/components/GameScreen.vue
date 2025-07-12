@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import ActionBar from './ActionBar.vue';
 import HashiViewer from '../hashi/components/HashiViewer.vue';
 import AlgorithmBuilder from '../algorithm/components/AlgorithmBuilder.vue';
 
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { Levels } from '@/Title-Screen/services/levels';
 import { watch } from 'vue';
 import { useHashiStore } from '@/hashi/stores/hashi';

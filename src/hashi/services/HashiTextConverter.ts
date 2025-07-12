@@ -89,7 +89,7 @@ export class HashiTextConverter {
 
     vertices.sort((a, b) => {
       if (a.posY === b.posY) {
-        a.posX - b.posX;
+        return a.posX - b.posX;
       }
       return a.posY - b.posY;
     });

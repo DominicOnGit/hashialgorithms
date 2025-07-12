@@ -4,7 +4,7 @@ import { expect, test, describe } from 'vitest';
 import { HashiUtil } from './HashiUtil';
 
 test('validate sample hashis', () => {
-  Object.entries(namedHashis).forEach(([name, hashi]) => {
+  Object.entries(namedHashis).forEach(([, hashi]) => {
     validateHashi(hashi);
   });
 });
