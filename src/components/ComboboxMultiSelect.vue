@@ -1,34 +1,34 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TItem">
 import { removeProxy } from '@/services/misc';
 import { computed } from 'vue';
 import Multiselect from 'vue-multiselect';
 
 interface OptionData {
-  item: any;
+  item: TItem;
   label: string;
   key: string;
   // index: number;
 }
 
 const props = defineProps<{
-  options: unknown[];
-  active: unknown;
-  keyGetter?: (item: any) => string;
-  labelGetter?: (item: any) => string;
+  options: TItem[];
+  active: TItem;
+  keyGetter?: (item: TItem) => string;
+  labelGetter?: (item: TItem) => string;
 }>();
 
-defineEmits<{ (e: 'update:modelValue', item: any, index: number): void }>();
+defineEmits<{ (e: 'update:modelValue', item: TItem, index: number): void }>();
 
 defineSlots<{
-  selected(props: { selectedItem: any }): any;
-  option(props: { item: any }): any;
+  selected(props: { selectedItem: TItem }): unknown;
+  option(props: { item: TItem }): unknown;
 }>();
 
-function getKey(item: unknown): string {
+function getKey(item: TItem): string {
   return props.keyGetter != null ? props.keyGetter(item) : JSON.stringify(item);
 }
 
-function toOptionData(item: any): OptionData {
+function toOptionData(item: TItem): OptionData {
   return {
     item: item,
     label: props.labelGetter != null ? props.labelGetter(item) : 'undefined',

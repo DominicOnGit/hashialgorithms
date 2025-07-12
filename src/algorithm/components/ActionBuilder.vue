@@ -29,11 +29,11 @@ const options = computed((): HashiAction[] => {
   return actions;
 });
 
-function getKey(item: any): string {
+function getKey(item: HashiAction): string {
   return item.kind;
 }
 
-function getLabel(item: any): string {
+function getLabel(item: HashiAction): string {
   return item.kind;
 }
 </script>
