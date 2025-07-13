@@ -19,15 +19,23 @@ async function loadStory(storyStr: string | string[]) {
 function nextPath(): string {
   const next = getNext(story.value);
   assertNotNull(next);
-  return getUrl(next);
+  return '/#' + getUrl(next);
 }
 </script>
 
 <template>
-  <h1>{{ story.title }}</h1>
-  <div v-html="story.text" />
+  <div class="card spaced">
+    <div class="card-body">
+      <h1 class="card-title">{{ story.title }}</h1>
+      <div v-html="story.text" />
 
-  <button class="btn" @click="$router.push({ path: nextPath() })">Ok</button>
+      <a class="btn btn-light" :href="nextPath()">Ok</a>
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.spaced {
+  margin: 2%;
+}
+</style>

@@ -22,7 +22,10 @@ function startLevelPath(level: Level): string {
         v-for="level in category.levels"
         :key="level.number"
         class="btn btn-light"
-        @click="$router.push({ path: startLevelPath(level) })"
+        @click="
+          console.log(startLevelPath(level));
+          $router.push({ path: startLevelPath(level) });
+        "
       >
         {{ level.number }}
       </button>
