@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { LevelsByCategory } from '../services/levels';
+import { getStartForLevel, getUrl } from '@/Story/service/stories';
+import type { Level } from '../stores/level';
 
 const levelCategories = ref(LevelsByCategory);
+
+function startLevelPath(level: Level): string {
+  const start = getStartForLevel(level);
+  return getUrl(start);
+}
 </script>
 
 <template>
@@ -15,7 +22,7 @@ const levelCategories = ref(LevelsByCategory);
         v-for="level in category.levels"
         :key="level.number"
         class="btn btn-light"
-        @click="$router.push({ path: `/play/${level.number}` })"
+        @click="$router.push({ path: startLevelPath(level) })"
       >
         {{ level.number }}
       </button>

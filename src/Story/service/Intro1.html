@@ -1,8 +1,21 @@
- 
-Hashi is a puzzle game. The goal is to connect the islands (circles) by drawing bridges between them. 
-<ul>
-  <li> Bridges can only be drawn horizontally or vertically. They cannot cross each other.</li>
-  <li>Each island has number (from 1 to 8) giving the number of bridges that must connect to this island.</li>
-  <li>At most two bridges can connect a pair of islands.</li>
-  <li>Finally, all islands must be connected into one group.`</li>
-</ul>
+Sometimes the solution for a part of the puzzle is easy to see. E.g. if there is an island that
+needs 4 bridges, and that island has only two neighbouring islands, then we need to connect both
+neighbours with double bridges.
+<br />
+Let's try to formulate this rule as an algorithm:
+<ol>
+  <li>
+    Find a vertex
+    <ul>
+      <li>with targetDegree 4</li>
+      <li>and two incident edges</li>
+    </ul>
+  </li>
+  <li>
+    then select one of the incident edges
+    <ul>
+      <li>that has multiplicity less than 2</li>
+    </ul>
+  </li>
+  <li>then increment the multiplicty of that edge.</li>
+</ol>

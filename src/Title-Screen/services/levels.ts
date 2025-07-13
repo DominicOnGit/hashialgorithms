@@ -20,7 +20,7 @@ export class TextLevel implements Level {
 
 export const DoubleBigSquare = new TextLevel(
   'Basic',
-  2,
+  1,
   'Double Big Square',
   `
     x 2 x 2 x
@@ -33,7 +33,7 @@ export const DoubleBigSquare = new TextLevel(
 
 export const SingleSnake = new TextLevel(
   'Basic',
-  1,
+  2,
   'Single Snake',
   `  
     x 1 x 1  x

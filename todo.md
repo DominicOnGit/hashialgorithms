@@ -1,5 +1,7 @@
 ## Prio 1
 
+- label AddEdge -> increment multiplicicy (localize support?)
+- handle crossing bridges
 - Connected Component rules (select componet). Component has @isEntireHashi
 - Detect success (hashi correct and algo stops)
 - advanced hashi builder, difficulties
@@ -8,12 +10,9 @@
 
 ## Prio 2
 
-- manual bridge drawing
-
 ## Prio 3
 
 - empty Term
-- undo/redo
 - show remaining degree
 
 ## Bugs

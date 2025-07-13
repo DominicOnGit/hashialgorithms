@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { Stories } from '../service/stories';
+import { getNext, getUrl, Stories } from '../service/stories';
 import { assertNotNull } from '@/services/misc';
 import { isStory, type Story } from '../story';
 
@@ -17,9 +17,9 @@ async function loadStory(storyStr: string | string[]) {
 }
 
 function nextPath(): string {
-  assertNotNull(story.value.next);
-  if (isStory(story.value.next)) return `/story/${story.value.next.id}`;
-  else return `/play/${story.value.next.number}`;
+  const next = getNext(story.value);
+  assertNotNull(next);
+  return getUrl(next);
 }
 </script>
 

@@ -1,4 +1,6 @@
-import type { Story } from '../story';
+import type { Level } from '@/Title-Screen/stores/level';
+import { isStory, type Story } from '../story';
+import { DoubleBigSquare } from '@/Title-Screen/services/levels';
 
 const Intro1: Story = {
   id: 'Intro1',
@@ -20,12 +22,11 @@ const Intro2: Story = {
   text: `
     But this is not a traditional Hashi game. You don't have to solve the puzzle yourself. You let the computer do it for you!
     You just have to write the algorithm to tell the computer how to solve a hashi.
-
-    Sometimes the solution for a part of the puzzle is easy to see. 
-    E.g. if there is an island that needs 4 bridges, and that island has only two neighbouring islands, then we need to connect both neighbours with double bridges.
-
-    Let's try to formulate this rule as an algorithm:
-
+<br/>
+    Here, an algorithm conists of a set of rules. 
+    A rule is an instruction of the form 'Find an island satisfying some condition. Then find a bridge to that island with some other condition. Then do something with that bridge, like drawing a second bridge.'
+<br/>
+    The algorithm will run as long as it has a rule that finds a matching island.
     `
 };
 
@@ -33,14 +34,76 @@ const Terminology: Story = {
   id: 'Terminology',
   title: 'Terminology',
   text: `
-  In the world of algorithms, there is a mathematical object that describes islands and bridges of Hashi: a graph.
+  In the world of algorithms, there is a mathematical object that describes the islands and bridges of Hashi: a graph.
+  <br/>
   A graph consists of vertices and edges. An edge is a connection between two vertices.   
+  Two vertices cannot be connected by more than one edge, but we can give the edge a <em>multiplicity</em> property. Thus, a double bridge is represented as multiplicity 2.
+  An edge with multiplicity 0 means that the two vertices could be connected by a bridge, but the bridge is not yet drawn.
+<br/>
+
+The number of bridges an island needs is represented as the <em>targetDegree</em> property of the vertex. The degree of the vertex is the sum of the multiplicity of all edges of that vertex.  
     `
 };
 
-Intro1.next = Intro2;
-
-export const Stories: Record<string, Story> = {
-  [Intro1.id]: Intro1,
-  [Intro2.id]: Intro2
+const FirstAlgorithm: Story = {
+  id: 'FirstAlgorithm',
+  title: 'A First Algorithm',
+  text: `
+Sometimes the solution for a part of the puzzle is easy to see. E.g. if there is an island that
+needs 4 bridges, and that island has only two neighbouring islands, then we need to connect both
+neighbours with double bridges.
+<br />
+Let's try to formulate this rule as an algorithm:
+<ol>
+  <li>
+    Find a vertex
+    <ul>
+      <li>with targetDegree 4</li>
+      <li>and two incident edges</li>
+    </ul>
+  </li>
+  <li>
+    then select one of the incident edges
+    <ul>
+      <li>that has multiplicity less than 2</li>
+    </ul>
+  </li>
+  <li>then increment the multiplicty of that edge</li>
+</ol>
+    `
 };
+
+const PreLevelStorySequences: [Level, Story[]][] = [
+  [DoubleBigSquare, [Intro1, Intro2, Terminology, FirstAlgorithm]]
+];
+
+export const Stories: Record<string, Story> = PreLevelStorySequences.reduce<Record<string, Story>>(
+  (dic, [, sequence]) =>
+    sequence.reduce((dic2, story) => {
+      dic2[story.id] = story;
+      return dic2;
+    }, dic),
+  {}
+);
+
+export function getStartForLevel(level: Level): Story | Level {
+  const preLevelSeq = PreLevelStorySequences.find(([lv]) => lv.number === level.number);
+  if (preLevelSeq != null) return preLevelSeq[1][0];
+  return level;
+}
+
+export function getNext(story: Story): Story | Level | null {
+  for (const [level, sequence] of PreLevelStorySequences) {
+    const index = sequence.findIndex((x) => x.id === story.id);
+    if (index >= 0) {
+      if (index === sequence.length - 1) return level;
+      return sequence[index + 1];
+    }
+  }
+  return null;
+}
+
+export function getUrl(next: Story | Level): string {
+  if (isStory(next)) return `/story/${next.id}`;
+  else return `/play/${next.number}`;
+}

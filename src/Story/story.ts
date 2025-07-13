@@ -2,7 +2,6 @@ import type { Level } from '@/Title-Screen/stores/level';
 
 export interface Story {
   id: string;
-  next?: Story | Level;
   title: string;
   text: string;
 }
