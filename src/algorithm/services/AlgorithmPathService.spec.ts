@@ -8,7 +8,8 @@ import {
   selectConditionPart,
   selectConditionPartTerm,
   selectSelector,
-  setComponent
+  setComponent,
+  toTermPath
 } from './AlgorithmPathService';
 import type {
   Condition,
@@ -19,7 +20,12 @@ import type {
   SumTerm,
   Term
 } from '@/algorithm/stores/HashiAlgorithm';
-import type { AlgorithmPath } from '../stores/AlgorithmPath';
+import type {
+  AlgorithmPath,
+  AlgorithmTermPath,
+  ConditionPartPath,
+  ConditionPath
+} from '../stores/AlgorithmPath';
 import { buildEmptyRule } from '../stores/HashiAlgorithmStore';
 
 const algorithmTemplate: HashiAlgorithm = {
@@ -213,8 +219,13 @@ test('delete condition', () => {
   expect(algorithm.rules[1].selectorSequence[1].conditions).toEqual([]);
 });
 
-test('toSelectorConditionPart', () => {
-  const path: AlgorithmPath = selectConditionPart(
+test('xxxxx', () => {
+  const selectConditionPartOrAsTerm: (
+    path: ConditionPath,
+    conditionPart: number
+  ) => AlgorithmPath = (x, y) => toTermPath(selectConditionPart(x, y));
+
+  const path: AlgorithmPath = selectConditionPartOrAsTerm(
     selectCondition(selectSelector(createPathToRule(1), 1), 0),
     0
   );
@@ -225,7 +236,7 @@ test('toSelectorConditionPart', () => {
   setComponent(algorithm, path, term);
   expect(getComponent(algorithm, path)).toEqual(term);
 
-  const path2: AlgorithmPath = selectConditionPart(
+  const path2: AlgorithmPath = selectConditionPartOrAsTerm(
     selectCondition(selectSelector(createPathToRule(1), 1), 0),
     1
   );
@@ -234,6 +245,37 @@ test('toSelectorConditionPart', () => {
   );
   setComponent(algorithm, path2, term);
   expect(getComponent(algorithm, path2)).toEqual(term);
+});
+
+[true, false].forEach((asTermPath) => {
+  test(asTermPath ? 'toSelectorConditionPart as TermPath' : 'toSelectorConditionPart', () => {
+    const selectConditionPartOrAsTerm: (
+      path: ConditionPath,
+      conditionPart: number
+    ) => AlgorithmPath = asTermPath
+      ? (x, y) => toTermPath(selectConditionPart(x, y))
+      : selectConditionPart;
+    const path: AlgorithmPath = selectConditionPartOrAsTerm(
+      selectCondition(selectSelector(createPathToRule(1), 1), 0),
+      0
+    );
+    expect(getComponent(algorithm, path)).toEqual(
+      algorithm.rules[1].selectorSequence[1].conditions[0].lhs
+    );
+    const term: Term = { kind: 'constant', value: 1 };
+    setComponent(algorithm, path, term);
+    expect(getComponent(algorithm, path)).toEqual(term);
+
+    const path2: AlgorithmPath = selectConditionPartOrAsTerm(
+      selectCondition(selectSelector(createPathToRule(1), 1), 0),
+      1
+    );
+    expect(getComponent(algorithm, path2)).toEqual(
+      algorithm.rules[1].selectorSequence[1].conditions[0].rhs
+    );
+    setComponent(algorithm, path2, term);
+    expect(getComponent(algorithm, path2)).toEqual(term);
+  });
 });
 
 test('sum in plus', () => {

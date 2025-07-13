@@ -26,10 +26,13 @@ import {
   isAlgorithmTermPath
 } from '../stores/AlgorithmPath';
 import { assertNotNull } from '@/services/misc';
+import { AlgorithmPathLogger } from '@/services/logging';
+
+const logger = AlgorithmPathLogger;
 
 export function getComponent(algo: HashiAlgorithm, path: AlgorithmPath): AlgorithmPiece {
+  logger.info('getComponent', path);
   const res = getRuleComponent(algo, path);
-  console.debug('getComponent ', path, res);
   return res;
 }
 
@@ -39,6 +42,7 @@ export function setComponent(
   path: AlgorithmPath,
   newComponent: AlgorithmPiece | null
 ): void {
+  logger.info('setComponent ', path, newComponent);
   setRuleComponent(algo, path, newComponent);
 }
 
@@ -52,6 +56,7 @@ function getRuleComponent(algo: HashiAlgorithm, path: RulePath): AlgorithmPiece 
   } else if (isActionPath(path)) {
     return getActionComponent(rule, path);
   } else {
+    logger.debug('returning rule', rule);
     return rule;
   }
 }
@@ -63,6 +68,7 @@ function setRuleComponent(
 ): void {
   if (!isSelectorPath(path) && !isActionPath(path)) {
     if (newComponent == null) {
+      logger.debug('deleting rule', path.ruleIndex);
       algo.rules.splice(path.ruleIndex, 1);
       algo.disabledRules = algo.disabledRules.reduce<number[]>((acc, oldDisabledIndex) => {
         if (oldDisabledIndex < path.ruleIndex) acc.push(oldDisabledIndex);
@@ -70,6 +76,7 @@ function setRuleComponent(
         return acc;
       }, []);
     } else {
+      logger.debug('setting rule', path.ruleIndex);
       algo.rules[path.ruleIndex] = newComponent as Rule;
     }
     return;
@@ -88,10 +95,12 @@ function setRuleComponent(
 // path:  [selectorIndex, conditionIndex, termIndex, termPart]
 function getSelectorComponent(rule: Rule, path: SelectorPath): AlgorithmPiece {
   const selector = rule.selectorSequence[path.selectorIndex];
+  logger.debug('getSelectorComponent', selector);
 
   if (isConditionPath(path)) {
     return getConditionComponent(selector, path);
   }
+  logger.debug('returning selector', selector);
   return selector;
 }
 
@@ -100,10 +109,13 @@ function setSelectorComponent(
   path: SelectorPath,
   newComponent: AlgorithmPiece | null
 ): void {
+  logger.debug('setSelectorComponent ' + path.selectorIndex);
   if (!isConditionPath(path)) {
     if (newComponent == null) {
+      logger.debug('deleting selector', path.selectorIndex);
       rule.selectorSequence.splice(path.selectorIndex, 1);
     } else {
+      logger.debug('setting selector', path.selectorIndex);
       rule.selectorSequence[path.selectorIndex] = newComponent as Selector;
     }
     return;
@@ -125,6 +137,7 @@ function setConditionComponent(
   path: ConditionPath,
   newComponent: AlgorithmPiece | null
 ): void {
+  logger.debug('setConditionComponent ' + path.conditionIndex);
   if (!isConditionPartPath(path)) {
     if (newComponent == null) {
       selector.conditions.splice(path.conditionIndex, 1);
@@ -140,9 +153,10 @@ function setConditionComponent(
 }
 
 function getConditionPartComponent(condition: Condition, path: ConditionPartPath): Selector | Term {
+  logger.debug('getConditionPartComponent ' + path.conditionPart);
   const term = path.conditionPart === 0 ? condition.lhs : condition.rhs;
 
-  if (isConditionTermPath(path)) {
+  if (isConditionTermPath(path) && path.termPath.sequence.length > 0) {
     return getTermPart(term, path.termPath.sequence);
   }
   return term;
@@ -153,7 +167,8 @@ function setConditionPartComponent(
   path: ConditionPartPath,
   newComponent: AlgorithmPiece
 ): void {
-  if (!isConditionTermPath(path)) {
+  logger.debug('setConditionPartComponont ' + path.conditionPart);
+  if (!isConditionTermPath(path) || path.termPath.sequence.length === 0) {
     if (path.conditionPart === 0) condition.lhs = newComponent as Term;
     else condition.rhs = newComponent as Term;
     return;
@@ -174,6 +189,7 @@ function getActionComponent(rule: Rule, path: ActionPath): AlgorithmPiece {
 
 // path:  [actionIndex, termIndex, termPart]
 function setActionComponent(rule: Rule, path: ActionPath, newComponent: AlgorithmPiece): void {
+  logger.debug('setActionComponent');
   if (!isActionPartPath(path)) {
     rule.action = newComponent as HashiAction;
     return;
@@ -186,7 +202,7 @@ function getActionPartComponent(action: HashiAction, path: ActionPartPath): Term
   if (path.actionPart !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
   const term = action.value;
 
-  if (isActionTermPath(path)) {
+  if (isActionTermPath(path) && path.termPath.sequence.length > 0) {
     const part = getTermPart(term, path.termPath.sequence);
     if (!isTerm(part)) throw new Error('path to selector cannot continue');
     return part;
@@ -199,9 +215,10 @@ function setActionPartComponent(
   path: ActionPartPath,
   newComponent: AlgorithmPiece
 ): void {
+  logger.debug('setActionPartComponent ' + path.actionPart);
   if (path.actionPart !== 0 || action.kind !== 'setProperty') throw new Error('not supported');
 
-  if (!isActionTermPath(path)) {
+  if (!isActionTermPath(path) || path.termPath.sequence.length === 0) {
     action.value = newComponent as Term;
     return;
   }
@@ -220,7 +237,9 @@ function isTerm(obj: Selector | Term): obj is Term {
 }
 
 function getTermPart(term: Term, termPath: number[]): Selector | Term {
-  // console.log('getTermPart', term, termPath);
+  logger.debug('getTermPart', termPath);
+
+  if (termPath.length === 0) throw new Error();
 
   const path0Term = getTermFor(term, termPath[0]);
   if (termPath.length > 1) {
@@ -240,7 +259,7 @@ function getTermFor(term: Term, index: number): Selector | Term {
 }
 
 function setTermPart(term: Term, termPath: number[], newComponent: AlgorithmPiece): void {
-  // console.log('setTermPart', term, termPath);
+  logger.debug('setTermPart ', termPath);
 
   if (termPath.length === 1) {
     if (term.kind === 'plus') {
