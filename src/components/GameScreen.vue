@@ -26,7 +26,7 @@ async function loadLevel(levelStr: string | string[]) {
 
 <template>
   <!-- <ActionBar /> -->
-  <HashiViewer style="height: 400px" />
+  <HashiViewer style="height: 300px" />
 
   <AlgorithmBuilder />
 </template>

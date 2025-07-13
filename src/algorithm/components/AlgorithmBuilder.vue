@@ -6,9 +6,9 @@ import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
 import { ref, onBeforeMount, toRef } from 'vue';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
-import { AllRulesAlgorithm } from '../stores/rules';
 import EditableLabel from '@/components/EditableLabel.vue';
 import { AlgorithmRunner } from '../services/AlgorithmRunner';
+import { LoadAlgorithm, SaveAlgorithm } from '@/services/storageService';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const hashiState = useHashiStore();
@@ -16,8 +16,14 @@ const hashiState = useHashiStore();
 const activeRuleIndex = ref(0);
 
 onBeforeMount(() => {
-  console.log('loading AllRulesAlgorithm', AllRulesAlgorithm);
-  hashiAlgorithmStore.$patch(AllRulesAlgorithm);
+  const loaded = LoadAlgorithm();
+  if (loaded != null) {
+    hashiAlgorithmStore.$patch(loaded);
+  }
+});
+
+hashiAlgorithmStore.$subscribe((mutation, algorithm) => {
+  SaveAlgorithm(algorithm);
 });
 
 function setActiveRuleIndex(index: number): void {

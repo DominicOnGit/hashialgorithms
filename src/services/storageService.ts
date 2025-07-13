@@ -17,6 +17,15 @@ export function LoadObject(name: string): unknown | null {
   return object;
 }
 
+export function LoadAlgorithm(): HashiAlgorithm | null {
+  const algorithm = LoadObject(AlgorithmKey) as HashiAlgorithm;
+  return algorithm;
+}
+
+export function SaveAlgorithm(algorithm: HashiAlgorithm): void {
+  SaveObject(algorithm, AlgorithmKey);
+}
+
 export function SaveAll(): void {
   console.log('SaveAll');
   const hashiAlgorithmStore = useHashiAlgorithmStore();
@@ -34,7 +43,7 @@ export function LoadAll(): void {
   const hashiAlgorithmStore = useHashiAlgorithmStore();
   const hashiStore = useHashiStore();
 
-  const algorithm = LoadObject(AlgorithmKey) as HashiAlgorithm;
+  const algorithm = LoadAlgorithm();
   if (algorithm == null) {
     alert('algorithm not found');
   } else {

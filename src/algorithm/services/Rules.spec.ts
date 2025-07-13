@@ -8,7 +8,7 @@ import {
 } from './../stores/rules';
 import { type HashiAlgorithm } from './../stores/HashiAlgorithm';
 import { expect, test, describe } from 'vitest';
-import { useHashiStore, type Edge, type Hashi } from '@/hashi/stores/hashi';
+import { type Edge, type Hashi } from '@/hashi/stores/hashi';
 import { type Rule } from '@/algorithm/stores/HashiAlgorithm';
 import { setActivePinia, createPinia } from 'pinia';
 import {
