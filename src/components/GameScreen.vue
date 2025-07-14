@@ -18,16 +18,20 @@ function loadLevelAndSet(levelStr: string | string[]) {
 </script>
 
 <template>
-  <div class="container-fluid">
-    <div class="card">
-      <div class="card-body">
-        <HashiViewer />
+  <div class="row row-cols-1 g-4">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <HashiViewer />
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-body">
-        <AlgorithmBuilder />
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <AlgorithmBuilder />
+        </div>
       </div>
     </div>
   </div>

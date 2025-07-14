@@ -123,10 +123,14 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
 
   <RuleList @selected="setActiveRuleIndex" />
 
-  <RuleBuilder
-    v-if="hashiAlgorithmStore.rules.length > 0"
-    :path="createPathToRule(activeRuleIndex)"
-  />
+  <div class="card">
+    <div class="card-body">
+      <RuleBuilder
+        v-if="hashiAlgorithmStore.rules.length > 0"
+        :path="createPathToRule(activeRuleIndex)"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>
