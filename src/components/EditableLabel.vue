@@ -25,7 +25,7 @@ const editing = ref(false);
   </template>
   <template v-else>
     <span>{{ model ?? displayNameIfNull }} </span>
-    <button class="ruleBtn btn" @click="() => (editing = true)">
+    <button class="btn" @click="() => (editing = true)">
       <i class="bi-pencil"></i>
     </button>
   </template>

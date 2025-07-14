@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { getNext, getUrl, Stories } from '../service/stories';
 import { assertNotNull } from '@/services/misc';
-import { isStory, type Story } from '../story';
+import { type Story } from '../story';
 
 const story = ref<Story>({} as Story);
 

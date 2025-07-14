@@ -9,6 +9,8 @@ import { HashiUtil } from '@/hashi/services/HashiUtil';
 import EditableLabel from '@/components/EditableLabel.vue';
 import { AlgorithmRunner } from '../services/AlgorithmRunner';
 import { LoadAlgorithm, SaveAlgorithm } from '@/services/storageService';
+import { useRoute } from 'vue-router';
+import { loadLevel } from '@/Title-Screen/services/levels';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const hashiState = useHashiStore();
@@ -74,32 +76,49 @@ function stepAndPause(): void {
   stepAlgorithm();
 }
 
+const route = useRoute();
+function resetHashi(): void {
+  const levelStr = route.params.level;
+  const hashi = loadLevel(levelStr as string);
+  hashiState.setHashi(hashi.wrappedItem);
+}
+
 const algorithmName = toRef(hashiAlgorithmStore.name);
 </script>
 
 <template>
   <h2>
-    <EditableLabel v-model="algorithmName" />
+    <div class="btn-toolbar">
+      <EditableLabel v-model="algorithmName" />
 
-    <!-- Pause -->
-    <button class="ruleBtn btn" @click="() => setPlayState('paused')">
-      <i class="bi-stop" :class="{ activeState: playState === 'paused' }"></i>
-    </button>
+      <div class="btn-group">
+        <!-- Pause -->
+        <button class="btn" @click="() => setPlayState('paused')">
+          <i class="bi-stop" :class="{ activeState: playState === 'paused' }"></i>
+        </button>
 
-    <!-- Step -->
-    <button class="ruleBtn btn" @click="stepAndPause">
-      <i class="bi-arrow-bar-right"></i>
-    </button>
+        <!-- Step -->
+        <button class="btn" @click="stepAndPause">
+          <i class="bi-arrow-bar-right"></i>
+        </button>
 
-    <!-- Play Normal -->
-    <button class="ruleBtn btn" @click="() => setPlayState('normal')">
-      <i class="bi-play" :class="{ activeState: playState === 'normal' }"></i>
-    </button>
+        <!-- Play Normal -->
+        <button class="btn" @click="() => setPlayState('normal')">
+          <i class="bi-play" :class="{ activeState: playState === 'normal' }"></i>
+        </button>
 
-    <!-- Play Fast -->
-    <button class="ruleBtn btn" @click="() => setPlayState('fast')">
-      <i class="bi-fast-forward" :class="{ activeState: playState === 'fast' }"></i>
-    </button>
+        <!-- Play Fast -->
+        <button class="btn" @click="() => setPlayState('fast')">
+          <i class="bi-fast-forward" :class="{ activeState: playState === 'fast' }"></i>
+        </button>
+      </div>
+
+      <!-- Reset -->
+      <button class="btn" @click="resetHashi">
+        <i class="bi-bootstrap-reboot"></i>
+        <!-- bi-arrow-counterclockwise -->
+      </button>
+    </div>
   </h2>
 
   <RuleList @selected="setActiveRuleIndex" />

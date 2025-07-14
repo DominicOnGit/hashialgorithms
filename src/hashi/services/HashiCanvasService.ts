@@ -1,17 +1,26 @@
 import { type Vertex } from '@/hashi/stores/hashi';
-import type { HashiEdge, HashiUtil, HashiVertex } from './HashiUtil';
+import type { HashiEdge, HashiSize, HashiUtil, HashiVertex } from './HashiUtil';
 import type { CustomPropertyDefs } from '@/stores/CustomPropertyDef';
-import { HashiTextConverter } from './HashiTextConverter';
 
 const IslandRadiusFactor = 1;
 const LineGap = 4;
+const DesiredBlockSize = 80;
 
 const NormalStyle = 'black';
 const SatisfiedStyle = 'darkgreen';
 const ErrorStyle = 'red';
 
+export const Rescale = 1;
+
 function compareNumbers(a: number, b: number): number {
   return b > a ? 1 : b < a ? -1 : 0;
+}
+
+export function desiredSize(hashiSize: HashiSize): { width: number; height: number } {
+  return {
+    width: DesiredBlockSize * hashiSize.nx,
+    height: DesiredBlockSize * hashiSize.ny
+  };
 }
 
 export class HashiCanvasService {
@@ -25,13 +34,15 @@ export class HashiCanvasService {
     private hashi: HashiUtil,
     private customPropertyDefs: CustomPropertyDefs
   ) {
+    // canvas.translate(0.5, 0.5);
+    canvas.scale(Rescale, Rescale);
     const hashiSize = this.hashi.getSize();
-    const canvasWidth = this.canvas.canvas.width;
-    const canvasHeight = this.canvas.canvas.height;
+    const canvasWidth = this.canvas.canvas.width / Rescale;
+    const canvasHeight = this.canvas.canvas.height / Rescale;
 
     this.gridSize = Math.min(canvasWidth / hashiSize.nx, canvasHeight / hashiSize.ny);
 
-    const fontSize = this.gridSize < 50 ? 12 : this.gridSize < 100 ? 15 : 20;
+    const fontSize = this.gridSize < 50 ? 12 : this.gridSize < 80 ? 14 : 18;
 
     this.canvas.font = `${fontSize}px sans-serif`;
     this.canvas.textAlign = 'center';
@@ -44,8 +55,8 @@ export class HashiCanvasService {
     console.log(
       'HashiCanvasService initialized',
       `canvas size: ${canvasWidth} x ${canvasHeight}`,
-      new HashiTextConverter().toText(this.hashi),
-      `gridSize: ${this.gridSize}, islandRadius: ${this.islandRadius}, textHeight: ${this.textHeight}, textSize: ${this.textSize}`
+      `hashi size: ${hashiSize.nx} x ${hashiSize.ny}`,
+      `gridSize: ${this.gridSize}, font: ${fontSize}, islandRadius: ${this.islandRadius}, textHeight: ${this.textHeight}, textSize: ${this.textSize}`
     );
   }
 

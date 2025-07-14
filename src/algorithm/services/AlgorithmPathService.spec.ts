@@ -20,12 +20,7 @@ import type {
   SumTerm,
   Term
 } from '@/algorithm/stores/HashiAlgorithm';
-import type {
-  AlgorithmPath,
-  AlgorithmTermPath,
-  ConditionPartPath,
-  ConditionPath
-} from '../stores/AlgorithmPath';
+import type { AlgorithmPath, ConditionPath } from '../stores/AlgorithmPath';
 import { buildEmptyRule } from '../stores/HashiAlgorithmStore';
 
 const algorithmTemplate: HashiAlgorithm = {

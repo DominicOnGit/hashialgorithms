@@ -3,32 +3,34 @@ import HashiViewer from '../hashi/components/HashiViewer.vue';
 import AlgorithmBuilder from '../algorithm/components/AlgorithmBuilder.vue';
 
 import { useRoute } from 'vue-router';
-import { Levels } from '@/Title-Screen/services/levels';
+import { loadLevel } from '@/Title-Screen/services/levels';
 import { watch } from 'vue';
 import { useHashiStore } from '@/hashi/stores/hashi';
-import { assertNotNull } from '@/services/misc';
 
 const hashiStore = useHashiStore();
 const route = useRoute();
-watch(() => route.params.level, loadLevel, { immediate: true });
+watch(() => route.params.level, loadLevelAndSet, { immediate: true });
 
-async function loadLevel(levelStr: string | string[]) {
-  console.log('loadLevel', levelStr);
-  const levelNum = parseInt(levelStr as string, 10);
-  const level = Levels.find((level) => level.number === levelNum);
-  assertNotNull(level, 'Level not found');
-
-  const hashi = level.load();
-
+function loadLevelAndSet(levelStr: string | string[]) {
+  const hashi = loadLevel(levelStr as string);
   hashiStore.setHashi(hashi.wrappedItem);
 }
 </script>
 
 <template>
-  <!-- <ActionBar /> -->
-  <HashiViewer style="height: 300px" />
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <HashiViewer />
+      </div>
+    </div>
 
-  <AlgorithmBuilder />
+    <div class="card">
+      <div class="card-body">
+        <AlgorithmBuilder />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

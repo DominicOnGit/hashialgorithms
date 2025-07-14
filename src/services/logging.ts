@@ -22,5 +22,6 @@ export class Logger {
   }
 }
 
-export const AlgorithmPathLogger = new Logger('info');
-export const AlgorithmRunnerLogger = new Logger('info');
+export const UiActionLogger = new Logger('info');
+export const AlgorithmPathLogger = new Logger('error');
+export const AlgorithmRunnerLogger = new Logger('error');

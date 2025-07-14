@@ -1,6 +1,7 @@
 import { HashiTextConverter } from '@/hashi/services/HashiTextConverter';
 import { LevelCategories, type Level, type LevelCategory } from '../stores/level';
 import type { HashiUtil } from '@/hashi/services/HashiUtil';
+import { assertNotNull } from '@/services/misc';
 
 export class TextLevel implements Level {
   constructor(
@@ -67,3 +68,13 @@ export const LevelsByCategory = LevelCategories.map((category) => {
     )
   };
 });
+
+export function loadLevel(levelStr: string): HashiUtil {
+  console.log('loadLevel', levelStr);
+  const levelNum = parseInt(levelStr as string, 10);
+  const level = Levels.find((level) => level.number === levelNum);
+  assertNotNull(level, 'Level not found');
+
+  const hashi = level.load();
+  return hashi;
+}
