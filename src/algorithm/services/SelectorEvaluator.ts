@@ -3,6 +3,7 @@ import type { Condition, Operator, Selector } from '@/algorithm/stores/HashiAlgo
 import { TermEvaluator } from './TermEvaluator';
 import type { ISelectorEvaluator } from './interfaces';
 import { termToString } from './TermBuilderService';
+import { AlgorithmRunnerLogger } from '@/services/logging';
 
 export class SelectorEvaluator implements ISelectorEvaluator {
   private termEvaluator: TermEvaluator;
@@ -87,7 +88,7 @@ export class SelectorEvaluator implements ISelectorEvaluator {
     const condString = `${termToString(cond.lhs)}=${lhs} ${cond.operator} ${termToString(
       cond.rhs
     )}=${rhs}`;
-    console.debug(`evaluateCondition(${condString}, ${item.toString()}) => ${res}`);
+    AlgorithmRunnerLogger.debug(`evaluateCondition(${condString}, ${item.toString()}) => ${res}`);
     return res;
   }
 

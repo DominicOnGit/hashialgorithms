@@ -29,7 +29,7 @@ hashiAlgorithmStore.$subscribe((mutation, algorithm) => {
 });
 
 function setActiveRuleIndex(index: number): void {
-  activeRuleIndex.value = index;
+  if (index >= 0) activeRuleIndex.value = index;
 }
 
 function stepAlgorithm(): boolean {
@@ -87,7 +87,7 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
 </script>
 
 <template>
-  <h2>
+  <h3>
     <div class="btn-toolbar">
       <EditableLabel v-model="algorithmName" />
 
@@ -119,16 +119,24 @@ const algorithmName = toRef(hashiAlgorithmStore.name);
         <!-- bi-arrow-counterclockwise -->
       </button>
     </div>
-  </h2>
+  </h3>
 
-  <RuleList @selected="setActiveRuleIndex" />
+  <div class="container g-4">
+    <div class="row">
+      <div class="col-lg-4">
+        <RuleList @selected="setActiveRuleIndex" />
+      </div>
 
-  <div class="card">
-    <div class="card-body">
-      <RuleBuilder
-        v-if="hashiAlgorithmStore.rules.length > 0"
-        :path="createPathToRule(activeRuleIndex)"
-      />
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <RuleBuilder
+              v-if="hashiAlgorithmStore.rules.length > 0"
+              :path="createPathToRule(activeRuleIndex)"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

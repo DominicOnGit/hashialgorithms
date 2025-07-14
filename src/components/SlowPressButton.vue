@@ -10,6 +10,7 @@ const emit = defineEmits<{
 
 const isRunning = ref(false);
 const counter = ref(0);
+let isArmed = false;
 
 const progressWidth = computed(() => {
   const rel = (100 * counter.value) / STEPS;
@@ -22,8 +23,8 @@ function run(): void {
 
   counter.value = counter.value + 1;
   if (counter.value > STEPS) {
-    stopRunning();
-    emit('activated');
+    isRunning.value = false;
+    isArmed = true;
   }
   setTimeout(() => {
     run();
@@ -35,14 +36,22 @@ function startRunning(): void {
   run();
 }
 
-function stopRunning(): void {
+function clickStopped(allowEmit: boolean): void {
   isRunning.value = false;
   counter.value = 0;
+  if (isArmed && allowEmit) {
+    emit('activated');
+  }
 }
 </script>
 
 <template>
-  <button class="outer" @mousedown="startRunning" @mouseup="stopRunning" @mouseleave="stopRunning">
+  <button
+    class="outer"
+    @mousedown="startRunning"
+    @mouseup="() => clickStopped(true)"
+    @mouseleave="() => clickStopped(false)"
+  >
     <span class="slot"><slot></slot></span>
 
     <span class="level" :style="{ width: progressWidth }"></span>

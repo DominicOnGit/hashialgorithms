@@ -152,6 +152,19 @@ test('toRule', () => {
   expect(getComponent(algorithm, path)).toEqual(newRule);
 });
 
+test('set rule on empty algorithm', () => {
+  const path: AlgorithmPath = createPathToRule(0);
+  const algorithm: HashiAlgorithm = {
+    name: 'empty',
+    disabledRules: [],
+    rules: []
+  };
+
+  const newRule: Rule = buildEmptyRule(99);
+  setComponent(algorithm, path, newRule);
+  expect(getComponent(algorithm, path)).toEqual(newRule);
+});
+
 test('deleteRule', () => {
   const path: AlgorithmPath = createPathToRule(1);
   algorithm.disabledRules = [0, 1, 2];

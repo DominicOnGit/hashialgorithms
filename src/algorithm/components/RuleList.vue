@@ -58,7 +58,12 @@ function newRule(): void {
 }
 
 function deleteRule(index: number): void {
+  if (activeRuleIndex.value >= hashiAlgorithmStore.rules.length - 1) {
+    activeRuleIndex.value = hashiAlgorithmStore.rules.length - 2;
+    emit('selected', activeRuleIndex.value);
+  }
   hashiAlgorithmStore.deleteRule(createPathToRule(index));
+  console.log(`deleted ${index}, active now=${activeRuleIndex.value}`);
 }
 
 function enableRule(index: number): void {
@@ -133,8 +138,9 @@ function stepRule(index: number): void {
     </a>
 
     <!-- new  -->
-    <button type="button" class="list-group-item list-group-item-action" @click="newRule">
-      NEW
+    <!-- class="list-group-item list-group-item-action" -->
+    <button type="button" class="btn list-group-item list-group-item-action" @click="newRule">
+      Add Rule
     </button>
   </div>
 </template>
@@ -180,5 +186,11 @@ function stepRule(index: number): void {
 }
 .notActiveState {
   color: var(--bs-tertiary-color);
+}
+
+.list-group-item.active {
+  background-color: var(--bs-secondary-bg);
+  border-color: var(--bs-tertiary-color);
+  color: var(--bs-body-color);
 }
 </style>
