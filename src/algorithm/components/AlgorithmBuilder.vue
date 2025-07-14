@@ -3,7 +3,7 @@ import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import RuleBuilder from './RuleBuilder.vue';
 import RuleList from './RuleList.vue';
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
-import { ref, onBeforeMount, toRef } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import EditableLabel from '@/components/EditableLabel.vue';
@@ -82,14 +82,12 @@ function resetHashi(): void {
   const hashi = loadLevel(levelStr as string);
   hashiState.setHashi(hashi.wrappedItem);
 }
-
-const algorithmName = toRef(hashiAlgorithmStore.name);
 </script>
 
 <template>
   <h3>
     <div class="btn-toolbar">
-      <EditableLabel v-model="algorithmName" />
+      <EditableLabel v-model="hashiAlgorithmStore.name" />
 
       <div class="btn-group">
         <!-- Pause -->

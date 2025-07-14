@@ -9,11 +9,16 @@ defineProps<{
 }>();
 
 const editing = ref(false);
+
+const vFocus = {
+  mounted: (el: HTMLElement) => el.focus()
+};
 </script>
 
 <template>
   <template v-if="editing">
     <input
+      v-focus
       ref="nameEditors"
       v-elementDeselected="{ handler: () => (editing = false) }"
       v-model="model"

@@ -28,6 +28,8 @@ export class HashiCanvasService {
   private islandRadius: number;
   private textHeight: number;
   private textSize: number;
+  private canvasWidth: number;
+  private canvasHeight: number;
 
   constructor(
     private canvas: CanvasRenderingContext2D,
@@ -37,10 +39,10 @@ export class HashiCanvasService {
     // canvas.translate(0.5, 0.5);
     canvas.scale(Rescale, Rescale);
     const hashiSize = this.hashi.getSize();
-    const canvasWidth = this.canvas.canvas.width / Rescale;
-    const canvasHeight = this.canvas.canvas.height / Rescale;
+    this.canvasWidth = this.canvas.canvas.width / Rescale;
+    this.canvasHeight = this.canvas.canvas.height / Rescale;
 
-    this.gridSize = Math.min(canvasWidth / hashiSize.nx, canvasHeight / hashiSize.ny);
+    this.gridSize = Math.min(this.canvasWidth / hashiSize.nx, this.canvasHeight / hashiSize.ny);
 
     const fontSize = this.gridSize < 50 ? 12 : this.gridSize < 80 ? 14 : 18;
 
@@ -54,7 +56,7 @@ export class HashiCanvasService {
 
     console.log(
       'HashiCanvasService initialized',
-      `canvas size: ${canvasWidth} x ${canvasHeight}`,
+      `canvas size: ${this.canvasWidth} x ${this.canvasHeight}`,
       `hashi size: ${hashiSize.nx} x ${hashiSize.ny}`,
       `gridSize: ${this.gridSize}, font: ${fontSize}, islandRadius: ${this.islandRadius}, textHeight: ${this.textHeight}, textSize: ${this.textSize}`
     );
@@ -163,7 +165,7 @@ export class HashiCanvasService {
 
   draw(): void {
     // clear canvas
-    this.canvas.clearRect(0, 0, 400, 400);
+    this.canvas.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
     this.hashi.vertices.forEach((vertex) => this.drawVertex(vertex));
 

@@ -22,6 +22,8 @@ watch(activeRuleIndex, (newIndex: number) => {
   emit('selected', newIndex);
 });
 
+updateRuleState();
+
 hashiState.$subscribe(() => updateRuleState());
 hashiAlgorithmStore.$subscribe(() => updateRuleState());
 

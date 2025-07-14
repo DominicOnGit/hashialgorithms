@@ -46,7 +46,7 @@ export const SingleSnake = new TextLevel(
 );
 
 export const SingleBigSquare = new TextLevel(
-  'Advanced',
+  'Basic',
   3,
   'Single Big Square',
   `  
@@ -58,7 +58,20 @@ export const SingleBigSquare = new TextLevel(
     `
 );
 
-export const Levels: Level[] = [DoubleBigSquare, SingleSnake, SingleBigSquare];
+export const SingleE = new TextLevel(
+  'Advanced',
+  4,
+  'Single E',
+  `  
+    x 1 x
+    1
+    x 1 x
+    1     
+    x 1 x 
+    `
+);
+
+export const Levels: Level[] = [DoubleBigSquare, SingleSnake, SingleBigSquare, SingleE];
 
 export const LevelsByCategory = LevelCategories.map((category) => {
   return {
