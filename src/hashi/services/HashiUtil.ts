@@ -264,8 +264,11 @@ export class HashiUtil {
     while (reachendNotProcess.length > 0) {
       const v = reachendNotProcess.pop();
       if (v == null) throw new Error();
-      if (!reachedAndProcessed.includes(v)) {
-        reachendNotProcess.push(...this.adjacentVertices(v));
+      reachedAndProcessed.push(v);
+      for (const adjacent of this.adjacentVertices(v)) {
+        if (!reachedAndProcessed.includes(adjacent)) {
+          reachendNotProcess.push(adjacent);
+        }
       }
     }
 

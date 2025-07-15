@@ -3,6 +3,7 @@ import type { Rule } from '@/algorithm/stores/HashiAlgorithm';
 import { ActionRunner } from './ActionRunner';
 import type { HashiUtil } from '../../hashi/services/HashiUtil';
 import { SelectorRunner } from './SelectorRunner';
+import { AlgorithmRunnerLogger } from '@/services/logging';
 
 export class RuleRunner {
   constructor(
@@ -14,7 +15,7 @@ export class RuleRunner {
     const selectorRunner = new SelectorRunner(this.rule.selectorSequence, this.hashiUtil);
 
     const selected = selectorRunner.SelectNext();
-    console.log(`Rule ${this.rule.name}: selector retured `, selected);
+    AlgorithmRunnerLogger.debug(`Rule ${this.rule.name}: selector returned `, selected);
 
     if (selected != null) {
       const actionRunner = new ActionRunner(this.rule.action, this.hashiUtil);

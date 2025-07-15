@@ -5,14 +5,12 @@ import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { useCustomPropertyStore } from '@/stores/CustomPropertyDef';
 import { assertNotNull } from '@/services/misc';
-
+import { HashiViewerLogger } from '@/services/logging';
 if (import.meta.hot) {
   import.meta.hot.on('vite:afterUpdate', () => {
-    console.log('HOT');
     draw();
   });
 }
-
 const hashiStore = useHashiStore();
 const customPropertiesStore = useCustomPropertyStore();
 
@@ -23,41 +21,33 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  console.debug('mounted');
   const c = document.getElementById('canvas') as HTMLCanvasElement;
 
   const ctx = c.getContext('2d');
   if (ctx == null) throw new Error();
   vueCanvas.value = ctx;
-
-  draw();
+  //  draw();
 });
 
 onUpdated(() => {
-  console.log('updated');
+  draw();
 });
 
 watch(hashiStore, () => {
+  calculateDesiredSize();
   draw();
 });
 
 const desiredCanvasSize = ref({ width: 300, height: 300 });
 
-watch(
-  () => hashiStore.vertices,
-  () => {
-    calculateDesiredSize();
-  }
-);
-
 function calculateDesiredSize(): void {
   const hashiSize = new HashiUtil(hashiStore).getSize();
   desiredCanvasSize.value = desiredSize(hashiSize);
-  console.log('desired size', desiredCanvasSize.value);
+  // console.log('desired size', desiredCanvasSize.value);
 }
 
 function draw() {
-  console.debug('draw ');
+  HashiViewerLogger.debug('draw');
   assertNotNull(vueCanvas.value, 'vueCanvas is null');
   new HashiCanvasService(
     vueCanvas.value,
@@ -70,8 +60,8 @@ function draw() {
 <template>
   <canvas
     id="canvas"
-    :width="Rescale * desiredCanvasSize.width + 'px'"
-    :height="Rescale * desiredCanvasSize.height + 'px'"
+    :width="Rescale * desiredCanvasSize.width"
+    :height="Rescale * desiredCanvasSize.height"
     :style="{
       width: desiredCanvasSize.width + 'px',
       height: desiredCanvasSize.height + 'px'

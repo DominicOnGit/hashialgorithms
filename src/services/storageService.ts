@@ -1,6 +1,7 @@
 import { useHashiStore, type Hashi } from '@/hashi/stores/hashi';
 import type { HashiAlgorithm } from './../algorithm/stores/HashiAlgorithm';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { UiActionLogger } from './logging';
 
 const HashiKey = 'hashi';
 const AlgorithmKey = 'algorithm';
@@ -27,7 +28,7 @@ export function SaveAlgorithm(algorithm: HashiAlgorithm): void {
 }
 
 export function SaveAll(): void {
-  console.log('SaveAll');
+  UiActionLogger.info('SaveAll');
   const hashiAlgorithmStore = useHashiAlgorithmStore();
   const hashiStore = useHashiStore();
 
@@ -39,7 +40,7 @@ export function SaveAll(): void {
 }
 
 export function LoadAll(): void {
-  console.log('LoadAll');
+  UiActionLogger.info('LoadAll');
   const hashiAlgorithmStore = useHashiAlgorithmStore();
   const hashiStore = useHashiStore();
 
@@ -54,7 +55,7 @@ export function LoadAll(): void {
   if (hashi != null) {
     hashiStore.$patch(hashi);
   } else {
-    console.log('hashi not found');
+    UiActionLogger.error('hashi not found');
     if (algorithm != null) {
       alert('hashi not found');
     }

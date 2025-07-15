@@ -1,6 +1,7 @@
 import { type Vertex } from '@/hashi/stores/hashi';
 import type { HashiEdge, HashiSize, HashiUtil, HashiVertex } from './HashiUtil';
 import type { CustomPropertyDefs } from '@/stores/CustomPropertyDef';
+import { HashiViewerLogger } from '@/services/logging';
 
 const IslandRadiusFactor = 1;
 const LineGap = 4;
@@ -54,7 +55,7 @@ export class HashiCanvasService {
 
     this.islandRadius = IslandRadiusFactor * this.textSize;
 
-    console.log(
+    HashiViewerLogger.info(
       'HashiCanvasService initialized',
       `canvas size: ${this.canvasWidth} x ${this.canvasHeight}`,
       `hashi size: ${hashiSize.nx} x ${hashiSize.ny}`,
@@ -78,7 +79,7 @@ export class HashiCanvasService {
   }
 
   private drawVertex(vertex: HashiVertex): void {
-    // console.log(
+    // HashiViewerLogger.debug(
     //   `Drawing vertex ${vertex.posX}, ${vertex.posY} at ${this.getVertexCenterX(vertex)}, ${this.getVertexCenterY(vertex)}`
     // );
     this.canvas.beginPath();

@@ -1,4 +1,5 @@
 import { empty } from '@/hashi/services/HashiSamples';
+import { UiActionLogger } from '@/services/logging';
 import { defineStore } from 'pinia';
 
 export interface Vertex {
@@ -28,24 +29,13 @@ export interface Hashi {
   edges: Edge[];
 }
 
-function findOrCreateEdge(hashi: Hashi, v1: number, v2: number): Edge {
-  const found = hashi.edges.find((e) => e.v1 === v1 && e.v2 === v2);
-  if (found) {
-    return found;
-  } else {
-    const newEdge = { v1, v2, multiplicity: 0 };
-    hashi.edges.push(newEdge);
-    return newEdge;
-  }
-}
-
 export const useHashiStore = defineStore('hashi', {
   state: (): Hashi => {
     return empty();
   },
   actions: {
     setHashi(hashi: Hashi): void {
-      console.log(`setHashi()`, hashi);
+      UiActionLogger.info(`setHashi()`, hashi);
       this.$patch(hashi);
     }
   }

@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import { getNext, getUrl, Stories } from '../service/stories';
 import { assertNotNull } from '@/services/misc';
 import { type Story } from '../story';
+import { UiActionLogger } from '@/services/logging';
 
 const story = ref<Story>({} as Story);
 
@@ -11,7 +12,7 @@ const route = useRoute();
 watch(() => route.params.id, loadStory, { immediate: true });
 
 async function loadStory(storyStr: string | string[]) {
-  console.log('loadStory', storyStr);
+  UiActionLogger.info('loadStory', storyStr);
   story.value = Stories[storyStr as string];
   assertNotNull(story.value, 'Story not found');
 }

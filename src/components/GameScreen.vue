@@ -3,17 +3,59 @@ import HashiViewer from '../hashi/components/HashiViewer.vue';
 import AlgorithmBuilder from '../algorithm/components/AlgorithmBuilder.vue';
 
 import { useRoute } from 'vue-router';
-import { loadLevel } from '@/Title-Screen/services/levels';
+import { getLevel, getNextLevel } from '@/Title-Screen/services/levels';
 import { watch } from 'vue';
 import { useHashiStore } from '@/hashi/stores/hashi';
+import { useAlgorithmRunnerStore } from '@/algorithm/stores/AlgorithmRunnerStore';
+import { HashiUtil } from '@/hashi/services/HashiUtil';
+import { Modal } from 'bootstrap';
+import type { Level } from '@/Title-Screen/stores/level';
+import { getStartForLevel, getUrl } from '@/Story/service/stories';
+import { assertNotNull } from '@/services/misc';
+
+let level: Level;
+let nextLevel: Level | null;
+let successShown = false;
 
 const hashiStore = useHashiStore();
 const route = useRoute();
 watch(() => route.params.level, loadLevelAndSet, { immediate: true });
 
 function loadLevelAndSet(levelStr: string | string[]) {
-  const hashi = loadLevel(levelStr as string);
+  successShown = false;
+  level = getLevel(levelStr as string);
+  nextLevel = getNextLevel(level);
+  const hashi = level.load();
   hashiStore.setHashi(hashi.wrappedItem);
+}
+
+function nextLevelPath(): string {
+  assertNotNull(nextLevel);
+  const nextStart = getStartForLevel(nextLevel);
+  return getUrl(nextStart);
+}
+
+const hashiRunnerStore = useAlgorithmRunnerStore();
+
+hashiStore.$subscribe(() => {
+  checkLevelComplete();
+});
+hashiRunnerStore.$subscribe(() => {
+  checkLevelComplete();
+});
+
+function checkLevelComplete(): void {
+  if (successShown) {
+    return;
+  }
+  const algorithmStopped = hashiRunnerStore.ruleStates.every((state) => state === 'noMatch');
+  const hashiSolved = new HashiUtil(hashiStore).IsSolved();
+
+  if (algorithmStopped && hashiSolved) {
+    successShown = true;
+    const successModal = new Modal('#successModal');
+    successModal.show();
+  }
 }
 </script>
 
@@ -31,6 +73,37 @@ function loadLevelAndSet(levelStr: string | string[]) {
       <div class="card">
         <div class="card-body">
           <AlgorithmBuilder />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
+    id="successModal"
+    data-bs-backdrop="static"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title">Congratulations!</h1>
+        </div>
+        <div class="modal-body">
+          <p>Your algorithm successfully solved the Hashy.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stay Here</button>
+          <button
+            v-if="nextLevel != null"
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            @click="$router.push({ path: nextLevelPath() })"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

@@ -120,7 +120,6 @@ function testSinglePropertyRule(
   checkResult(hashi, finalHashi, []);
 
   const actualPropertyHashi = propertyToMultiplicity(finalHashi, expectedPropName);
-  console.log(toRaw(actualPropertyHashi));
   // const expectedPropertyHashi: Hashi = {vertices: hashi.vertices, edges: expectedPropEdges};
   checkResult(hashi, actualPropertyHashi, expectedPropEdges, false);
 

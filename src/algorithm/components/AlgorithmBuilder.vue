@@ -10,7 +10,8 @@ import EditableLabel from '@/components/EditableLabel.vue';
 import { AlgorithmRunner } from '../services/AlgorithmRunner';
 import { LoadAlgorithm, SaveAlgorithm } from '@/services/storageService';
 import { useRoute } from 'vue-router';
-import { loadLevel } from '@/Title-Screen/services/levels';
+import { getLevel } from '@/Title-Screen/services/levels';
+import { UiActionLogger } from '@/services/logging';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
 const hashiState = useHashiStore();
@@ -46,11 +47,11 @@ function stepAndQueue(): void {
         () => {
           stepAndQueue();
         },
-        playState.value === 'fast' ? 250 : 1000
+        playState.value === 'fast' ? 100 : 1000
       );
     } else {
       playState.value = 'paused';
-      console.log('algorithm ended');
+      UiActionLogger.info('algorithm ended');
     }
   }
 }
@@ -66,7 +67,7 @@ function setPlayState(state: PlayState): void {
   }
   playState.value = state;
   if (oldState === 'paused') {
-    console.log('start playing algorithm');
+    UiActionLogger.info('start playing algorithm');
     stepAndQueue();
   }
 }
@@ -79,7 +80,8 @@ function stepAndPause(): void {
 const route = useRoute();
 function resetHashi(): void {
   const levelStr = route.params.level;
-  const hashi = loadLevel(levelStr as string);
+  const level = getLevel(levelStr as string);
+  const hashi = level.load();
   hashiState.setHashi(hashi.wrappedItem);
 }
 </script>

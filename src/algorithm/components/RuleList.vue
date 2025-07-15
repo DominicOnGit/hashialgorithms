@@ -7,6 +7,7 @@ import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { RuleRunner } from '../services/RuleRunner';
+import { UiActionLogger } from '@/services/logging';
 
 const emit = defineEmits<{
   selected: [index: number];
@@ -31,17 +32,14 @@ const shakeRunning = ref(false);
 watch(
   () => runState.lastStepAt,
   () => {
-    console.log('shake start');
     shakeRunning.value = true;
     setTimeout(() => {
       shakeRunning.value = false;
-      console.log('shake end');
     }, 500);
   }
 );
 
 function updateRuleState(): void {
-  console.log('updateRuleState');
   hashiAlgorithmStore.rules.forEach((rule, index) => {
     const runner = new RuleRunner(rule, new HashiUtil(hashiState));
     const state = runner.getRuleState();
@@ -65,7 +63,7 @@ function deleteRule(index: number): void {
     emit('selected', activeRuleIndex.value);
   }
   hashiAlgorithmStore.deleteRule(createPathToRule(index));
-  console.log(`deleted ${index}, active now=${activeRuleIndex.value}`);
+  UiActionLogger.info(`deleted ${index}, active now=${activeRuleIndex.value}`);
 }
 
 function enableRule(index: number): void {

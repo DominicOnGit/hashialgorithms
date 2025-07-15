@@ -82,12 +82,22 @@ export const LevelsByCategory = LevelCategories.map((category) => {
   };
 });
 
-export function loadLevel(levelStr: string): HashiUtil {
-  console.log('loadLevel', levelStr);
+export function getLevel(levelStr: string): Level {
   const levelNum = parseInt(levelStr as string, 10);
   const level = Levels.find((level) => level.number === levelNum);
   assertNotNull(level, 'Level not found');
+  return level;
+}
+
+export function loadLevelHashi(levelStr: string): HashiUtil {
+  const level = getLevel(levelStr);
 
   const hashi = level.load();
   return hashi;
+}
+
+export function getNextLevel(level: Level): Level | null {
+  const levelIndex = Levels.findIndex((l) => l.number === level.number);
+  if (levelIndex < 0) throw new Error();
+  return levelIndex < Levels.length - 1 ? Levels[levelIndex + 1] : null;
 }

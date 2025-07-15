@@ -15,6 +15,7 @@ import {
   setComponent
 } from '@/algorithm/services/AlgorithmPathService';
 import type { AlgorithmPath } from './AlgorithmPath';
+import { UiActionLogger } from '@/services/logging';
 
 const EmptyAlgorithm: HashiAlgorithm = {
   name: 'New Algorithm',
@@ -55,28 +56,27 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
       pathToSelector: AlgorithmPath,
       kindAndExcludeAncestor: SelectorKindAndExcludeAncestor
     ): void {
-      console.log('changeSelectorKind', kindAndExcludeAncestor, pathToSelector);
+      UiActionLogger.info('changeSelectorKind', kindAndExcludeAncestor, pathToSelector);
       const selector = getComponent(this, pathToSelector) as Selector;
-      console.log(selector);
       selector.kind = kindAndExcludeAncestor.kind;
       selector.excludeAncestor = kindAndExcludeAncestor.excludeAncestor;
     },
 
     changeConditionOperator(pathToCondition: AlgorithmPath, operator: Condition['operator']): void {
-      console.log('changeConditionOperator', operator, pathToCondition);
+      UiActionLogger.info('changeConditionOperator', operator, pathToCondition);
       const condition = getComponent(this, pathToCondition) as Condition;
       condition.operator = operator;
     },
 
     changeTerm(pathToTerm: AlgorithmPath, newTerm: Term): void {
-      console.log('changeTerm', newTerm, pathToTerm);
+      UiActionLogger.info('changeTerm', newTerm, pathToTerm);
       // if (pathToTerm.termIndex == null) throw new Error();
 
       setComponent(this, pathToTerm, newTerm);
     },
 
     newRule(): void {
-      console.log('newRule');
+      UiActionLogger.info('newRule');
       const rule = buildEmptyRule(this.rules.length);
       this.rules.push(rule);
       const pathToRule = createPathToRule(this.rules.length - 1);
@@ -84,7 +84,7 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
     },
 
     newSelector(pathToRule: AlgorithmPath): void {
-      console.log('newSelector', pathToRule);
+      UiActionLogger.info('newSelector', pathToRule);
       const rule = getComponent(this, pathToRule) as Rule;
       let kind: Selector['kind'] = 'vertex';
       if (rule.selectorSequence.length > 0) {
@@ -95,29 +95,29 @@ export const useHashiAlgorithmStore = defineStore('hashiAlgorithm', {
     },
 
     deleteSelector(pathToSelector: AlgorithmPath): void {
-      console.log('deleteSelector', pathToSelector);
+      UiActionLogger.info('deleteSelector', pathToSelector);
       // if (pathToSelector.selectorIndex == null) throw new Error();
       deleteComponent(this, pathToSelector);
     },
 
     newCondition(pathToSelector: AlgorithmPath): void {
-      console.log('newCondition', pathToSelector);
+      UiActionLogger.info('newCondition', pathToSelector);
       const selector = getComponent(this, pathToSelector) as Selector;
       selector.conditions.push(buildEmptyCondition());
     },
 
     deleteCondition(pathToCondition: AlgorithmPath): void {
-      console.log('deleteCondition', pathToCondition);
+      UiActionLogger.info('deleteCondition', pathToCondition);
       deleteComponent(this, pathToCondition);
     },
 
     changeAction(pathToAction: AlgorithmPath, newAction: HashiAction): void {
-      console.log('changeAction', pathToAction, newAction);
+      UiActionLogger.info('changeAction', pathToAction, newAction);
       setComponent(this, pathToAction, newAction);
     },
 
     deleteRule(pathToRule: AlgorithmPath): void {
-      console.log('deleteRule', pathToRule);
+      UiActionLogger.info('deleteRule', pathToRule);
       deleteComponent(this, pathToRule);
     },
 
