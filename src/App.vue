@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { Levels } from './Title-Screen/services/levels';
+
+const levels = Levels;
+levels.sort((a, b) => a.number - b.number);
+</script>
 
 <template>
   <header>
@@ -19,10 +24,14 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <RouterLink class="nav-link" exactActiveClass="active" to="/">Levels</RouterLink>
-            <RouterLink class="nav-link" exactActiveClass="active" to="/play/1">Lv1</RouterLink>
-            <RouterLink class="nav-link" exactActiveClass="active" to="/play/2">Lv2</RouterLink>
-            <RouterLink class="nav-link" exactActiveClass="active" to="/play/3">Lv3</RouterLink>
-            <RouterLink class="nav-link" exactActiveClass="active" to="/play/4">Lv4</RouterLink>
+            <RouterLink
+              v-for="level in levels"
+              :key="level.number"
+              class="nav-link"
+              exactActiveClass="active"
+              :to="`/play/${level.number}`"
+              >{{ 'Lv' + level.number }}</RouterLink
+            >
           </div>
         </div>
       </div>

@@ -34,7 +34,7 @@ export const DoubleBigSquare = new TextLevel(
 
 export const SingleSnake = new TextLevel(
   'Basic',
-  2,
+  3,
   'Single Snake',
   `  
     x 1 x 1  x
@@ -46,8 +46,8 @@ export const SingleSnake = new TextLevel(
 );
 
 export const SingleBigSquare = new TextLevel(
-  'Basic',
-  3,
+  'Advanced',
+  6,
   'Single Big Square',
   `  
     x 1 x 1 x
@@ -60,7 +60,7 @@ export const SingleBigSquare = new TextLevel(
 
 export const SingleE = new TextLevel(
   'Advanced',
-  4,
+  7,
   'Single E',
   `  
     x 1 x
@@ -71,7 +71,72 @@ export const SingleE = new TextLevel(
     `
 );
 
-export const Levels: Level[] = [DoubleBigSquare, SingleSnake, SingleBigSquare, SingleE];
+export const SinglePlus = new TextLevel(
+  'Basic',
+  2,
+  'Single Plus',
+  `  
+        x
+        1
+    x 1 x 1 x
+        1
+        x
+    `
+);
+
+export const Spiral = new TextLevel(
+  'Basic',
+  4,
+  'Single Plus',
+  `  
+            x
+        x   
+        2   1
+    x 1 x 1 x
+    1   2
+        x
+    x
+    `
+);
+
+export const Crossings = new TextLevel(
+  'Basic',
+  5,
+  'Single Plus',
+  `  
+          x     x
+          1     1
+             x1 x
+             1
+          x     x
+          1     1
+          x1 x 1x
+    `
+);
+
+export const Isolation = new TextLevel(
+  'Advanced',
+  8,
+  'Iso',
+  `
+  x 1 x 1 x 1 x
+  1           1
+  x 1 x 1 x 1 x
+  `
+);
+
+const SimpleLevels = [DoubleBigSquare, SinglePlus];
+
+const RequiringMaxDegree = [SingleSnake, Spiral];
+
+export const Levels: Level[] = [
+  ...SimpleLevels,
+  ...RequiringMaxDegree,
+  SingleBigSquare,
+  SingleE,
+  Crossings,
+  Isolation
+];
 
 export const LevelsByCategory = LevelCategories.map((category) => {
   return {

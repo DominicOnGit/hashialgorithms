@@ -69,8 +69,4 @@ function draw() {
   ></canvas>
 </template>
 
-<style scoped>
-#canvas {
-  border: 1px solid gray;
-}
-</style>
+<style scoped></style>
