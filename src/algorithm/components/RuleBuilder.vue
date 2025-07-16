@@ -30,12 +30,14 @@ const rule = computed(() => getComponent(hashiAlgorithmStore, props.path) as Rul
         <SelectorBuilder :path="selectSelector(path, index)" />
       </template>
       <tr>
-        <td colspan="2">
-          <button @click="hashiAlgorithmStore.newSelector(path)">continue selecting</button>
+        <td colspan="2" class="spaceUnder">
+          <button class="btn btn-secondary" @click="hashiAlgorithmStore.newSelector(path)">
+            continue selecting
+          </button>
         </td>
       </tr>
       <tr>
-        <td>then</td>
+        <td class="rightAlign">then</td>
         <td>
           <ActionBuilder :action="rule.action" :path="selectAction(path)"></ActionBuilder>
         </td>
@@ -44,4 +46,11 @@ const rule = computed(() => getComponent(hashiAlgorithmStore, props.path) as Rul
   </table>
 </template>
 
-<style scoped></style>
+<style scoped>
+.rightAlign {
+  text-align: right;
+}
+.spaceUnder {
+  padding-bottom: 10px;
+}
+</style>
