@@ -35,7 +35,9 @@ onUpdated(() => {
 
 watch(hashiStore, () => {
   calculateDesiredSize();
-  draw();
+  if (vueCanvas.value != null) {
+    draw();
+  }
 });
 
 const desiredCanvasSize = ref({ width: 300, height: 300 });

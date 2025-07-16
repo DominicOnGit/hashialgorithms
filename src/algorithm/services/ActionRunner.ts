@@ -2,6 +2,7 @@ import { SelectorEvaluator } from './SelectorEvaluator';
 import { TermEvaluator } from './TermEvaluator';
 import { HashiEdge, HashiUtil, type Selectable } from '../../hashi/services/HashiUtil';
 import type { HashiAction } from '@/algorithm/stores/HashiAlgorithm';
+import { AlgorithmRunnerLogger } from '@/services/logging';
 
 export class ActionRunner {
   constructor(
@@ -10,6 +11,7 @@ export class ActionRunner {
   ) {}
 
   run(selected: Selectable[]): void {
+    AlgorithmRunnerLogger.info(`Running action ${this.action.kind}`);
     if (selected.length === 0) throw new Error();
 
     switch (this.action.kind) {

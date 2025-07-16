@@ -3,7 +3,7 @@ import { isRuleEnabled, useHashiAlgorithmStore } from '@/algorithm/stores/HashiA
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
 import { ref, watch } from 'vue';
 import SlowPressButton from '@/components/SlowPressButton.vue';
-import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
+import { useAlgorithmRunnerStore, type RuleState } from '../stores/AlgorithmRunnerStore';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
 import { RuleRunner } from '../services/RuleRunner';
@@ -73,9 +73,30 @@ function disableRule(index: number): void {
   hashiAlgorithmStore.disableRule(index);
 }
 
+function isRuleValid(index: number): boolean {
+  const ruleRunner = new RuleRunner(hashiAlgorithmStore.rules[index], new HashiUtil(hashiState));
+  const res = ruleRunner.isValid();
+  return res;
+}
+
 function stepRule(index: number): void {
   const ruleRunner = new RuleRunner(hashiAlgorithmStore.rules[index], new HashiUtil(hashiState));
   ruleRunner.runRuleStep();
+}
+
+function ruleStateIcon(state: RuleState): string {
+  switch (state) {
+    case 'matching':
+      return 'bi-play-circle';
+    case 'noMatch':
+      return 'bi-stop-circle';
+    case 'unknown':
+      return 'bi-hourglass';
+    case 'infiniteLoop':
+      return 'bi-repeat';
+    case 'invalid':
+      return 'bi-slash-circle';
+  }
 }
 </script>
 
@@ -96,19 +117,7 @@ function stepRule(index: number): void {
         style="display: inline-flex"
       >
         <i v-if="runState.activeRule === index && shakeRunning" class="ruleState bi-activity"></i>
-
-        <template v-else>
-          <i v-if="runState.ruleStates[index] == 'matching'" class="ruleState bi-play-circle"></i>
-          <i
-            v-else-if="runState.ruleStates[index] == 'noMatch'"
-            class="ruleState bi-stop-circle"
-          ></i>
-          <i v-else-if="runState.ruleStates[index] == 'unknown'" class="ruleState bi-hourglass"></i>
-          <i
-            v-else-if="runState.ruleStates[index] == 'infiniteLoop'"
-            class="ruleState bi-repeat"
-          ></i>
-        </template>
+        <i v-else class="ruleState" :class="ruleStateIcon(runState.ruleStates[index])"></i>
       </span>
 
       <!-- name -->
@@ -132,7 +141,7 @@ function stepRule(index: number): void {
       </SlowPressButton>
 
       <!-- step -->
-      <button class="ruleBtn btn" @click="stepRule(index)">
+      <button class="ruleBtn btn" :disabled="!isRuleValid(index)" @click="stepRule(index)">
         <i class="bi-arrow-bar-right"></i>
       </button>
     </a>
@@ -180,6 +189,7 @@ function stepRule(index: number): void {
 .ruleBtn {
   --bs-btn-padding-x: 0.5rem;
   --bs-btn-padding-y: 0.1rem;
+  border-color: transparent !important;
 }
 .activeState {
   color: var(--bs-primary);

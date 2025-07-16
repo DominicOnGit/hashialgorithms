@@ -13,11 +13,9 @@ export class Logger {
     return LevelToNumber[level] <= LevelToNumber[this.level];
   }
 
-  
   error(...args: unknown[]): void {
     if (this.isEnabled('error')) console.log(...args);
   }
-
 
   info(...args: unknown[]): void {
     if (this.isEnabled('info')) console.log(...args);
@@ -31,4 +29,4 @@ export class Logger {
 export const HashiViewerLogger = new Logger('error');
 export const UiActionLogger = new Logger('info');
 export const AlgorithmPathLogger = new Logger('error');
-export const AlgorithmRunnerLogger = new Logger('error');
+export const AlgorithmRunnerLogger = new Logger('info');

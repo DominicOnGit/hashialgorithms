@@ -18,10 +18,12 @@ export class AlgorithmRunner {
       if (isRuleEnabled(this.algorithm, ruleIndex)) {
         const rule = this.algorithm.rules[ruleIndex];
         const ruleRunner = new RuleRunner(rule, this.hashiUtil);
-        const hadEffect = ruleRunner.runRuleStep();
-        if (hadEffect) {
-          runnerStore.setActiveRule(ruleIndex);
-          return true;
+        if (ruleRunner.isValid()) {
+          const hadEffect = ruleRunner.runRuleStep();
+          if (hadEffect) {
+            runnerStore.setActiveRule(ruleIndex);
+            return true;
+          }
         }
       }
     }

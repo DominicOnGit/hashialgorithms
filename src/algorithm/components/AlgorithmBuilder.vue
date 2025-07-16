@@ -123,7 +123,7 @@ function resetHashi(): void {
 
   <div class="container g-4">
     <div class="row">
-      <div class="col-lg-4">
+      <div class="col-xl-4">
         <RuleList @selected="setActiveRuleIndex" />
       </div>
 

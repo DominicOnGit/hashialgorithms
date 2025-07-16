@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export type RuleState = 'noMatch' | 'matching' | 'unknown' | 'infiniteLoop';
+export type RuleState = 'noMatch' | 'matching' | 'unknown' | 'infiniteLoop' | 'invalid';
 
 export interface RunState {
   lastStepAt: Date | null;

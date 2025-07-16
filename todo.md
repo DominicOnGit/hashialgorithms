@@ -1,14 +1,14 @@
 ## Prio 1
 
-- label AddEdge -> increment multiplicicy (localize support?)
-- handle crossing bridges
-- Connected Component rules (select componet). Component has @isEntireHashi
-- Detect success (hashi correct and algo stops)
-- advanced hashi builder, difficulties
-- tutorial
-- beautify
+- trash icon in rulebuilder
+- same button style in add rule and add condition
 
 ## Prio 2
+
+- label AddEdge -> increment multiplicicy (localize support?)
+- Connected Component rules (select componet). Component has @isEntireHashi
+- advanced hashi builder, difficulties
+- beautify
 
 ## Prio 3
 

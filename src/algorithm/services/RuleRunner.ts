@@ -26,7 +26,17 @@ export class RuleRunner {
     }
   }
 
+  public isValid(): boolean {
+    if (this.rule.selectorSequence.length === 0) return false;
+
+    const selectsEdge = this.rule.selectorSequence.some((selector) => selector.kind === 'edge');
+    if (!selectsEdge) return false;
+
+    return true;
+  }
+
   public getRuleState(): RuleState {
+    if (!this.isValid()) return 'invalid';
     if (this.rule.selectorSequence.length === 0) return 'noMatch';
     const selectorRunner = new SelectorRunner(this.rule.selectorSequence, this.hashiUtil);
     const selected = selectorRunner.SelectNext();
