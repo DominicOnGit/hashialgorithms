@@ -1,8 +1,5 @@
 ## Prio 1
 
-- trash icon in rulebuilder
-- same button style in add rule and add condition
-
 ## Prio 2
 
 - label AddEdge -> increment multiplicicy (localize support?)

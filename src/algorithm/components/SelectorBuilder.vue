@@ -26,44 +26,48 @@ const isFirstOrSecond = computed(() => {
 </script>
 
 <template>
-  <tr>
-    <td class="rightAlign">{{ isFirst ? 'Select' : 'then select' }}</td>
-    <td>
+  <!-- Select -->
+  <div class="row">
+    <div class="col col-2 text-end">{{ isFirst ? 'Select' : 'then select' }}</div>
+    <div class="col">
       <SelectorTypeOption
         :value="selector"
         :useIncident="!isFirst"
         :allowExcludeAncestor="!isFirstOrSecond"
         @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(path, newKind)"
       />
-    </td>
-    <td>
+    </div>
+    <div class="col col-1">
       <SlowPressButton class="btn" @activated="() => hashiAlgorithmStore.deleteSelector(path)">
         <i class="bi-trash"></i>
       </SlowPressButton>
-    </td>
-  </tr>
-  <tr v-for="(condition, index) of selector.conditions" :key="index">
-    <td class="rightAlign">{{ index === 0 ? 'with' : 'and' }}</td>
-    <td>
+    </div>
+  </div>
+
+  <!-- Conditions -->
+  <div class="row" v-for="(condition, index) of selector.conditions" :key="index">
+    <div class="col col-2 text-end">{{ index === 0 ? 'with' : 'and' }}</div>
+    <div class="col">
       <ConditionBuilder :condition="condition" :path="selectCondition(path, index)" />
-    </td>
-    <td>
+    </div>
+    <div class="col col-1">
       <SlowPressButton
         class="btn"
         @activated="() => hashiAlgorithmStore.deleteCondition(selectCondition(path, index))"
       >
         <i class="bi-trash"></i>
       </SlowPressButton>
-    </td>
-  </tr>
-  <tr>
-    <td></td>
-    <td class="spaceUnder">
+    </div>
+  </div>
+
+  <!-- add Condition -->
+  <div class="row mb-3">
+    <div class="col offset-2">
       <button class="btn btn-secondary" @click="() => hashiAlgorithmStore.newCondition(path)">
         add condition
       </button>
-    </td>
-  </tr>
+    </div>
+  </div>
 </template>
 
 <style scoped>
