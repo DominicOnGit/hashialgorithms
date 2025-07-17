@@ -1,8 +1,15 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Levels } from './Title-Screen/services/levels';
+import { useRoute } from 'vue-router';
 
 const levels = Levels;
 levels.sort((a, b) => a.number - b.number);
+const route = useRoute();
+
+const level = computed(() => {
+  return route.params.level;
+});
 </script>
 
 <template>
@@ -10,6 +17,7 @@ levels.sort((a, b) => a.number - b.number);
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <span class="navbar-brand">Hashi Algorithm</span>
+        <span v-if="level != null" class="navbar-text">Level {{ level }}</span>
         <button
           class="navbar-toggler"
           type="button"
