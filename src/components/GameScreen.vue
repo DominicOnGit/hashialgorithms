@@ -12,6 +12,7 @@ import { Modal } from 'bootstrap';
 import type { Level } from '@/Title-Screen/stores/level';
 import { getStartForLevel, getUrl } from '@/Story/service/stories';
 import { assertNotNull } from '@/services/misc';
+import { UiActionLogger } from '@/services/logging';
 
 let level: Level;
 let nextLevel: Level | null;
@@ -45,6 +46,7 @@ hashiRunnerStore.$subscribe(() => {
 });
 
 function checkLevelComplete(): void {
+  UiActionLogger.debug(`checkLevelComplete, successShown=${successShown}`);
   if (successShown) {
     return;
   }
@@ -68,7 +70,6 @@ function checkLevelComplete(): void {
         </div>
       </div>
     </div>
-
     <div class="col">
       <div class="card">
         <div class="card-body">

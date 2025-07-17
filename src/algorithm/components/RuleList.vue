@@ -40,12 +40,14 @@ watch(
 );
 
 function updateRuleState(): void {
-  hashiAlgorithmStore.rules.forEach((rule, index) => {
-    const runner = new RuleRunner(rule, new HashiUtil(hashiState));
-    const state = runner.getRuleState();
+  UiActionLogger.debug('updateRuleState');
 
-    runState.setRuleState(index, state);
+  const hashi = new HashiUtil(hashiState);
+  const states: RuleState[] = hashiAlgorithmStore.rules.map((rule) => {
+    const runner = new RuleRunner(rule, hashi);
+    return runner.getRuleState();
   });
+  runState.setRuleState(states);
 }
 
 function newRuleName(index: number): string {

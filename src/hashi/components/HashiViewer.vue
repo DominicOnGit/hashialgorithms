@@ -17,6 +17,7 @@ const customPropertiesStore = useCustomPropertyStore();
 const vueCanvas = ref<CanvasRenderingContext2D>();
 
 onBeforeMount(() => {
+  HashiViewerLogger.debug('onBeforeMount');
   calculateDesiredSize();
 });
 
@@ -26,14 +27,18 @@ onMounted(() => {
   const ctx = c.getContext('2d');
   if (ctx == null) throw new Error();
   vueCanvas.value = ctx;
-  //  draw();
+
+  HashiViewerLogger.debug('mounted');
+  draw();
 });
 
 onUpdated(() => {
+  HashiViewerLogger.debug('onUpdated');
   draw();
 });
 
 watch(hashiStore, () => {
+  HashiViewerLogger.debug('hashiStore changed');
   calculateDesiredSize();
   if (vueCanvas.value != null) {
     draw();

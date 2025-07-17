@@ -24,8 +24,8 @@ export const useAlgorithmRunnerStore = defineStore('algorithmRunner', {
         this.lastStepAt = new Date();
       }
     },
-    setRuleState(ruleIndex: number, state: RuleState): void {
-      this.ruleStates[ruleIndex] = state;
+    setRuleState(states: RuleState[]): void {
+      this.ruleStates = states;
     }
   }
 });
