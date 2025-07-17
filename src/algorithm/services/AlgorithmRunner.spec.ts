@@ -1,10 +1,22 @@
 import { useAlgorithmRunnerStore, type RunState } from './../stores/AlgorithmRunnerStore';
-import { expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { AlgorithmRunner } from './AlgorithmRunner';
 import { type Edge, type Hashi } from '@/hashi/stores/hashi';
 import { type HashiAlgorithm } from '@/algorithm/stores/HashiAlgorithm';
 import { createPinia, setActivePinia } from 'pinia';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
+import {
+  Need2Bridges,
+  NeedAtLeastOneBridge,
+  NeedAtLeastOneBridgeMaxMulti,
+  NeedMaxMultiplicity,
+  NoPairIslandDouble,
+  NoPairIslandSingle,
+  SetMaxMultIfRemainingDegreeIs0,
+  SetMaxMultIfRemainingDegreeIs1
+} from '../stores/rules';
+import { Levels } from '@/Title-Screen/services/levels';
+import { runTillEnd } from './Rules.spec';
 
 test('runs rule', () => {
   setActivePinia(createPinia());
@@ -140,4 +152,68 @@ test('runStep switches to next rule if nothing executed', () => {
   expect(hashi.edges).toStrictEqual([expectedEdge]);
 
   expect(runState.activeRule).toBe(1);
+});
+
+function canSolve(algo: HashiAlgorithm, hashi: HashiUtil): boolean {
+  const finalHashi = runTillEnd(hashi.wrappedItem, algo);
+
+  const solved = new HashiUtil(finalHashi).IsSolved();
+  return solved;
+}
+
+function testAlgo(algo: HashiAlgorithm, expectedToSolve: number[]): void {
+  for (const lv of Levels) {
+    const lvHashi = lv.load();
+    const expected = expectedToSolve.includes(lv.number);
+
+    test((expected ? 'can' : 'cannot') + ' solve ' + lv.title, () => {
+      const solved = canSolve(algo, lvHashi);
+      expect(solved).toEqual(expected);
+    });
+  }
+}
+
+describe('needsBridgesAlgo', () => {
+  const needsBridgesAlgo: HashiAlgorithm = {
+    name: 'needsBridgesAlgo',
+    rules: [NeedAtLeastOneBridge, Need2Bridges],
+    disabledRules: []
+  };
+  const expectedToSolve: number[] = [1, 2];
+
+  testAlgo(needsBridgesAlgo, expectedToSolve);
+});
+
+describe('maxMultiplicityAlgo', () => {
+  const maxMultiplicityAlgo: HashiAlgorithm = {
+    name: 'maxMultiplicityAlgo',
+    rules: [
+      NeedMaxMultiplicity,
+      NeedAtLeastOneBridgeMaxMulti,
+      SetMaxMultIfRemainingDegreeIs0,
+      SetMaxMultIfRemainingDegreeIs1
+    ],
+    disabledRules: []
+  };
+  const expectedToSolve: number[] = [1, 2, 3, 4];
+
+  testAlgo(maxMultiplicityAlgo, expectedToSolve);
+});
+
+describe('maxMultiplicityWithoutPairIslandAlgo', () => {
+  const maxMultiplicityAlgo: HashiAlgorithm = {
+    name: 'maxMultiplicityWithoutPairIslandAlgo',
+    rules: [
+      NeedMaxMultiplicity,
+      NeedAtLeastOneBridgeMaxMulti,
+      SetMaxMultIfRemainingDegreeIs0,
+      SetMaxMultIfRemainingDegreeIs1,
+      NoPairIslandSingle,
+      NoPairIslandDouble
+    ],
+    disabledRules: []
+  };
+  const expectedToSolve: number[] = [1, 2, 3, 4, 5, 6, 7];
+
+  testAlgo(maxMultiplicityAlgo, expectedToSolve);
 });

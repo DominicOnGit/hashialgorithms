@@ -137,6 +137,10 @@ describe('RuleRunner', () => {
               rhs: { kind: 'constant', value: 2 }
             }
           ]
+        },
+        {
+          kind: 'edge',
+          conditions: []
         }
       ],
       action: { kind: 'addEdge' }
@@ -177,7 +181,7 @@ describe('RuleRunner', () => {
 
     const runner = new RuleRunner(rule, new HashiUtil(hashi));
     const actual = runner.getRuleState();
-    expect(actual).toBe('noMatch');
+    expect(actual).toBe('invalid');
   });
 
   test('invalidRule test', () => {
