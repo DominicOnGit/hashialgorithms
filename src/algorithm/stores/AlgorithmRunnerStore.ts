@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
 
-export type RuleState = 'noMatch' | 'matching' | 'unknown' | 'infiniteLoop';
+export type RuleState = 'noMatch' | 'matching' | 'unknown' | 'infiniteLoop' | 'invalid';
 
 export interface RunState {
+  lastStepAt: Date | null;
   activeRule: number | null;
 
   ruleStates: RuleState[];
@@ -11,6 +12,7 @@ export interface RunState {
 export const useAlgorithmRunnerStore = defineStore('algorithmRunner', {
   state: (): RunState => {
     return {
+      lastStepAt: null,
       activeRule: null,
       ruleStates: []
     };
@@ -18,10 +20,12 @@ export const useAlgorithmRunnerStore = defineStore('algorithmRunner', {
   actions: {
     setActiveRule(ruleIndex: number | null): void {
       this.activeRule = ruleIndex;
+      if (ruleIndex != null) {
+        this.lastStepAt = new Date();
+      }
     },
-    setRuleState(ruleIndex: number, state: RuleState): void {
-      console.debug(`setRuleState(${ruleIndex}, ${state})`);
-      this.ruleStates[ruleIndex] = state;
+    setRuleState(states: RuleState[]): void {
+      this.ruleStates = states;
     }
   }
 });

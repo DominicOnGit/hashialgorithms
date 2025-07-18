@@ -1,9 +1,8 @@
 import { type SetPropertyAction } from './../stores/HashiAlgorithm';
 import { expect, test, describe } from 'vitest';
-import { useHashiStore, type Hashi } from '@/hashi/stores/hashi';
+import { type Hashi } from '@/hashi/stores/hashi';
 import { type HashiAction } from '@/algorithm/stores/HashiAlgorithm';
 import { HashiUtil } from '../../hashi/services/HashiUtil';
-import { setActivePinia, createPinia } from 'pinia';
 import { ActionRunner } from './ActionRunner';
 
 describe('addEdge', () => {
@@ -17,16 +16,12 @@ describe('addEdge', () => {
       edges: [{ v1: 0, v2: 1, multiplicity: 2 }]
     };
     const hashiUtil = new HashiUtil(hashi);
-    setActivePinia(createPinia());
-    const hashiStore = useHashiStore();
-    hashiStore.setHashi(hashi);
-
     const action: HashiAction = { kind: 'addEdge' };
 
     const actionRunner = new ActionRunner(action, hashiUtil);
 
     actionRunner.run([hashiUtil.getEdge(1, 2)]);
-    expect(hashiStore.edges).toStrictEqual([
+    expect(hashi.edges).toStrictEqual([
       { v1: 0, v2: 1, multiplicity: 2 },
       { v1: 1, v2: 2, multiplicity: 1 }
     ]);
@@ -42,16 +37,13 @@ describe('addEdge', () => {
       edges: [{ v1: 0, v2: 1, multiplicity: 2 }]
     };
     const hashiUtil = new HashiUtil(hashi);
-    setActivePinia(createPinia());
-    const hashiStore = useHashiStore();
-    hashiStore.setHashi(hashi);
 
     const action: HashiAction = { kind: 'addEdge' };
 
     const actionRunner = new ActionRunner(action, hashiUtil);
 
     actionRunner.run([hashiUtil.getEdge(1, 2), hashiUtil.vertices[2]]);
-    expect(hashiStore.edges).toStrictEqual([
+    expect(hashi.edges).toStrictEqual([
       { v1: 0, v2: 1, multiplicity: 2 },
       { v1: 1, v2: 2, multiplicity: 1 }
     ]);
@@ -68,9 +60,6 @@ describe('setProperty', () => {
       edges: [{ v1: 0, v2: 1, multiplicity: 2 }]
     };
     const hashiUtil = new HashiUtil(hashi);
-    setActivePinia(createPinia());
-    const hashiStore = useHashiStore();
-    hashiStore.setHashi(hashi);
 
     const action: SetPropertyAction = {
       kind: 'setProperty',
@@ -81,7 +70,7 @@ describe('setProperty', () => {
     const actionRunner = new ActionRunner(action, hashiUtil);
 
     actionRunner.run([hashiUtil.getEdge(0, 1)]);
-    expect(hashiStore.edges).toStrictEqual([
+    expect(hashi.edges).toStrictEqual([
       { v1: 0, v2: 1, multiplicity: 2, customPropertyValues: { maxMultiplicity: 3 } }
     ]);
   });
@@ -95,9 +84,6 @@ describe('setProperty', () => {
       edges: [{ v1: 0, v2: 1, multiplicity: 2 }]
     };
     const hashiUtil = new HashiUtil(hashi);
-    setActivePinia(createPinia());
-    const hashiStore = useHashiStore();
-    hashiStore.setHashi(hashi);
 
     const action: SetPropertyAction = {
       kind: 'setProperty',
@@ -108,7 +94,7 @@ describe('setProperty', () => {
     const actionRunner = new ActionRunner(action, hashiUtil);
 
     actionRunner.run([hashiUtil.getEdge(1, 2), hashiUtil.vertices[2]]);
-    expect(hashiStore.edges).toStrictEqual([
+    expect(hashi.edges).toStrictEqual([
       { v1: 0, v2: 1, multiplicity: 2 },
       { v1: 1, v2: 2, multiplicity: 0, customPropertyValues: { maxMultiplicity: 3 } }
     ]);

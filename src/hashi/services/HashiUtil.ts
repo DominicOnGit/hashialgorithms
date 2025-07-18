@@ -85,6 +85,11 @@ export class HashiEdge implements Selectable, Edge {
     return [];
   }
 
+  public setCustomPropertyValue(name: string, value: number): void {
+    if (this.edge.customPropertyValues == null) this.edge.customPropertyValues = {};
+    this.edge.customPropertyValues[name] = value;
+  }
+
   public equals(other: Edge): boolean {
     return this.v1 === other.v1 && this.v2 === other.v2;
   }
@@ -108,13 +113,17 @@ export class HashiUtil {
   vertices: HashiVertex[];
   edges: HashiEdge[];
 
+  public get wrappedItem(): Hashi {
+    return this.hashi;
+  }
+
   constructor(private hashi: Hashi) {
     validateHashi(hashi);
 
     this.vertices = hashi.vertices.map((v, i) => new HashiVertex(v, i));
     this.edges = hashi.edges.map((e) => new HashiEdge(e, this.vertices));
 
-    this.edges.push(...this.findMissingEdges());
+    this.addMissingEdges();
   }
 
   incidentEdges(v: HashiVertex): HashiEdge[] {
@@ -148,40 +157,14 @@ export class HashiUtil {
     };
   }
 
-  // makeGrid(): EdgeVertexNull[][] {
-  //   const size = this.getSize()
-  //   const grid: EdgeVertexNull[][] = Array.from({ length: size.ny }, () =>
-  //     Array.from({ length: size.nx })
-  //   )
-
-  //   this.hashi.vertices.forEach((vertex) => {
-  //     grid[vertex.posY][vertex.posX] = vertex
-  //   })
-  //   this.hashi.edges.forEach((edge) => {
-  //     const v1 = this.hashi.vertices[edge.v1]
-  //     const v2 = this.hashi.vertices[edge.v2]
-  //     if (v1.posX === v2.posX) {
-  //       for (let y = v1.posY + 1; y < v2.posY; y++) {
-  //         grid[y][v1.posX] = edge
-  //       }
-  //     }
-  //     if (v1.posY === v2.posY) {
-  //       for (let x = v1.posX + 1; x < v2.posX; x++) {
-  //         grid[v1.posY][x] = edge
-  //       }
-  //     }
-  //   })
-  //   return grid
-  // }
-
-  getVertexAt(x: number, y: number): Vertex | undefined {
-    return this.hashi.vertices.find((v) => v.posX === x && v.posY === y);
+  getVertexAt(x: number, y: number): HashiVertex | undefined {
+    return this.vertices.find((v) => v.posX === x && v.posY === y);
   }
 
-  getEdgeAt(x: number, y: number): Edge | undefined {
-    const found = this.hashi.edges.find((edge) => {
-      const v1 = this.hashi.vertices[edge.v1];
-      const v2 = this.hashi.vertices[edge.v2];
+  private getEdgesAt(x: number, y: number): HashiEdge[] {
+    const found = this.edges.filter((edge) => {
+      const v1 = edge.vertex1;
+      const v2 = edge.vertex2;
 
       if (v1.posX === v2.posX && v1.posX === x) {
         return v1.posY <= y && y <= v2.posY;
@@ -194,45 +177,112 @@ export class HashiUtil {
     return found;
   }
 
-  private findMissingEdges(): HashiEdge[] {
-    const res: HashiEdge[] = [];
+  getEdgeAt(x: number, y: number): HashiEdge | null {
+    const found = this.getEdgesAt(x, y);
+    if (found.length > 1) throw new Error('multiple edges');
+    return found.length > 0 ? found[0] : null;
+  }
+
+  getNextVertex(xStart: number, yStart: number, dx: number, dy: number): Vertex | null {
+    const size = this.getSize();
+    for (
+      let x = xStart + dx, y = yStart + dy;
+      0 <= x && x <= size.nx && 0 <= y && y <= size.ny;
+      x += dx, y += dy
+    ) {
+      const vertex = this.getVertexAt(x, y);
+      if (vertex != null) return vertex;
+    }
+    return null;
+  }
+
+  private isHorizontalOrVertical(v1: HashiVertex, v2: HashiVertex): boolean {
+    return v1.posX === v2.posX || v1.posY === v2.posY;
+  }
+  private getEdgePoints(v1: HashiVertex, v2: HashiVertex): [x: number, y: number][] {
+    const res: [x: number, y: number][] = [];
+    if (v1.posX === v2.posX) {
+      for (let y = v1.posY + 1; y < v2.posY; y++) {
+        res.push([v1.posX, y]);
+      }
+      return res;
+    } else if (v1.posY === v2.posY) {
+      for (let x = v1.posX + 1; x < v2.posX; x++) {
+        res.push([x, v1.posY]);
+      }
+      return res;
+    } else throw new Error('points not horizontal or vertical');
+  }
+
+  private addMissingEdges(): void {
     for (let v1Index = 0; v1Index < this.vertices.length; v1Index++)
       for (let v2Index = v1Index + 1; v2Index < this.vertices.length; v2Index++) {
         const v1 = this.vertices[v1Index];
         const v2 = this.vertices[v2Index];
 
         const existing = this.edges.find((e) => e.v1 === v1Index && e.v2 === v2Index);
-        if (existing == null) {
+        if (existing == null && this.isHorizontalOrVertical(v1, v2)) {
           let valid = true;
-          if (v1.posX === v2.posX) {
-            for (let y = v1.posY + 1; y < v2.posY; y++) {
-              const hitVertex = this.getVertexAt(v1.posX, y);
-              const hitEdge = this.getEdgeAt(v1.posX, y);
-              if (hitVertex != null || hitEdge != null) {
-                valid = false;
-                break;
-              }
-            }
-            if (valid) {
-              res.push(new HashiEdge({ v1: v1Index, v2: v2Index, multiplicity: 0 }, this.vertices));
+          const edgePoints = this.getEdgePoints(v1, v2);
+          for (const edgePoint of edgePoints) {
+            const hitVertex = this.getVertexAt(...edgePoint);
+            const hitEdges = this.getEdgesAt(...edgePoint);
+            if (hitVertex != null || hitEdges.some((e) => e.multiplicity > 0)) {
+              valid = false;
+              break;
             }
           }
-          if (v1.posY === v2.posY) {
-            for (let x = v1.posX + 1; x < v2.posX; x++) {
-              const hitVertex = this.getVertexAt(x, v1.posY);
-              const hitEdge = this.getEdgeAt(x, v1.posY);
-              if (hitVertex != null || hitEdge != null) {
-                valid = false;
-                break;
-              }
-            }
-            if (valid) {
-              res.push(new HashiEdge({ v1: v1Index, v2: v2Index, multiplicity: 0 }, this.vertices));
-            }
+          if (valid) {
+            this.addEdge(v1Index, v2Index, 0);
           }
         }
       }
-    return res;
+  }
+
+  private addEdge(v1: number, v2: number, multiplicity: number): void {
+    const edge = { v1, v2, multiplicity };
+    this.hashi.edges.push(edge);
+    this.edges.push(new HashiEdge(edge, this.vertices));
+  }
+
+  private removeEdge(e: HashiEdge): void {
+    if (e.multiplicity > 0) throw new Error('cannot remove edge');
+    const innerIndex = this.hashi.edges.indexOf(e.edge);
+    this.hashi.edges.splice(innerIndex, 1);
+
+    const index = this.edges.indexOf(e);
+    this.edges.splice(index, 1);
+  }
+
+  public SetMultiplicity(edge: HashiEdge, newMultiplicity: number) {
+    if (newMultiplicity < 0) throw new Error('invalid multiplicity');
+    if (edge.multiplicity === newMultiplicity) return;
+    if (edge.multiplicity === 0) {
+      this.removeCrossingEdges(edge);
+    }
+    edge.edge.multiplicity = newMultiplicity;
+  }
+
+  public IncrementMultiplicity(edge: HashiEdge) {
+    this.SetMultiplicity(edge, edge.multiplicity + 1);
+  }
+
+  private removeCrossingEdges(edge: HashiEdge) {
+    const edgePoints = this.getEdgePoints(edge.vertex1, edge.vertex2);
+    for (const edgePoint of edgePoints) {
+      const allEdgesAtPoint = this.getEdgesAt(...edgePoint);
+      const otherEdges = allEdgesAtPoint.filter((e) => e !== edge);
+      otherEdges.forEach((e) => this.removeEdge(e));
+    }
+  }
+
+  public calculateTargetDegrees(): void {
+    this.vertices.forEach((v) => {
+      v.wrappedItem.targetDegree = this.incidentEdges(v).reduce(
+        (sum, e) => sum + e.multiplicity,
+        0
+      );
+    });
   }
 
   public IsValid(): boolean {
@@ -251,7 +301,12 @@ export class HashiUtil {
       const v = reachendNotProcess.pop();
       if (v == null) throw new Error();
       if (!reachedAndProcessed.includes(v)) {
-        reachendNotProcess.push(...this.adjacentVertices(v));
+        reachedAndProcessed.push(v);
+        for (const adjacent of this.adjacentVertices(v)) {
+          if (!reachedAndProcessed.includes(adjacent)) {
+            reachendNotProcess.push(adjacent);
+          }
+        }
       }
     }
 
@@ -266,6 +321,11 @@ export class HashiUtil {
     if (!this.IsValid()) return 'invalid';
     if (this.IsSolved()) return 'solved';
     return 'open';
+  }
+
+  public clearEdges(): void {
+    this.edges.forEach((e) => (e.edge.multiplicity = 0));
+    this.addMissingEdges();
   }
 }
 

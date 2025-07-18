@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // enables v-focus in templates
 export const vElementDeselected = {
   mounted: function (el: any, binding: any, vnode: any): void {
     el.globalClickEvent = function (event: any) {
       const { handler, exclude } = binding.value;
       if (!isInDom(event.target)) {
-        console.log('removed element');
         return;
       }
       let clickedOutsideExclusion: boolean;
@@ -13,8 +13,6 @@ export const vElementDeselected = {
       } else {
         clickedOutsideExclusion = exclude.every((refName: string) => {
           const excludedEl = vnode.ctx.refs[refName];
-          console.log(event.target, excludedEl);
-          console.log(event.target.parentElement);
           if (excludedEl instanceof Array) {
             return excludedEl.every(
               (excludedArrayEl) =>
@@ -48,11 +46,8 @@ function isInDom(element: HTMLElement): boolean {
 
 // enables v-focus in templates
 export const vElementDeselectedByParentId = {
-  mounted: function (el: any, binding: any, vnode: any): void {
+  mounted: function (el: any, binding: any): void {
     el.globalClickEvent = function (event: any) {
-      console.log(vnode);
-      console.log(vnode.ctx.refs);
-      console.log(el, event.target, binding.value);
       const { handler, exclude } = binding.value;
       let excludedEl = el as HTMLElement;
       if (exclude != null) {

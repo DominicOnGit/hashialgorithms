@@ -1,12 +1,13 @@
 import type { CustomPropertyDef } from '@/stores/CustomPropertyDef';
 
 export interface HashiAlgorithm {
+  name: string;
   rules: Rule[];
   disabledRules: number[];
 }
 
 export interface Rule {
-  name?: string;
+  name: string;
   selectorSequence: Selector[];
   action: HashiAction;
 }
@@ -70,20 +71,3 @@ export interface SumTerm {
 }
 
 export type Term = ProperyAccessTerm | CustomProperyAccessTerm | ConstantTerm | SumTerm | PlusTerm;
-
-export type AlgorithmPiece = Rule | Selector | Condition | Term | HashiAction;
-
-// selectorpath [ruleIndex, selectorOrAction, selectorIndex, conditionIndex, termIndex, termPart]
-// actionPath: [ ruleIndex, selectorOrAction, actionIndex, termIndex, termPart]
-export type AlgorithmPath = number[];
-// {
-//   kind: 'selector' | 'action';
-//   sequence: number[];
-// };
-// export interface AlgorithmPath {
-//   ruleIndex: number;
-//   selectorIndex?: number;
-//   conditionIndex?: number;
-//   termIndex?: number; // lhs or rhs
-//   termPath?: AlgorithmPath;
-// }

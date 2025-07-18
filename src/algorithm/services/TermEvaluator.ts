@@ -3,6 +3,7 @@ import type { PlusTerm, ProperyAccessTerm, SumTerm, Term } from '@/algorithm/sto
 import { HashiEdge, HashiUtil, HashiVertex, type Selectable } from '../../hashi/services/HashiUtil';
 import type { ISelectorEvaluator } from './interfaces';
 import { termToString } from './TermBuilderService';
+import { AlgorithmRunnerLogger } from '@/services/logging';
 
 export class TermEvaluator {
   constructor(
@@ -48,7 +49,7 @@ export class TermEvaluator {
     const itemValues = itemsToSumOver.map((summandItem) =>
       this.evaluate2(sum.what, summandItem, chainToItem)
     );
-    console.debug(
+    AlgorithmRunnerLogger.debug(
       `evaluateSum ${termToString(sum)} on ${item.toString()}: `,
       itemsToSumOver.map((summandItem, index) => `${summandItem.toString()}=${itemValues[index]}`)
     );

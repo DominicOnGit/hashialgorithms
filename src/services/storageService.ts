@@ -1,9 +1,12 @@
 import { useHashiStore, type Hashi } from '@/hashi/stores/hashi';
 import type { HashiAlgorithm } from './../algorithm/stores/HashiAlgorithm';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { UiActionLogger } from './logging';
+import type { Progress } from '@/stores/ProgressStore';
 
 const HashiKey = 'hashi';
 const AlgorithmKey = 'algorithm';
+const ProgressKey = 'progress';
 
 export function SaveObject(object: unknown, name: string): void {
   const value = JSON.stringify(object);
@@ -17,8 +20,25 @@ export function LoadObject(name: string): unknown | null {
   return object;
 }
 
+export function LoadAlgorithm(): HashiAlgorithm | null {
+  const algorithm = LoadObject(AlgorithmKey) as HashiAlgorithm;
+  return algorithm;
+}
+
+export function SaveAlgorithm(algorithm: HashiAlgorithm): void {
+  SaveObject(algorithm, AlgorithmKey);
+}
+
+export function LoadProgress(): Progress | null {
+  return LoadObject(ProgressKey) as Progress;
+}
+
+export function SaveProgress(progress: Progress): void {
+  SaveObject(progress, ProgressKey);
+}
+
 export function SaveAll(): void {
-  console.log('SaveAll');
+  UiActionLogger.info('SaveAll');
   const hashiAlgorithmStore = useHashiAlgorithmStore();
   const hashiStore = useHashiStore();
 
@@ -30,11 +50,11 @@ export function SaveAll(): void {
 }
 
 export function LoadAll(): void {
-  console.log('LoadAll');
+  UiActionLogger.info('LoadAll');
   const hashiAlgorithmStore = useHashiAlgorithmStore();
   const hashiStore = useHashiStore();
 
-  const algorithm = LoadObject(AlgorithmKey) as HashiAlgorithm;
+  const algorithm = LoadAlgorithm();
   if (algorithm == null) {
     alert('algorithm not found');
   } else {
@@ -45,7 +65,7 @@ export function LoadAll(): void {
   if (hashi != null) {
     hashiStore.$patch(hashi);
   } else {
-    console.log('hashi not found');
+    UiActionLogger.error('hashi not found');
     if (algorithm != null) {
       alert('hashi not found');
     }
@@ -57,6 +77,7 @@ export function CanLoad(): boolean {
 }
 
 const extractAlgorithm = extract<HashiAlgorithm>({
+  name: true,
   rules: true,
   disabledRules: true
 });

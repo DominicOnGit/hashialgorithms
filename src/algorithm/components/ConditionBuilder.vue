@@ -1,22 +1,30 @@
 <script setup lang="ts">
 import {
-  type AlgorithmPath,
   type Condition,
   type Operator,
   type SelectorKind
 } from '@/algorithm/stores/HashiAlgorithm';
 import TermBuilder from './TermBuilder.vue';
-import { getAncestorSelector, pathAppend } from '@/algorithm/services/AlgorithmPathService';
 import ComboboxMultiSelect from '../../components/ComboboxMultiSelect.vue';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { computed } from 'vue';
+import type { ConditionPath } from '../stores/AlgorithmPath';
+import {
+  getAncestorSelector,
+  getComponent,
+  selectConditionPart,
+  toTermPath
+} from '../services/AlgorithmPathService';
 
 const props = defineProps<{
-  condition: Condition;
-  path: AlgorithmPath;
+  path: ConditionPath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
+
+const condition = computed(() => {
+  return getComponent(hashiAlgorithmStore, props.path) as Condition;
+});
 
 const onEdgeOrVertex = computed((): SelectorKind => {
   const ancestorSelector = getAncestorSelector(hashiAlgorithmStore, props.path);
@@ -38,7 +46,7 @@ const operatorLabels: { [key in Operator]: string } = {
   <span class="condition">
     <TermBuilder
       :term="condition.lhs"
-      :path="pathAppend(path, 0)"
+      :path="toTermPath(selectConditionPart(path, 0))"
       :on-edge-or-vertex="onEdgeOrVertex"
       :allow-sum="true"
     />
@@ -53,7 +61,7 @@ const operatorLabels: { [key in Operator]: string } = {
 
     <TermBuilder
       :term="condition.rhs"
-      :path="pathAppend(path, 1)"
+      :path="toTermPath(selectConditionPart(path, 1))"
       :on-edge-or-vertex="onEdgeOrVertex"
       :allow-sum="true"
     />

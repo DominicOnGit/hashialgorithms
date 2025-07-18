@@ -24,6 +24,7 @@ import { checkResult, runTillEnd } from './Rules.spec';
 
 function testMultiRules(hashi: Hashi, rules: Rule[], expectedEdges: Edge[]): void {
   const algo: HashiAlgorithm = {
+    name: '',
     disabledRules: [],
     rules
   };

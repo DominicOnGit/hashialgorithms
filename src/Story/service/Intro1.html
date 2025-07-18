@@ -1,0 +1,21 @@
+Sometimes the solution for a part of the puzzle is easy to see. E.g. if there is an island that
+needs 4 bridges, and that island has only two neighbouring islands, then we need to connect both
+neighbours with double bridges.
+<br />
+Let's try to formulate this rule as an algorithm:
+<ol>
+  <li>
+    Find a vertex
+    <ul>
+      <li>with targetDegree 4</li>
+      <li>and two incident edges</li>
+    </ul>
+  </li>
+  <li>
+    then select one of the incident edges
+    <ul>
+      <li>that has multiplicity less than 2</li>
+    </ul>
+  </li>
+  <li>then increment the multiplicty of that edge.</li>
+</ol>

@@ -1,6 +1,9 @@
 import { HashiUtil, type Selectable } from '../../hashi/services/HashiUtil';
 import type { Selector } from '@/algorithm/stores/HashiAlgorithm';
 import { SelectorEvaluator } from './SelectorEvaluator';
+import { AlgorithmRunnerLogger } from '@/services/logging';
+
+const logger = AlgorithmRunnerLogger;
 
 export class SelectorRunner {
   private selectorEvaluator: SelectorEvaluator;
@@ -28,7 +31,7 @@ export class SelectorRunner {
 
     const res = ancestorsToLevelSet.flatMap((selectedAncestors) => {
       const allAtLevel = this.selectorEvaluator.SelectAll(this.selectors[level], selectedAncestors);
-      console.debug(
+      logger.debug(
         'selector evaluated at level ' + level,
         selectedAncestors.map((x) => x.toString()),
         allAtLevel.map((x) => x.toString())

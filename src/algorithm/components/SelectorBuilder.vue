@@ -1,55 +1,73 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { type Selector, type AlgorithmPath } from '@/algorithm/stores/HashiAlgorithm';
+import { type Selector } from '@/algorithm/stores/HashiAlgorithm';
 import SelectorTypeOption from './SelectorTypeOption.vue';
 import ConditionBuilder from './ConditionBuilder.vue';
-import { getSelectorIndex, pathAppend } from '@/algorithm/services/AlgorithmPathService';
+import SlowPressButton from '@/components/SlowPressButton.vue';
+import { getComponent } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import type { SelectorPath } from '../stores/AlgorithmPath';
+import { selectCondition } from '@/algorithm/services/AlgorithmPathService';
 
 const props = defineProps<{
-  selector: Selector;
-  path: AlgorithmPath;
+  path: SelectorPath;
 }>();
 
+const hashiAlgorithmStore = useHashiAlgorithmStore();
+const selector = computed(() => getComponent(hashiAlgorithmStore, props.path) as Selector);
+
 const isFirst = computed(() => {
-  return getSelectorIndex(props.path) === 0;
+  return props.path.selectorIndex === 0;
 });
 
 const isFirstOrSecond = computed(() => {
-  return getSelectorIndex(props.path) <= 1;
+  return props.path.selectorIndex <= 1;
 });
-
-const hashiAlgorithmStore = useHashiAlgorithmStore();
 </script>
 
 <template>
-  <tr>
-    <td class="rightAlign">{{ isFirst ? 'Select' : 'then select' }}</td>
-    <td>
+  <!-- Select -->
+  <div class="row">
+    <div class="col col-2 text-end">{{ isFirst ? 'Select' : 'then select' }}</div>
+    <div class="col">
       <SelectorTypeOption
         :value="selector"
         :useIncident="!isFirst"
         :allowExcludeAncestor="!isFirstOrSecond"
         @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(path, newKind)"
       />
-    </td>
-    <td><button @click="hashiAlgorithmStore.deleteSelector(path)">x</button></td>
-  </tr>
-  <tr v-for="(condition, index) of selector.conditions" :key="index">
-    <td class="rightAlign">{{ index === 0 ? 'with' : 'and' }}</td>
-    <td>
-      <ConditionBuilder :condition="condition" :path="pathAppend(path, index)" />
-    </td>
-    <td>
-      <button @click="() => hashiAlgorithmStore.deleteCondition(pathAppend(path, index))">x</button>
-    </td>
-  </tr>
-  <tr>
-    <td></td>
-    <td class="spaceUnder">
-      <button @click="() => hashiAlgorithmStore.newCondition(path)">add condition</button>
-    </td>
-  </tr>
+    </div>
+    <div class="col col-1">
+      <SlowPressButton class="btn" @activated="() => hashiAlgorithmStore.deleteSelector(path)">
+        <i class="bi-trash"></i>
+      </SlowPressButton>
+    </div>
+  </div>
+
+  <!-- Conditions -->
+  <div class="row" v-for="(condition, index) of selector.conditions" :key="index">
+    <div class="col col-2 text-end">{{ index === 0 ? 'with' : 'and' }}</div>
+    <div class="col">
+      <ConditionBuilder :condition="condition" :path="selectCondition(path, index)" />
+    </div>
+    <div class="col col-1">
+      <SlowPressButton
+        class="btn"
+        @activated="() => hashiAlgorithmStore.deleteCondition(selectCondition(path, index))"
+      >
+        <i class="bi-trash"></i>
+      </SlowPressButton>
+    </div>
+  </div>
+
+  <!-- add Condition -->
+  <div class="row mb-3">
+    <div class="col offset-2">
+      <button class="btn btn-secondary" @click="() => hashiAlgorithmStore.newCondition(path)">
+        add condition
+      </button>
+    </div>
+  </div>
 </template>
 
 <style scoped>

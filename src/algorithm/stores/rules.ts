@@ -354,16 +354,441 @@ export const NoPairIslandDouble: Rule = {
 };
 
 export const AllRulesAlgorithm: HashiAlgorithm = {
-  disabledRules: [0, 2],
+  name: 'All Rules Algorithm',
+  disabledRules: [],
   rules: [
     Need2Bridges,
-    NeedMaxMultiplicity,
-    NeedAtLeastOneBridge,
-    NeedAtLeastOneBridgeMaxMulti,
-    SetMaxMultIfRemainingDegreeIs0,
-    SetMaxMultIfRemainingDegreeIs1,
-    NoPairIslandSingle,
-    NoPairIslandDouble
+    // NeedMaxMultiplicity,
+    NeedAtLeastOneBridge
+    // NeedAtLeastOneBridgeMaxMulti
+    // SetMaxMultIfRemainingDegreeIs0,
+    // SetMaxMultIfRemainingDegreeIs1,
+    // NoPairIslandSingle,
+    // NoPairIslandDouble
   ]
 };
 // AllRulesAlgorithm.disabledRules = Array.from(Array(AllRulesAlgorithm.rules.length).keys());
+
+// const optimal =
+// {
+//     "name": "Optimal?",
+//     "disabledRules": [],
+//     "rules": [
+//         {
+//             "name": "NeedsMoreBridges 1",
+//             "selectorSequence": [
+//                 {
+//                     "kind": "edge",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "multiplicity"
+//                             },
+//                             "operator": "lt",
+//                             "rhs": {
+//                                 "kind": "custompropertyAccess",
+//                                 "property": {
+//                                     "name": "maxMultiplicity",
+//                                     "onVertex": false,
+//                                     "initialValue": 2,
+//                                     "color": "blue"
+//                                 }
+//                             }
+//                         },
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "multiplicity"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 0
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 {
+//                     "kind": "vertex",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "plus",
+//                                 "lhs": {
+//                                     "kind": "sum",
+//                                     "over": {
+//                                         "kind": "edge",
+//                                         "conditions": [],
+//                                         "excludeAncestor": true
+//                                     },
+//                                     "what": {
+//                                         "kind": "custompropertyAccess",
+//                                         "property": {
+//                                             "name": "maxMultiplicity",
+//                                             "onVertex": false,
+//                                             "initialValue": 2,
+//                                             "color": "blue"
+//                                         }
+//                                     }
+//                                 },
+//                                 "rhs": {
+//                                     "kind": "constant",
+//                                     "value": 0
+//                                 }
+//                             },
+//                             "operator": "lt",
+//                             "rhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "targetDegree"
+//                             }
+//                         }
+//                     ]
+//                 }
+//             ],
+//             "action": {
+//                 "kind": "addEdge"
+//             }
+//         },
+//         {
+//             "name": "NeedsMoreBridges 2",
+//             "selectorSequence": [
+//                 {
+//                     "kind": "edge",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "multiplicity"
+//                             },
+//                             "operator": "lt",
+//                             "rhs": {
+//                                 "kind": "custompropertyAccess",
+//                                 "property": {
+//                                     "name": "maxMultiplicity",
+//                                     "onVertex": false,
+//                                     "initialValue": 2,
+//                                     "color": "blue"
+//                                 }
+//                             }
+//                         },
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "multiplicity"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 1
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 {
+//                     "kind": "vertex",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "plus",
+//                                 "lhs": {
+//                                     "kind": "sum",
+//                                     "over": {
+//                                         "kind": "edge",
+//                                         "conditions": [],
+//                                         "excludeAncestor": true
+//                                     },
+//                                     "what": {
+//                                         "kind": "custompropertyAccess",
+//                                         "property": {
+//                                             "name": "maxMultiplicity",
+//                                             "onVertex": false,
+//                                             "initialValue": 2,
+//                                             "color": "blue"
+//                                         }
+//                                     }
+//                                 },
+//                                 "rhs": {
+//                                     "kind": "constant",
+//                                     "value": 1
+//                                 }
+//                             },
+//                             "operator": "lt",
+//                             "rhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "targetDegree"
+//                             }
+//                         }
+//                     ]
+//                 }
+//             ],
+//             "action": {
+//                 "kind": "addEdge"
+//             }
+//         },
+//         {
+//             "name": "MaxMultiplicity 1",
+//             "selectorSequence": [
+//                 {
+//                     "kind": "vertex",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "targetDegree"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "plus",
+//                                 "lhs": {
+//                                     "kind": "propertyAccess",
+//                                     "property": "degree"
+//                                 },
+//                                 "rhs": {
+//                                     "kind": "constant",
+//                                     "value": 1
+//                                 }
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 {
+//                     "kind": "edge",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "multiplicity"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 0
+//                             }
+//                         },
+//                         {
+//                             "lhs": {
+//                                 "kind": "custompropertyAccess",
+//                                 "property": {
+//                                     "name": "maxMultiplicity",
+//                                     "onVertex": false,
+//                                     "initialValue": 2,
+//                                     "color": "blue"
+//                                 }
+//                             },
+//                             "operator": "gt",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 1
+//                             }
+//                         }
+//                     ]
+//                 }
+//             ],
+//             "action": {
+//                 "kind": "setProperty",
+//                 "property": "maxMultiplicity",
+//                 "value": {
+//                     "kind": "constant",
+//                     "value": 1
+//                 }
+//             }
+//         },
+//         {
+//             "name": "MaxMultiplicity 0",
+//             "selectorSequence": [
+//                 {
+//                     "kind": "vertex",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "degree"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "targetDegree"
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 {
+//                     "kind": "edge",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "custompropertyAccess",
+//                                 "property": {
+//                                     "name": "maxMultiplicity",
+//                                     "onVertex": false,
+//                                     "initialValue": 2,
+//                                     "color": "blue"
+//                                 }
+//                             },
+//                             "operator": "gt",
+//                             "rhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "multiplicity"
+//                             }
+//                         }
+//                     ]
+//                 }
+//             ],
+//             "action": {
+//                 "kind": "setProperty",
+//                 "property": "maxMultiplicity",
+//                 "value": {
+//                     "kind": "propertyAccess",
+//                     "property": "multiplicity"
+//                 }
+//             }
+//         },
+//         {
+//             "name": "NoIsolation 1-1",
+//             "selectorSequence": [
+//                 {
+//                     "kind": "vertex",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "targetDegree"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 1
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 {
+//                     "kind": "edge",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "custompropertyAccess",
+//                                 "property": {
+//                                     "name": "maxMultiplicity",
+//                                     "onVertex": false,
+//                                     "initialValue": 2,
+//                                     "color": "blue"
+//                                 }
+//                             },
+//                             "operator": "gt",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 0
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 {
+//                     "kind": "vertex",
+//                     "excludeAncestor": true,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "targetDegree"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 1
+//                             }
+//                         }
+//                     ]
+//                 }
+//             ],
+//             "action": {
+//                 "kind": "setProperty",
+//                 "property": "maxMultiplicity",
+//                 "value": {
+//                     "kind": "constant",
+//                     "value": 1
+//                 }
+//             }
+//         },
+//         {
+//             "name": "NoIsolation 2-2",
+//             "selectorSequence": [
+//                 {
+//                     "kind": "vertex",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "targetDegree"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 2
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 {
+//                     "kind": "edge",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "custompropertyAccess",
+//                                 "property": {
+//                                     "name": "maxMultiplicity",
+//                                     "onVertex": false,
+//                                     "initialValue": 2,
+//                                     "color": "blue"
+//                                 }
+//                             },
+//                             "operator": "gt",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 1
+//                             }
+//                         }
+//                     ]
+//                 },
+//                 {
+//                     "kind": "vertex",
+//                     "excludeAncestor": false,
+//                     "conditions": [
+//                         {
+//                             "lhs": {
+//                                 "kind": "propertyAccess",
+//                                 "property": "targetDegree"
+//                             },
+//                             "operator": "eq",
+//                             "rhs": {
+//                                 "kind": "constant",
+//                                 "value": 2
+//                             }
+//                         }
+//                     ]
+//                 }
+//             ],
+//             "action": {
+//                 "kind": "setProperty",
+//                 "property": "maxMultiplicity",
+//                 "value": {
+//                     "kind": "constant",
+//                     "value": 1
+//                 }
+//             }
+//         }
+//     ]
+// }

@@ -1,38 +1,57 @@
 <script setup lang="ts">
-import { type Rule, type AlgorithmPath } from '@/algorithm/stores/HashiAlgorithm';
+import { type Rule } from '@/algorithm/stores/HashiAlgorithm';
 import SelectorBuilder from './SelectorBuilder.vue';
 import ActionBuilder from './ActionBuilder.vue';
 import {
-  pathSelectorAndAppend,
-  pathActionAndAppend
+  getComponent,
+  selectAction,
+  selectSelector
 } from '@/algorithm/services/AlgorithmPathService';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
+import { computed } from 'vue';
+import EditableLabel from '@/components/EditableLabel.vue';
+import type { RulePath } from '../stores/AlgorithmPath';
 
-defineProps<{
-  rule: Rule;
-  path: AlgorithmPath;
+const props = defineProps<{
+  path: RulePath;
 }>();
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
+
+const rule = computed(() => getComponent(hashiAlgorithmStore, props.path) as Rule);
 </script>
 
 <template>
-  <table>
-    <template v-for="(selector, index) in rule.selectorSequence" :key="index">
-      <SelectorBuilder :selector="selector" :path="pathSelectorAndAppend(path, index)" />
-    </template>
-    <tr>
-      <td colspan="2">
-        <button @click="hashiAlgorithmStore.newSelector(path)">continue selecting</button>
-      </td>
-    </tr>
-    <tr>
-      <td>then</td>
-      <td>
-        <ActionBuilder :action="rule.action" :path="pathActionAndAppend(path, 0)"></ActionBuilder>
-      </td>
-    </tr>
-  </table>
+  <h2><EditableLabel v-model="rule.name" /></h2>
+
+  <!-- Selectors -->
+  <template v-for="(selector, index) in rule.selectorSequence" :key="index">
+    <SelectorBuilder :path="selectSelector(path, index)" />
+  </template>
+
+  <!-- add selector -->
+  <div class="row">
+    <div class="col offset-2">
+      <button class="btn btn-secondary" @click="hashiAlgorithmStore.newSelector(path)">
+        continue selecting
+      </button>
+    </div>
+  </div>
+
+  <!-- action -->
+  <div class="row mt-4">
+    <div class="col col-2 text-end">then</div>
+    <div class="col col-9">
+      <ActionBuilder :action="rule.action" :path="selectAction(path)"></ActionBuilder>
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.rightAlign {
+  text-align: right;
+}
+.spaceUnder {
+  padding-bottom: 10px;
+}
+</style>

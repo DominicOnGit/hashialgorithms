@@ -2,9 +2,10 @@ import { singleTee, namedHashis, singleStar } from './HashiSamples';
 import { validateHashi, type Hashi } from '@/hashi/stores/hashi';
 import { expect, test, describe } from 'vitest';
 import { HashiUtil } from './HashiUtil';
+import { HashiTextConverter } from './HashiTextConverter';
 
 test('validate sample hashis', () => {
-  Object.entries(namedHashis).forEach(([name, hashi]) => {
+  Object.entries(namedHashis).forEach(([, hashi]) => {
     validateHashi(hashi);
   });
 });
@@ -121,5 +122,27 @@ describe('HashiUtil', () => {
     expect(util.getDegree(util.vertices[1])).toBe(2);
     expect(util.getDegree(util.vertices[2])).toBe(2);
     expect(util.getDegree(util.vertices[3])).toBe(1);
+  });
+
+  test('isConnected', () => {
+    const hashi1 = new HashiTextConverter().parse(`x  x  x`);
+    expect(hashi1.IsConnected()).toBeFalsy();
+
+    const hashi2 = new HashiTextConverter().parse(`x 1 x 1 x`);
+    expect(hashi2.IsConnected()).toBeTruthy();
+  });
+
+  test('addEdge removes crossing edges', () => {
+    const hashi = new HashiTextConverter().parse(`
+         x
+      x     x
+         x
+      `);
+    expect(hashi.edges.length).toBe(2);
+    hashi.edges.forEach((e) => expect(e.multiplicity).toBe(0));
+
+    const edgeToKeep = hashi.edges[0];
+    hashi.IncrementMultiplicity(edgeToKeep);
+    expect(hashi.edges).toEqual([edgeToKeep]);
   });
 });

@@ -11,9 +11,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import TitleScreen from './Title-Screen/components/TitleScreen.vue';
+import StoryViewer from './Story/components/StoryViewer.vue';
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', component: GameScreen },
+  { path: '/', component: TitleScreen },
+  { path: '/play/:level', component: GameScreen },
+  { path: '/story/:id', component: StoryViewer },
   { path: '/test', component: TestScreen }
 ];
 

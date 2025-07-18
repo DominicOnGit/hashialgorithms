@@ -1,156 +1,148 @@
 <script setup lang="ts">
-import { isRuleEnabled, useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
-import { vElementDeselected } from '@/directives/vElementDeselected';
+import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import RuleBuilder from './RuleBuilder.vue';
+import RuleList from './RuleList.vue';
 import { createPathToRule } from '@/algorithm/services/AlgorithmPathService';
-import type { Rule } from '../stores/HashiAlgorithm';
-import { ref, nextTick, onBeforeMount } from 'vue';
-import SlowPressButton from '@/components/SlowPressButton.vue';
-import { useAlgorithmRunnerStore } from '../stores/AlgorithmRunnerStore';
+import { ref, onBeforeMount } from 'vue';
 import { useHashiStore } from '@/hashi/stores/hashi';
 import { HashiUtil } from '@/hashi/services/HashiUtil';
-import { RuleRunner } from '../services/RuleRunner';
-import { AllRulesAlgorithm } from '../stores/rules';
+import EditableLabel from '@/components/EditableLabel.vue';
+import { AlgorithmRunner } from '../services/AlgorithmRunner';
+import { LoadAlgorithm, SaveAlgorithm } from '@/services/storageService';
+import { useRoute } from 'vue-router';
+import { getLevel } from '@/Title-Screen/services/levels';
+import { UiActionLogger } from '@/services/logging';
 
 const hashiAlgorithmStore = useHashiAlgorithmStore();
-const runState = useAlgorithmRunnerStore();
 const hashiState = useHashiStore();
 
-const nameEditors = ref();
 const activeRuleIndex = ref(0);
-const editedNameIndex = ref<number | null>(null);
-
-hashiState.$subscribe(() => updateRuleState());
-hashiAlgorithmStore.$subscribe(() => updateRuleState());
-
-function updateRuleState(): void {
-  hashiAlgorithmStore.rules.forEach((rule, index) => {
-    const runner = new RuleRunner(rule, new HashiUtil(hashiState));
-    const state = runner.getRuleState();
-
-    runState.setRuleState(index, state);
-  });
-}
 
 onBeforeMount(() => {
-  console.log('loading AllRulesAlgorithm', AllRulesAlgorithm);
-  hashiAlgorithmStore.$patch(AllRulesAlgorithm);
+  const loaded = LoadAlgorithm();
+  if (loaded != null) {
+    hashiAlgorithmStore.$patch(loaded);
+  }
 });
 
-function getName(rule: Rule, index: number): string {
-  return rule.name ?? 'Rule ' + (index + 1);
+hashiAlgorithmStore.$subscribe((mutation, algorithm) => {
+  SaveAlgorithm(algorithm);
+});
+
+function setActiveRuleIndex(index: number): void {
+  if (index >= 0) activeRuleIndex.value = index;
 }
 
-function editName(index: number): void {
-  activeRuleIndex.value = index;
-  editedNameIndex.value = index;
-  nextTick(() => {
-    if (nameEditors.value.length !== 1) throw new Error();
-    nameEditors.value[0].focus();
-    nameEditors.value[0].select();
-  });
+function stepAlgorithm(): boolean {
+  const algoRunner = new AlgorithmRunner(hashiAlgorithmStore, new HashiUtil(hashiState));
+  const res = algoRunner.runStep();
+  return res;
 }
 
-function stopNameEditing(): void {
-  console.log('stopNameEditing');
-  editedNameIndex.value = null;
+function stepAndQueue(): void {
+  if (playState.value !== 'paused') {
+    const stepOk = stepAlgorithm();
+    if (stepOk) {
+      setTimeout(
+        () => {
+          stepAndQueue();
+        },
+        playState.value === 'fast' ? 100 : 1000
+      );
+    } else {
+      playState.value = 'paused';
+      UiActionLogger.info('algorithm ended');
+    }
+  }
 }
 
-function newRule(): void {
-  hashiAlgorithmStore.newRule();
-  activeRuleIndex.value = hashiAlgorithmStore.rules.length - 1;
+type PlayState = 'normal' | 'fast' | 'paused';
+
+const playState = ref<PlayState>('paused');
+
+function setPlayState(state: PlayState): void {
+  const oldState = playState.value;
+  if (oldState === state) {
+    return;
+  }
+  playState.value = state;
+  if (oldState === 'paused') {
+    UiActionLogger.info('start playing algorithm');
+    stepAndQueue();
+  }
 }
 
-function deleteRule(index: number): void {
-  hashiAlgorithmStore.deleteRule(createPathToRule(index));
+function stepAndPause(): void {
+  setPlayState('paused');
+  stepAlgorithm();
 }
 
-function enableRule(index: number): void {
-  hashiAlgorithmStore.enableRule(index);
-}
-function disableRule(index: number): void {
-  hashiAlgorithmStore.disableRule(index);
+const route = useRoute();
+function resetHashi(): void {
+  const levelStr = route.params.level;
+  const level = getLevel(levelStr as string);
+  const hashi = level.load();
+  hashiState.setHashi(hashi.wrappedItem);
 }
 </script>
 
 <template>
-  <ul class="nav nav-pills">
-    <li v-for="(rule, index) in hashiAlgorithmStore.rules" :key="index" class="nav-item">
-      <a
-        :ref="'a' + index"
-        class="nav-link"
-        :class="{ active: activeRuleIndex === index }"
-        @click="activeRuleIndex = index"
-      >
-        <i v-if="runState.activeRule === index" class="ruleState bi-activity"></i>
-        <!-- bi-bullseye bi-caret-right-square-->
-        <template v-else>
-          <i v-if="runState.ruleStates[index] == 'matching'" class="ruleState bi-play-circle"></i>
-          <i
-            v-else-if="runState.ruleStates[index] == 'noMatch'"
-            class="ruleState bi-stop-circle"
-          ></i>
-          <i v-else-if="runState.ruleStates[index] == 'unknown'" class="ruleState bi-hourglass"></i>
-          <i
-            v-else-if="runState.ruleStates[index] == 'infiniteLoop'"
-            class="ruleState bi-repeat"
-          ></i>
-        </template>
-        <!-- <span
-          v-if="runState.activeRule === index"
-          class="spinner-border spinner-border-sm"
-          role="status"
-          aria-hidden="true"
-        ></span> -->
-        <template v-if="editedNameIndex === index">
-          <input
-            ref="nameEditors"
-            v-if="editedNameIndex === index"
-            v-elementDeselected="{ handler: stopNameEditing, exclude: ['a' + index] }"
-            v-model="rule.name"
-            type="text"
-          />
-          <button class="btn" @click="stopNameEditing">
-            <i class="bi-check-lg"></i>
-          </button>
-        </template>
-        <template v-else>
-          <span>{{ getName(rule, index) }} </span>
-          <button class="ruleBtn btn" @click="editName(index)">
-            <i class="bi-pencil"></i>
-          </button>
-          <button
-            v-if="isRuleEnabled(hashiAlgorithmStore, index)"
-            class="ruleBtn btn"
-            @click="disableRule(index)"
-          >
-            <i class="bi-stop"></i>
-          </button>
-          <button v-else class="ruleBtn btn" @click="enableRule(index)">
-            <i class="bi-play"></i>
-          </button>
-          <SlowPressButton class="ruleBtn btn" @activated="() => deleteRule(index)">
-            <i class="bi-trash"></i>
-          </SlowPressButton>
-        </template>
-      </a>
-    </li>
-    <li class="nav-item"><a class="nav-link" @click="newRule">NEW</a></li>
-  </ul>
+  <h3>
+    <div class="btn-toolbar">
+      <EditableLabel v-model="hashiAlgorithmStore.name" />
 
-  <RuleBuilder
-    v-if="hashiAlgorithmStore.rules.length > 0"
-    :rule="hashiAlgorithmStore.rules[activeRuleIndex]"
-    :path="createPathToRule(activeRuleIndex)"
-  />
+      <div class="btn-group">
+        <!-- Pause -->
+        <button class="btn" @click="() => setPlayState('paused')">
+          <i class="bi-stop" :class="{ activeState: playState === 'paused' }"></i>
+        </button>
+
+        <!-- Step -->
+        <button class="btn" @click="stepAndPause">
+          <i class="bi-arrow-bar-right"></i>
+        </button>
+
+        <!-- Play Normal -->
+        <button class="btn" @click="() => setPlayState('normal')">
+          <i class="bi-play" :class="{ activeState: playState === 'normal' }"></i>
+        </button>
+
+        <!-- Play Fast -->
+        <button class="btn" @click="() => setPlayState('fast')">
+          <i class="bi-fast-forward" :class="{ activeState: playState === 'fast' }"></i>
+        </button>
+      </div>
+
+      <!-- Reset -->
+      <button class="btn" @click="resetHashi">
+        <i class="bi-bootstrap-reboot"></i>
+        <!-- bi-arrow-counterclockwise -->
+      </button>
+    </div>
+  </h3>
+
+  <div class="container g-4">
+    <div class="row">
+      <div class="col-xl-4">
+        <RuleList @selected="setActiveRuleIndex" />
+      </div>
+
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <RuleBuilder
+              v-if="hashiAlgorithmStore.rules.length > 0"
+              :path="createPathToRule(activeRuleIndex)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.ruleState {
-  margin-right: 5px;
-}
-.ruleBtn {
-  --bs-btn-padding-x: 0.5rem;
-  --bs-btn-padding-y: 0.1rem;
+.activeState {
+  color: var(--bs-primary);
 }
 </style>

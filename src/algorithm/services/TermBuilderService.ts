@@ -7,10 +7,9 @@ export class TermBuilderService {
     private customPropDefs: CustomPropertyDefs
   ) {}
 
+  constants: Term[] = [...Array(3).keys()].map((v) => ({ kind: 'constant', value: v }));
   commonTerms: Term[] = [
-    { kind: 'constant', value: 0 },
-    { kind: 'constant', value: 1 },
-    { kind: 'constant', value: 2 },
+    ...this.constants,
     { kind: 'plus', lhs: { kind: 'constant', value: 1 }, rhs: { kind: 'constant', value: 1 } }
   ];
 
