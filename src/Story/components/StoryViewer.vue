@@ -20,7 +20,7 @@ async function loadStory(storyStr: string | string[]) {
 function nextPath(): string {
   const next = getNext(story.value);
   assertNotNull(next);
-  return '/#' + getUrl(next);
+  return getUrl(next);
 }
 </script>
 
@@ -33,7 +33,7 @@ function nextPath(): string {
       <div>
         <img v-if="story.pic != null" :src="story.pic" alt="..." class="center" />
       </div>
-      <a class="btn btn-light mt-4" :href="nextPath()">Ok</a>
+      <RouterLink class="btn btn-light mt-4" :to="nextPath()">Ok</RouterLink>
     </div>
   </div>
 </template>
