@@ -49,8 +49,11 @@ function clickStopped(allowEmit: boolean): void {
   <button
     class="outer"
     @mousedown="startRunning"
+    @touchstart="startRunning"
     @mouseup="() => clickStopped(true)"
+    @touchend="() => clickStopped(true)"
     @mouseleave="() => clickStopped(false)"
+    @touchcancel="() => clickStopped(false)"
   >
     <span class="slot"><slot></slot></span>
 
