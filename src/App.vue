@@ -10,6 +10,7 @@ const route = useRoute();
 const level = computed(() => {
   return route.params.level;
 });
+const shortcuts = false;
 </script>
 
 <template>
@@ -32,14 +33,16 @@ const level = computed(() => {
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <RouterLink class="nav-link" exactActiveClass="active" to="/">Levels</RouterLink>
-            <RouterLink
-              v-for="level in levels"
-              :key="level.number"
-              class="nav-link"
-              exactActiveClass="active"
-              :to="`/play/${level.number}`"
-              >{{ 'Lv' + level.number }}</RouterLink
-            >
+            <template v-if="shortcuts">
+              <RouterLink
+                v-for="level in levels"
+                :key="level.number"
+                class="nav-link"
+                exactActiveClass="active"
+                :to="`/play/${level.number}`"
+                >{{ 'Lv' + level.number }}</RouterLink
+              >
+            </template>
           </div>
         </div>
       </div>
