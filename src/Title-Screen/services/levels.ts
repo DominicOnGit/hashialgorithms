@@ -154,7 +154,7 @@ export const Crossings = new TextLevel(
 );
 
 export const Isolation = new TextLevel(
-  'Advanced',
+  'Expert',
   levelNum++,
   'Isolation',
   `

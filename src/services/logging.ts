@@ -27,6 +27,6 @@ export class Logger {
 }
 
 export const HashiViewerLogger = new Logger('error');
-export const UiActionLogger = new Logger('info');
+export const UiActionLogger = new Logger('error');
 export const AlgorithmPathLogger = new Logger('error');
-export const AlgorithmRunnerLogger = new Logger('info');
+export const AlgorithmRunnerLogger = new Logger('error');

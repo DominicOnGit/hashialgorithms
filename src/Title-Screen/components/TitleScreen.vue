@@ -26,17 +26,22 @@ onBeforeMount(() => {
   <h2>Levels</h2>
 
   <div v-for="category in levelCategories" :key="category.categoryName">
-    <h3>{{ category.categoryName }}</h3>
-    <div class="btn-group">
-      <template v-for="level in category.levels" :key="level.number">
-        <button
-          :disabled="!canPlay(progress, level.number)"
-          class="btn btn-light"
-          @click="$router.push({ path: startLevelPath(level) })"
-        >
-          {{ level.number }}
-        </button>
-      </template>
+    <div class="card m-4" style="width: 20em">
+      <div class="card-body">
+        <h4 class="card-title">{{ category.categoryName }}</h4>
+
+        <div class="btn-group">
+          <template v-for="level in category.levels" :key="level.number">
+            <button
+              :disabled="!canPlay(progress, level.number)"
+              class="btn btn-light"
+              @click="$router.push({ path: startLevelPath(level) })"
+            >
+              {{ level.number }}
+            </button>
+          </template>
+        </div>
+      </div>
     </div>
   </div>
 </template>
