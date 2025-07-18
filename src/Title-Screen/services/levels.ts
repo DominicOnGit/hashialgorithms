@@ -124,6 +124,20 @@ export const SingleBigSquare = new TextLevel(
     `
 );
 
+export const Mix2 = new TextLevel(
+  'Advanced',
+  levelNum++,
+  'Mix2',
+  `
+  x . x1. x
+  1   1   2
+  x1  x
+    x2    x
+  1 
+  x1    x              
+  `
+);
+
 export const Crossings = new TextLevel(
   'Advanced',
   levelNum++,
@@ -154,7 +168,7 @@ const SimpleLevels = [DoubleBigSquare, SinglePlus];
 
 const RequiringMaxDegree = [SingleSnake, Spiral, Mix1];
 
-const RequiringPairIsolationDetection = [SingleE, SingleBigSquare, Crossings];
+const RequiringPairIsolationDetection = [SingleE, SingleBigSquare, Crossings, Mix2];
 
 const Unsolvable = [Isolation];
 

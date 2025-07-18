@@ -130,13 +130,17 @@ export class HashiCanvasService {
     );
   }
 
+  showProperties = true;
+
   private drawEdge(edge: HashiEdge): void {
     this.canvas.beginPath();
     this.canvas.strokeStyle = edge.multiplicity <= 2 ? NormalStyle : ErrorStyle;
     this.canvas.setLineDash(edge.multiplicity === 0 ? [1, 3] : []);
 
     if (
-      (edge.multiplicity === 0 && edge.getCustomProperties(this.customPropertyDefs).length > 0) ||
+      (edge.multiplicity === 0 &&
+        edge.getCustomProperties(this.customPropertyDefs).length > 0 &&
+        this.showProperties) ||
       edge.multiplicity === 1
     ) {
       this.line(edge.vertex1, edge.vertex2, 0);
@@ -155,7 +159,9 @@ export class HashiCanvasService {
     this.canvas.stroke();
 
     this.canvas.setLineDash([]);
-    this.drawEdgeProperties(edge);
+    if (this.showProperties) {
+      this.drawEdgeProperties(edge);
+    }
   }
 
   private drawEdgeProperties(edge: HashiEdge) {

@@ -30,7 +30,10 @@ function nextPath(): string {
       <h1 class="card-title">{{ story.title }}</h1>
       <div v-html="story.text" />
 
-      <a class="btn btn-light" :href="nextPath()">Ok</a>
+      <div>
+        <img v-if="story.pic != null" :src="story.pic" alt="..." class="center" />
+      </div>
+      <a class="btn btn-light mt-4" :href="nextPath()">Ok</a>
     </div>
   </div>
 </template>
@@ -38,5 +41,11 @@ function nextPath(): string {
 <style scoped>
 .spaced {
   margin: 2%;
+}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 </style>
