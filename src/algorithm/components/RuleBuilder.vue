@@ -40,7 +40,7 @@ const rule = computed(() => getComponent(hashiAlgorithmStore, props.path) as Rul
 
   <!-- action -->
   <div class="row mt-4">
-    <div class="col col-2 text-end">then</div>
+    <div class="col col-2 gx-2 gx-sm-4 text-end">then</div>
     <div class="col col-9">
       <ActionBuilder :action="rule.action" :path="selectAction(path)"></ActionBuilder>
     </div>

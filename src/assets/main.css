@@ -7,3 +7,10 @@
 
   font-weight: normal;
 }
+
+
+.nakedBtn {
+  padding: 0.10rem 0.5rem;
+  border-color: transparent !important; 
+  background-color: transparent;
+}

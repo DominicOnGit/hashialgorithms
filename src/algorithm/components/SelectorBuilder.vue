@@ -28,7 +28,9 @@ const isFirstOrSecond = computed(() => {
 <template>
   <!-- Select -->
   <div class="row">
-    <div class="col col-2 text-end">{{ isFirst ? 'Select' : 'then select' }}</div>
+    <div class="col col-2 gx-2 gx-sm-4 text-end">
+      {{ isFirst ? 'Select' : 'then select' }}
+    </div>
     <div class="col">
       <SelectorTypeOption
         :value="selector"
@@ -37,22 +39,22 @@ const isFirstOrSecond = computed(() => {
         @change="(newKind) => hashiAlgorithmStore.changeSelectorKind(path, newKind)"
       />
     </div>
-    <div class="col col-1">
-      <SlowPressButton class="btn" @activated="() => hashiAlgorithmStore.deleteSelector(path)">
+    <div class="col col-sm-1 col-2 gx-0 text-center">
+      <SlowPressButton class="nakedBtn" @activated="() => hashiAlgorithmStore.deleteSelector(path)">
         <i class="bi-trash"></i>
       </SlowPressButton>
     </div>
   </div>
 
   <!-- Conditions -->
-  <div class="row" v-for="(condition, index) of selector.conditions" :key="index">
-    <div class="col col-2 text-end">{{ index === 0 ? 'with' : 'and' }}</div>
+  <div class="row py-1" v-for="(condition, index) of selector.conditions" :key="index">
+    <div class="col col-2 gx-2 gx-sm-4 text-end">{{ index === 0 ? 'with' : 'and' }}</div>
     <div class="col">
       <ConditionBuilder :condition="condition" :path="selectCondition(path, index)" />
     </div>
-    <div class="col col-1">
+    <div class="col col-sm-1 col-2 gx-0 text-center">
       <SlowPressButton
-        class="btn"
+        class="nakedBtn"
         @activated="() => hashiAlgorithmStore.deleteCondition(selectCondition(path, index))"
       >
         <i class="bi-trash"></i>
