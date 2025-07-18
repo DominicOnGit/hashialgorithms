@@ -49,8 +49,9 @@ const desiredCanvasSize = ref({ width: 300, height: 300 });
 
 function calculateDesiredSize(): void {
   const hashiSize = new HashiUtil(hashiStore).getSize();
-  desiredCanvasSize.value = desiredSize(hashiSize);
-  // console.log('desired size', desiredCanvasSize.value);
+  const desired = desiredSize(hashiSize);
+  HashiViewerLogger.debug('desired size: ', desired);
+  desiredCanvasSize.value = desired;
 }
 
 function draw() {

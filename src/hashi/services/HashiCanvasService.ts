@@ -5,7 +5,9 @@ import { HashiViewerLogger } from '@/services/logging';
 
 const IslandRadiusFactor = 1;
 const LineGap = 4;
-const DesiredBlockSize = 80;
+
+const DesiredMaxPx = 500;
+const DesiredBlockSizes = [80, 60, 40];
 
 const NormalStyle = 'black';
 const SatisfiedStyle = 'darkgreen';
@@ -18,9 +20,15 @@ function compareNumbers(a: number, b: number): number {
 }
 
 export function desiredSize(hashiSize: HashiSize): { width: number; height: number } {
+  const maxSize = Math.max(hashiSize.nx, hashiSize.ny);
+
+  const blockSize =
+    DesiredBlockSizes.find((size) => size * maxSize < DesiredMaxPx) ??
+    DesiredBlockSizes[DesiredBlockSizes.length - 1];
+
   return {
-    width: DesiredBlockSize * hashiSize.nx,
-    height: DesiredBlockSize * hashiSize.ny
+    width: blockSize * hashiSize.nx,
+    height: blockSize * hashiSize.ny
   };
 }
 
@@ -45,7 +53,7 @@ export class HashiCanvasService {
 
     this.gridSize = Math.min(this.canvasWidth / hashiSize.nx, this.canvasHeight / hashiSize.ny);
 
-    const fontSize = this.gridSize < 50 ? 12 : this.gridSize < 80 ? 14 : 18;
+    const fontSize = this.gridSize < 80 ? 16 : 18;
 
     this.canvas.font = `${fontSize}px sans-serif`;
     this.canvas.textAlign = 'center';
