@@ -1,12 +1,12 @@
 import type { Level } from '@/Title-Screen/stores/level';
 import { type Story } from '../story';
 import { DoubleBigSquare } from '@/Title-Screen/services/levels';
-import Intro1Pic from '@/assets/mix2Sln.png';
+import Intro1Pic from '@/assets/Mix2Sln.PNG';
 
 const Intro1: Story = {
   id: 'Intro1',
   title: 'Hashi',
-  text: `
+  text: ` 
 Hashi is a puzzle game. The goal is to connect the islands (circles) by drawing bridges between them. 
 <ul>
   <li> Bridges can only be drawn horizontally or vertically. They cannot cross each other.</li>
