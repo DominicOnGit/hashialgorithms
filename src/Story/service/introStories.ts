@@ -1,7 +1,7 @@
 import type { Level } from '@/Title-Screen/stores/level';
 import { type Story } from '../story';
 import { DoubleBigSquare } from '@/Title-Screen/services/levels';
-import Intro1Pic from '@/assets/Mix2Sln.PNG';
+import Intro1Pic from '@/assets/mix2sln.png';
 
 const Intro1: Story = {
   id: 'Intro1',
