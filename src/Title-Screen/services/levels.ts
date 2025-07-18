@@ -19,9 +19,11 @@ export class TextLevel implements Level {
   }
 }
 
+let levelNum = 1;
+
 export const DoubleBigSquare = new TextLevel(
   'Basic',
-  1,
+  levelNum++,
   'Double Big Square',
   `
     x 2 x 2 x
@@ -32,48 +34,9 @@ export const DoubleBigSquare = new TextLevel(
     `
 );
 
-export const SingleSnake = new TextLevel(
-  'Basic',
-  3,
-  'Single Snake',
-  `  
-    x 1 x 1  x
-             1
-     x 1 x 1 x
-     1       
-     x 1  x 1 x
-    `
-);
-
-export const SingleBigSquare = new TextLevel(
-  'Advanced',
-  7,
-  'Single Big Square',
-  `  
-    x 1 x 1 x
-    1       1
-    x       x
-    1       1
-    x 1 x 1 x
-    `
-);
-
-export const SingleE = new TextLevel(
-  'Advanced',
-  8,
-  'Single E',
-  `  
-    x 1 x
-    1
-    x 1 x
-    1     
-    x 1 x 
-    `
-);
-
 export const SinglePlus = new TextLevel(
   'Basic',
-  2,
+  levelNum++,
   'Single Plus',
   `  
         x
@@ -84,9 +47,22 @@ export const SinglePlus = new TextLevel(
     `
 );
 
+export const SingleSnake = new TextLevel(
+  'Basic',
+  levelNum++,
+  'Single Snake',
+  `  
+    x 1 x 1  x
+             1
+     x 1 x 1 x
+     1       
+     x 1  x 1 x
+    `
+);
+
 export const Spiral = new TextLevel(
   'Basic',
-  4,
+  levelNum++,
   'Single Plus',
   `  
             x
@@ -99,37 +75,10 @@ export const Spiral = new TextLevel(
     `
 );
 
-export const Crossings = new TextLevel(
-  'Basic',
-  6,
-  'Single Plus',
-  `  
-          x     x
-          1     1
-             x1 x
-             1
-          x     x
-          1     1
-          x1 x 1x
-    `
-);
-
-export const Isolation = new TextLevel(
-  'Advanced',
-  9,
-  'Iso',
-  `
-  x 1 x 1 x 1 x
-  1           1
-  x 1 x 1 x 1 x
-  `
-);
-
 export const Mix1 = new TextLevel(
   'Basic',
-  5,
+  levelNum++,
   'Mix1',
-  //2 . 2 . 5 . 2 .
   `
   x   x 1 x 2 x
   2   1   2    
@@ -148,17 +97,72 @@ export const Mix1 = new TextLevel(
     x  1x    2x       
   `
 );
+
+export const SingleE = new TextLevel(
+  'Advanced',
+  levelNum++,
+  'Single E',
+  `  
+    x 1 x
+    1
+    x 1 x
+    1     
+    x 1 x 
+    `
+);
+
+export const SingleBigSquare = new TextLevel(
+  'Advanced',
+  levelNum++,
+  'Single Big Square',
+  `  
+    x 1 x 1 x
+    1       1
+    x       x
+    1       1
+    x 1 x 1 x
+    `
+);
+
+export const Crossings = new TextLevel(
+  'Advanced',
+  levelNum++,
+  'Single Plus',
+  `  
+          x     x
+          1     1
+             x1 x
+             1
+          x     x
+          1     1
+          x1 x 1x
+    `
+);
+
+export const Isolation = new TextLevel(
+  'Advanced',
+  levelNum++,
+  'Isolation',
+  `
+  x 1 x 1 x 1 x
+  1           1
+  x 1 x 1 x 1 x
+  `
+);
+
 const SimpleLevels = [DoubleBigSquare, SinglePlus];
 
 const RequiringMaxDegree = [SingleSnake, Spiral, Mix1];
 
+const RequiringPairIsolationDetection = [SingleE, SingleBigSquare, Crossings];
+
+const Unsolvable = [Isolation];
+
 export const Levels: Level[] = [
   ...SimpleLevels,
   ...RequiringMaxDegree,
-  SingleBigSquare,
-  SingleE,
-  Crossings,
-  Isolation
+  ...RequiringPairIsolationDetection,
+  ...Unsolvable
 ];
 
 export const LevelsByCategory = LevelCategories.map((category) => {
