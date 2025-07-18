@@ -13,6 +13,8 @@ import type { Level } from '@/Title-Screen/stores/level';
 import { getStartForLevel, getUrl } from '@/Story/service/stories';
 import { assertNotNull } from '@/services/misc';
 import { UiActionLogger } from '@/services/logging';
+import { useProgressStore } from '@/stores/ProgressStore';
+import { SaveProgress } from '@/services/storageService';
 
 let level: Level;
 let nextLevel: Level | null;
@@ -20,7 +22,12 @@ let successShown = false;
 
 const hashiStore = useHashiStore();
 const route = useRoute();
+const progress = useProgressStore();
 watch(() => route.params.level, loadLevelAndSet, { immediate: true });
+
+progress.$subscribe((mutation, prog) => {
+  SaveProgress(prog);
+});
 
 function loadLevelAndSet(levelStr: string | string[]) {
   successShown = false;
@@ -54,6 +61,7 @@ function checkLevelComplete(): void {
   const hashiSolved = new HashiUtil(hashiStore).IsSolved();
 
   if (algorithmStopped && hashiSolved) {
+    progress.solved(level.number);
     successShown = true;
     const successModal = new Modal('#successModal');
     successModal.show();

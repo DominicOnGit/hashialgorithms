@@ -107,7 +107,7 @@ export class HashiTextConverter {
           if (edge == null) {
             throw new Error(`Edge not found at (${x}, ${y})`);
           }
-          edge.multiplicity = multiplicity;
+          hashiUtil.SetMultiplicity(edge, multiplicity);
         }
       }
     });

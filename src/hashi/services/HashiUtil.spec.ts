@@ -131,4 +131,18 @@ describe('HashiUtil', () => {
     const hashi2 = new HashiTextConverter().parse(`x 1 x 1 x`);
     expect(hashi2.IsConnected()).toBeTruthy();
   });
+
+  test('addEdge removes crossing edges', () => {
+    const hashi = new HashiTextConverter().parse(`
+         x
+      x     x
+         x
+      `);
+    expect(hashi.edges.length).toBe(2);
+    hashi.edges.forEach((e) => expect(e.multiplicity).toBe(0));
+
+    const edgeToKeep = hashi.edges[0];
+    hashi.IncrementMultiplicity(edgeToKeep);
+    expect(hashi.edges).toEqual([edgeToKeep]);
+  });
 });

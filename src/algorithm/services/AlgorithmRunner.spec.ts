@@ -195,7 +195,7 @@ describe('maxMultiplicityAlgo', () => {
     ],
     disabledRules: []
   };
-  const expectedToSolve: number[] = [1, 2, 3, 4];
+  const expectedToSolve: number[] = [1, 2, 3, 4, 5];
 
   testAlgo(maxMultiplicityAlgo, expectedToSolve);
 });
@@ -213,7 +213,7 @@ describe('maxMultiplicityWithoutPairIslandAlgo', () => {
     ],
     disabledRules: []
   };
-  const expectedToSolve: number[] = [1, 2, 3, 4, 5, 6, 7];
+  const expectedToSolve: number[] = [1, 2, 3, 4, 5, 6, 7, 8];
 
   testAlgo(maxMultiplicityAlgo, expectedToSolve);
 });

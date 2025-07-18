@@ -2,9 +2,11 @@ import { useHashiStore, type Hashi } from '@/hashi/stores/hashi';
 import type { HashiAlgorithm } from './../algorithm/stores/HashiAlgorithm';
 import { useHashiAlgorithmStore } from '@/algorithm/stores/HashiAlgorithmStore';
 import { UiActionLogger } from './logging';
+import type { Progress } from '@/stores/ProgressStore';
 
 const HashiKey = 'hashi';
 const AlgorithmKey = 'algorithm';
+const ProgressKey = 'progress';
 
 export function SaveObject(object: unknown, name: string): void {
   const value = JSON.stringify(object);
@@ -25,6 +27,14 @@ export function LoadAlgorithm(): HashiAlgorithm | null {
 
 export function SaveAlgorithm(algorithm: HashiAlgorithm): void {
   SaveObject(algorithm, AlgorithmKey);
+}
+
+export function LoadProgress(): Progress | null {
+  return LoadObject(ProgressKey) as Progress;
+}
+
+export function SaveProgress(progress: Progress): void {
+  SaveObject(progress, ProgressKey);
 }
 
 export function SaveAll(): void {

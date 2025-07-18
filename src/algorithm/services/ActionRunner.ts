@@ -18,7 +18,7 @@ export class ActionRunner {
       case 'addEdge': {
         const selectedEdge = this.findLastEdge(selected);
         if (selectedEdge == null) throw new Error('action not applicable');
-        selectedEdge.multiplicity++;
+        this.hashiUtil.SetMultiplicity(selectedEdge, selectedEdge.multiplicity + 1);
         return;
       }
       case 'setProperty': {
